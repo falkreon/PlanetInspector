@@ -1,0 +1,30 @@
+apply plugin: "application";
+
+group = "blue.endless.pi";
+archivesBaseName = "PlanetInspector";
+version = "0.0.1";
+
+sourceCompatibility = 1.21;
+targetCompatibility = 1.21;
+
+repositories {
+	mavenCentral();
+	
+	maven {
+		url = "https://repo.sleeping.town";
+	}
+}
+
+tasks.withType(JavaCompile) {
+	options.encoding = "UTF-8";
+}
+
+
+application {
+	mainClass = "blue.endless.pi.App";
+}
+
+dependencies {
+	implementation "blue.endless:jankson:2.0.0-SNAPSHOT-34";
+	compileOnly "org.jetbrains:annotations:26.0.2";
+}
