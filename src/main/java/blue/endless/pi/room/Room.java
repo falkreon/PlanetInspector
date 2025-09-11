@@ -11,19 +11,15 @@ public record Room(
 		Hazard hazard,
 		@SerializedName("META")
 		Meta meta,
-		@SerializedName("MAP")
-		Map map,
 		@SerializedName("PATHING")
 		ArrayList<PathNode> pathing,
 		@SerializedName("PALETTES")
-		ArrayList<PaletteEntry> palettes
+		ArrayList<PaletteEntry> palettes,
+		@SerializedName("SCREENS")
+		ArrayList<Screen> screens,
 		
-		
-		//ArrayList<Screen> screens
-		
-		// TODO: EVENTS (empty)
-		// TODO: SCREENS (most of the remaining data!
-		
+		@SerializedName("EVENTS")
+		ArrayList<Event> events
 		) {
 	
 }
