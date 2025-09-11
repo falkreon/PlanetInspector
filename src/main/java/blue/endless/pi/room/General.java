@@ -1,8 +1,10 @@
-package blue.endless.pi;
+package blue.endless.pi.room;
 
+import blue.endless.jankson.api.annotation.Deserializer;
 import blue.endless.jankson.api.annotation.SerializedName;
+import blue.endless.jankson.api.document.ObjectElement;
 
-public record RoomGeneral(
+public record General(
 		int darkness,
 		int threat,
 		String bgm,
@@ -17,7 +19,7 @@ public record RoomGeneral(
 		String name,
 		@SerializedName("bg_color")
 		int bgColor,
-		boolean powered,
+		int powered,
 		@SerializedName("gravity_multiplier")
 		int gravityMultiplier,
 		@SerializedName("no_floor")
