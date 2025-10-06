@@ -1,18 +1,29 @@
 package blue.endless.pi;
 
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
 import javax.imageio.ImageIO;
@@ -20,21 +31,34 @@ import javax.imageio.ImageIO;
 import blue.endless.jankson.api.Jankson;
 import blue.endless.jankson.api.SyntaxError;
 import blue.endless.jankson.api.document.ArrayElement;
+import blue.endless.jankson.api.document.KeyValuePairElement;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.jankson.api.io.StructuredDataReader;
 import blue.endless.jankson.api.io.ValueElementReader;
+import blue.endless.jankson.api.io.json.JsonWriterOptions;
 import blue.endless.jankson.impl.io.objectwriter.RecordDeserializer;
+import blue.endless.pi.datastruct.IntGrid;
+import blue.endless.pi.datastruct.Vec2;
+import blue.endless.pi.gui.EditorFrame;
 import blue.endless.pi.room.Door;
+import blue.endless.pi.room.MinimapCell;
 import blue.endless.pi.room.Room;
 import blue.endless.pi.room.Screen;
+import blue.endless.pi.world.WorldMeta;
 
 public class App {
+	public static final int PALETTE_MASK = 0x1F << 12; // Bits 12-16, with palettes 00-0F being user palettes and 10-1F being system palettes
+	public static final int ANIMATION_MASK = 0x7 << 17; // Bits 17-19
+	public static final int CONVEYOR_MASK = 0x03 << 20; // Bits 20 and 21
+	public static final int MIRRORED = 1 << 28;
+	public static final int FLIPPED = 1 << 29;
+	public static final int ROTATED = 1 << 30;
 	
 	public static void main(String... args) {
 		
-		Path worldFile = Path.of("test.mp_room");
+		Path worldFile = Path.of("test.mp_world");
 		
 		ArrayList<byte[]> files = new ArrayList<>();
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -64,161 +88,108 @@ public class App {
 			System.exit(-1);
 		}
 		
+		try(OutputStream out = Files.newOutputStream(Path.of("out_raw.mp_world"), StandardOpenOption.WRITE, StandardOpenOption.CREATE)) {
+			DeflaterOutputStream dout = new DeflaterOutputStream(new BufferedOutputStream(out));
+			
+			ObjectElement worldMetaObj = Jankson.readJsonObject(new ByteArrayInputStream(files.get(0)));
+			System.out.println(worldMetaObj.toString());
+			worldMetaObj.put("description", PrimitiveElement.of("THIS IS A MODIFIED WORLD\nUSE WITH CARE"));
+			worldMetaObj.put("name_full", PrimitiveElement.of("EUGENIA - DEMO -69420"));
+			
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			OutputStreamWriter writer = new OutputStreamWriter(baos, StandardCharsets.UTF_8);
+			Jankson.writeJson(worldMetaObj, writer, JsonWriterOptions.ONE_LINE);
+			writer.flush();
+			byte[] metaFileBytes = baos.toByteArray();
+			
+			
+			dout.write(metaFileBytes);
+			//dout.write(files.get(0));
+			dout.write(0);
+			dout.write(files.get(1));
+			dout.write(0);
+			
+			dout.finish();
+			dout.flush();
+			
+		} catch (IOException | SyntaxError e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			System.exit(-1);
+		}
+		
 		try {
-			Room room = processRoom(files);
+			processWorld(files);
 			
-			int startX = Integer.MAX_VALUE;
-			int startY = Integer.MAX_VALUE;
-			int endX = Integer.MIN_VALUE;
-			int endY = Integer.MIN_VALUE;
-			for(Screen s : room.screens()) {
-				if (s.x() < startX) startX = s.x();
-				if (s.y() < startY) startY = s.y();
-				if (s.x() > endX) endX = s.x();
-				if (s.y() > endY) endY = s.y();
-			}
-			
-			int roomWidth = endX - startX + 1;
-			int roomHeight = endY - startY + 1;
-			System.out.println("Width: ["+startX+".."+endX+"] = "+roomWidth);
-			System.out.println("Height: ["+startY+".."+endY+"] = "+roomHeight);
-			
-			BufferedImage image = new BufferedImage(roomWidth * 20, roomHeight * 15, BufferedImage.TYPE_4BYTE_ABGR);
-			
-			for(Screen s : room.screens()) {
-				//Screen first = room.screens().get(0);
-				System.out.println("Coords: "+s.x()+", "+s.y());
-				System.out.println(Arrays.toString(s.map().doors()));
+			/*
+			Room r = processRoom(files);
+			long[][] planeData = r.screens().get(0).tiles()[1];
+			IntGrid fgPlane = new IntGrid(20, 15);
+			if (planeData.length > 0) {
+				for(int x=0; x<20; x++) {
+					for(int y=0; y<15; y++) {
+						
+						int tile = (int) planeData[x][y];
+						//tile &= 0x7FF;
+						fgPlane.set(x, y, tile);
+					}
+				}
 				
+				//TreeMap<Integer, Vec2> tileLocations = new TreeMap<>();
 				
-				// Planets screens are 20x15
-				long[][][] tiles = s.tiles();
-				long[][] fg = s.tiles()[0];
-				long[][] mid = s.tiles()[1];
-				long[][] bg = s.tiles()[2];
-				
-				int baseX = (s.x() - startX) * 20;
-				int baseY = (s.y() - startY) * 15;
-	
 				for(int y=0; y<15; y++) {
 					for(int x=0; x<20; x++) {
-						long fgTile = get(x, y, fg) & 0x7F;
-						long midTile = get(x, y, mid) & 0x7F;
-						long bgTile = get(x, y, bg) & 0x7F;
-						long tile = fgTile;
-						if (tile == 0) tile = midTile;
-						if (tile == 0) tile = bgTile;
+						int tile = fgPlane.get(x, y);
+						boolean flip = (tile & FLIPPED) != 0;
+						boolean mirror = (tile & MIRRORED) != 0;
+						boolean rotate = (tile & ROTATED) != 0;
 						
-						String str = Long.toString(tile & 0x7F, 16);
-						while(str.length() < 2) str = " " + str;
-						System.out.print(str);
-						System.out.print(" ");
+						tile &= 0x7FF; // Erase high bits
 						
-						int rgb = 0xFF_000000;
-						
-						if (midTile != 0) {
-							rgb = 0xFF_4444FF;
-						} else if (fgTile != 0 || bgTile != 0) {
-							//rgb = 0xFF_2222EE;
-							rgb = 0xFF_0000AA;
-						} else {
-							rgb = 0xFF_0000AA;
+						String orientation = " ";
+						if (flip & mirror & rotate) {
+							orientation = "<";
+						} else if (flip & mirror) {
+							orientation = "v";
+						} else if (flip & rotate) {
+							orientation = "q";
+						} else if (mirror & rotate) {
+							orientation = "p";
+						} else if (mirror) {
+							orientation = "m";
+						} else if (rotate) {
+							orientation = "r";
 						}
+						//tileLocations.put(tile, new Vec2(x, y));
 						
-						// Override
-						if (x == 0) {
-							
-						}
-						
-						image.setRGB(baseX + x, baseY + y, rgb);
+						String disp = Integer.toHexString(tile);
+						while(disp.length() < 3) disp = "0" + disp;
+						System.out.print(orientation + disp + " ");
 					}
 					System.out.println();
 				}
+				
 				System.out.println();
 				
-				for(Door d : s.doors()) {
-					System.out.println("Door at "+s.x()+","+s.y());
-					System.out.println("Pos: " + d.pos()+", ClearOnUse: "+d.clearOnUse());
-					
-				}
+				int leftDoor = fgPlane.get(0, 5);
+				String binary = Integer.toString(leftDoor, 2);
+				System.out.println("Left door top tile binary: "+binary);
 				
+				int rightBottom = fgPlane.get(19, 7);
+				binary = Integer.toString(rightBottom, 2);
+				System.out.println("Right door bottom tile binary: "+binary);
+
 				
-				System.out.println("Walls: "+Arrays.toString(s.map().walls()));
-				if (s.map().walls()[4] == 1) {
-					//Top Wall
-					for(int i=0; i<20; i++) {
-						image.setRGB(baseX + i, baseY + 14, 0xFF_FFFFFF);
-					}
-				} else if (s.map().walls()[4] == 3) {
-					for(int i=0; i<20; i++) {
-						image.setRGB(baseX + i, baseY + 14, 0xFF_FFFFFF);
-					}
-					image.setRGB(baseX + 8, baseY + 14, 0xFF_0000FF);
-					image.setRGB(baseX + 9, baseY + 14, 0xFF_0000FF);
-					image.setRGB(baseX + 10, baseY + 14, 0xFF_0000FF);
-					image.setRGB(baseX + 11, baseY + 14, 0xFF_0000FF);
-				}
-				
-				if (s.map().walls()[3] == 1) {
-					// Left Wall
-					for(int i=0; i<15; i++) {
-						image.setRGB(baseX, baseY + i, 0xFF_FFFFFF);
-					}
-				} else if (s.map().walls()[3] == 3) {
-					// Left Door
-					for(int i=0; i<15; i++) {
-						image.setRGB(baseX, baseY + i, 0xFF_FFFFFF);
-					}
-					image.setRGB(baseX, baseY + 5, 0xFF_0000FF);
-					image.setRGB(baseX, baseY + 6, 0xFF_0000FF);
-					image.setRGB(baseX, baseY + 7, 0xFF_0000FF);
-				}
-				
-				if (s.map().walls()[2] == 1) {
-					//Top Wall
-					for(int i=0; i<20; i++) {
-						image.setRGB(baseX + i, baseY, 0xFF_FFFFFF);
-					}
-				} else if (s.map().walls()[2] == 3) {
-					for(int i=0; i<20; i++) {
-						image.setRGB(baseX + i, baseY, 0xFF_FFFFFF);
-					}
-					image.setRGB(baseX + 8, baseY, 0xFF_0000FF);
-					image.setRGB(baseX + 9, baseY, 0xFF_0000FF);
-					image.setRGB(baseX + 10, baseY, 0xFF_0000FF);
-					image.setRGB(baseX + 11, baseY, 0xFF_0000FF);
-				}
-				
-				if (s.map().walls()[1] == 1) {
-					for(int i=0; i<15; i++) {
-						image.setRGB(baseX + 19, baseY + i, 0xFF_FFFFFF);
-					}
-				} else if (s.map().walls()[1] == 3) {
-					// Right Door
-					for(int i=0; i<15; i++) {
-						image.setRGB(baseX + 19, baseY + i, 0xFF_FFFFFF);
-					}
-					image.setRGB(baseX + 19, baseY + 5, 0xFF_0000FF);
-					image.setRGB(baseX + 19, baseY + 6, 0xFF_0000FF);
-					image.setRGB(baseX + 19, baseY + 7, 0xFF_0000FF);
-				}
-				
-				/*
-				if (s.map().doors()[3] == 1) {
-					for(int i=0; i<5; i++) image.setRGB(baseX, baseY + i, 0xFF_FFFFFF);
-					image.setRGB(baseX, baseY + 5, 0xFF_0000FF);
-					image.setRGB(baseX, baseY + 6, 0xFF_0000FF);
-					image.setRGB(baseX, baseY + 7, 0xFF_0000FF);
-					for(int i=8; i<15; i++) image.setRGB(baseX, baseY + i, 0xFF_FFFFFF);
-				}*/
 			}
 			
+			BufferedImage mapImage = r.screens().get(0).createMapImage();
+			File f = new File("scr.png");
+			ImageIO.write(mapImage, "png", f);
 			
-			//room.general().visionLimit = 1;
-			//room.general().bgColor = 2;
-			
-			File f = new File("image.png");
-			ImageIO.write(image, "png", f);
+			BufferedImage roomImage = r.createMapImage();
+			f = new File("room.png");
+			ImageIO.write(roomImage, "png", f);
+			*/
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (SyntaxError e) {
@@ -226,7 +197,7 @@ public class App {
 		}
 	}
 	
-	/*
+	
 	public static <T> ArrayList<T> unpackRecordList(ArrayElement arr, Class<T> clazz) throws IOException, SyntaxError {
 		ArrayList<T> result = new ArrayList<>();
 		for(ValueElement val : arr) {
@@ -237,7 +208,7 @@ public class App {
 			if (t != null) result.add(t);
 		}
 		return result;
-	}*/
+	}
 	
 	public static <T> T unpackRecord(ValueElement val, Class<T> clazz) throws IOException, SyntaxError {
 		StructuredDataReader reader = ValueElementReader.of(val);
@@ -289,6 +260,47 @@ public class App {
 		return result;
 	}*/
 	
+	public static int[] unpackIntArray(ArrayElement arr) {
+		int[] result = new int[arr.size()];
+		int i = 0;
+		
+		for(ValueElement val : arr) {
+			if (val instanceof PrimitiveElement prim) {
+				result[i] = prim.asInt().orElse((int) prim.asDouble().orElse(0));
+			}
+			i++;
+		}
+		
+		return result;
+	}
+	
+	public static int[][] unpackIntArray2D(ArrayElement arr) {
+		int[][] result = new int[arr.size()][];
+		int i=0;
+		for(ValueElement val : arr) {
+			if (val instanceof ArrayElement arr2) {
+				result[i] = unpackIntArray(arr2);
+			}
+			i++;
+		}
+		
+		return result;
+	}
+	
+	public static int[][][] unpackIntArray3D(ArrayElement arr) {
+		int[][][] result = new int[arr.size()][][];
+		int i=0;
+		for(ValueElement val : arr) {
+			if (val instanceof ArrayElement arr2) {
+				result[i] = unpackIntArray2D(arr2);
+			}
+			i++;
+		}
+		
+		return result;
+	}
+	
+	
 	private static long get(int x, int y, long[][] data) {
 		if (data.length > x) {
 			long[] column = data[x];
@@ -307,9 +319,232 @@ public class App {
 		
 		ObjectElement value = Jankson.readJsonObject(new ByteArrayInputStream(roomFiles.get(0)));
 		Room room = unpackRecord(value, Room.class);
+		
+		Files.write(Path.of("room_file.json"), roomFiles.get(0));
+		try(FileWriter fw = new FileWriter(new File("jankson_out_room.json"))) {
+			Jankson.writeJson(value, fw, JsonWriterOptions.STRICT);
+			fw.flush();
+		}
+		
 		System.out.println(room);
 		
+		
 		return room;
+	}
+	
+	public static void processWorld(List<byte[]> worldFiles) throws IOException, SyntaxError {
+		if (worldFiles.size() != 2) {
+			throw new IllegalArgumentException("Expected 2 embedded jsons");
+		}
+		
+		ObjectElement worldMetaObj = Jankson.readJsonObject(new ByteArrayInputStream(worldFiles.get(0)));
+		WorldMeta worldMeta = unpackRecord(worldMetaObj, WorldMeta.class);
+		System.out.println(worldMeta);
+		
+		ObjectElement worldObj = Jankson.readJsonObject(new ByteArrayInputStream(worldFiles.get(1)));
+		Files.write(Path.of("world_file.json"), worldFiles.get(1));
+		try(FileWriter fw = new FileWriter(new File("jankson_out_world.json"))) {
+			Jankson.writeJson(worldObj, fw, JsonWriterOptions.STRICT);
+			fw.flush();
+		}
+		
+		Map<Vec2, MinimapCell> minimap = new HashMap<>();
+		List<Area> areas = new ArrayList<>();
+		Map<Vec2, List<Door>> roomDoors = new HashMap<>();
+		Map<Vec2, Integer> cellToRoom = new HashMap<>();
+		//Multimap<Vec2, Door> doors;
+		
+		for(KeyValuePairElement kvp : worldObj) {
+			String key = kvp.getKey();
+			
+			switch(key) {
+				case "HAZARDS" -> {
+					
+				}
+				case "MODES" -> {
+					
+				}
+				case "GENERATION_DEBUG_LOG" -> {
+					
+				}
+				case "EVENTS" -> {
+					
+				}
+				case "ITEM_DATA" -> {
+					if (kvp.getValue() instanceof ArrayElement arr) {
+						EnumSet<Item> itemsPresent = EnumSet.noneOf(Item.class);
+						int i = 0;
+						for(ValueElement val : arr) {
+							Item item = Item.byId(i);
+							//if (item == Item.INVALID) System.out.println(i+": "+val);
+							itemsPresent.add(Item.byId(i));
+							i++;
+						}
+						
+						//System.out.println("Items Described: "+itemsPresent.toString());
+					}
+				}
+				case "FLAGS" -> {
+					
+				}
+				case "LOGS" -> {
+					
+				}
+				case "CUTSCENES" -> {
+					
+				}
+				case "AREAS" -> {
+					if (kvp.getValue() instanceof ArrayElement arr) {
+						for(ValueElement areaElem : arr) {
+							if (areaElem instanceof ObjectElement obj) {
+								areas.add(new Area(obj));
+							}
+						}
+					}
+				}
+				case "TIMERS" -> {
+					
+				}
+				case "SPAWN_POINTS" -> {
+					
+				}
+				case "SYSTEM_PALETTES" -> {
+					
+				}
+				case "GENERAL" -> {
+					//System.out.println(kvp.getValue());
+				}
+				case "VALUES" -> {
+					
+				}
+				case "ROOMS" -> {
+					
+					
+					if (kvp.getValue() instanceof ArrayElement arr) {
+						int roomId = 0;
+						for(ValueElement roomElem : arr) {
+							/*
+							try {
+								Room room = unpackRecord(val, Room.class);
+							} catch (Throwable t) {
+								//System.out.println(val);
+							}*/
+							
+							
+							if (roomElem instanceof ObjectElement room) {
+								//System.out.println("Room id: "+roomId);
+								ArrayElement screens = room.getArray("SCREENS");
+								for(ValueElement screenElem : screens) {
+									if (screenElem instanceof ObjectElement screen) {
+										int x = screen.getPrimitive("x").asInt().orElse(-1);
+										int y = screen.getPrimitive("y").asInt().orElse(-1);
+										if (x == -1 || y == -1) {
+											System.out.println("MISPLACED SCREEN??");
+										}
+										cellToRoom.put(new Vec2(x, y), roomId);
+										
+										ObjectElement minimapElem = screen.getObject("MAP");
+										MinimapCell cell = new MinimapCell();
+										if (minimapElem.size() > 0) {
+											cell = unpackRecord(minimapElem, MinimapCell.class);
+											minimap.put(new Vec2(x, y), cell);
+										}
+										
+										ArrayElement doorArray = screen.getArray("DOORS");
+										//System.out.println(doorArray);
+										Arrays.fill(cell.doors(), -1);
+										for(ValueElement doorElem : doorArray) {
+											List<Door> doorsList = roomDoors.computeIfAbsent(new Vec2(x, y), (vec)->new ArrayList<>());
+											//System.out.println("  door @ "+x+","+y+": "+doorElem);
+											if (doorElem instanceof ObjectElement obj) {
+												Door d = new Door(obj);
+												doorsList.add(d);
+												cell.doors()[d.pos()] = d.type();
+											}
+										}
+									} else {
+										System.out.println("FAILED door conversion");
+									}
+								}
+							}
+							
+							roomId++;
+						}
+						//ArrayList<Room> rooms = unpackRecordList(arr, Room.class);
+						//System.out.println("  "+rooms.size()+" rooms unpacked.");
+					}
+					
+					//System.out.println("Minimap: "+minimap);
+					
+					
+				}
+				case "RULES" -> {
+					//System.out.println(kvp.getValue());
+				}
+				case "LIQUIDS_DAMAGE" -> {
+					
+				}
+				case "PROGRESSION_LOG" -> {
+					
+				}
+				case "SAMUS" -> {
+					
+				}
+				case "SECTORS" -> {
+					
+				}
+				case "ENEMY_DATA" -> {
+					
+				}
+				default -> {
+					System.out.println("Unhandled key: " + kvp.getKey());
+				}
+			}
+			
+			//System.out.println(kvp.getValue());
+		}
+		
+		
+		// Render the minimap
+		//Figure out world size
+		if (minimap.size() > 0) {
+			int minX = Integer.MAX_VALUE;
+			int minY = Integer.MAX_VALUE;
+			int maxX = Integer.MIN_VALUE;
+			int maxY = Integer.MIN_VALUE;
+			
+			for(Vec2 s : minimap.keySet()) {
+				minX = Math.min(minX, s.x());
+				maxX = Math.max(maxX, s.x());
+				minY = Math.min(minY, s.y());
+				maxY = Math.max(maxY, s.y());
+			}
+			
+			int cellsWide = maxX - minX + 1;
+			int cellsHigh = maxY - minY + 1;
+			
+			BufferedImage mapImage = new BufferedImage(cellsWide * 7, cellsHigh * 7, BufferedImage.TYPE_INT_ARGB);
+			Graphics g = mapImage.getGraphics();
+			for(Map.Entry<Vec2, MinimapCell> entry : minimap.entrySet()) {
+				int cellX = entry.getKey().x() - minX;
+				int cellY = entry.getKey().y() - minY;
+				
+				int dx = cellX * 7;
+				int dy = cellY * 7;
+				
+				Integer roomId = cellToRoom.get(new Vec2(cellX, cellY));
+				List<Door> roomDoorList = (roomId == null) ? new ArrayList<>() : roomDoors.computeIfAbsent(new Vec2(cellX, cellY), (id) -> new ArrayList<>());
+				entry.getValue().paint(g, dx, dy, areas, roomDoorList);
+			}
+			g.dispose();
+			
+			File f = new File("world_map.png");
+			ImageIO.write(mapImage, "png", f);
+		}
+		
+		EditorFrame editor = new EditorFrame();
+		editor.setWorld(worldObj, worldMetaObj);
+		editor.setVisible(true); // Launch the app proper!
 	}
 	
 }
