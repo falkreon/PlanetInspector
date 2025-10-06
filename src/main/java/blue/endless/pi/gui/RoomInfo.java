@@ -21,4 +21,8 @@ public record RoomInfo(ObjectElement json, ObjectElement general, List<ScreenInf
 		
 		return new RoomInfo(roomJson, general, List.copyOf(screens));
 	}
+
+	public String name() {
+		return general.getPrimitive("name").asString().orElse("");
+	}
 }

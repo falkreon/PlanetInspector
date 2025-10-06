@@ -4,8 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.ArrayList;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JScrollPane;
 import javax.swing.ListModel;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
@@ -19,7 +21,7 @@ public class DebugLogFrame extends JFrame implements ListSelectionListener {
 	private final WorldInfo world;
 	private final ObjectElement debug;
 	private final JList<String> left;
-	private final JList<Item> right;
+	private final JList<String> right;
 	
 	
 	public DebugLogFrame(WorldInfo world) {
@@ -35,14 +37,17 @@ public class DebugLogFrame extends JFrame implements ListSelectionListener {
 		}
 		items.add("placed_items");
 		left = new JList<String>(items.toArray(new String[items.size()]));
+		left.setMinimumSize(new Dimension(200, 150));
+		left.setPreferredSize(new Dimension(200, 150));
+		left.setMaximumSize(new Dimension(200, -1));
 		left.addListSelectionListener(this);
 		
 		//Split the log into a left and right side
 		this.getContentPane().setLayout(new BorderLayout());
-		this.getContentPane().add(left, BorderLayout.WEST);
+		this.getContentPane().add(new JScrollPane(left, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.WEST);
 		
-		right = new JList<Item>();
-		this.getContentPane().add(right, BorderLayout.CENTER);
+		right = new JList<String>();
+		this.getContentPane().add(new JScrollPane(right, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
 		
 		this.setMinimumSize(new Dimension(640, 480));
 		this.setPreferredSize(new Dimension(640,480));
@@ -76,27 +81,41 @@ public class DebugLogFrame extends JFrame implements ListSelectionListener {
 			} catch (Throwable t) {
 				right.setModel(new ItemArrayListModel(new ArrayElement()));
 			}
+		} else if (elem.equals("placed_items")) {
+			DefaultListModel<String> placedItems = new DefaultListModel<>();
+			ArrayElement placedItemsArr = debug.getArray("placed_items");
+			for(int i=0; i<placedItemsArr.size(); i++) {
+				ObjectElement obj = placedItemsArr.getObject(i);
+				int roomId = obj.getPrimitive("room_id").asInt().orElse(0);
+				int id = obj.getPrimitive("id").asInt().orElse(0);
+				int oldVal = obj.getPrimitive("old_val").asInt().orElse(0);
+				int newVal = obj.getPrimitive("new_val").asInt().orElse(0);
+				
+				RoomInfo room = null;
+				if (roomId < world.rooms().size()) room = world.rooms().get(roomId);
+				if (room == null) {
+					placedItems.addElement(Item.byId(oldVal).toString().toLowerCase()+" -> "+Item.byId(newVal).toString().toLowerCase()+" in Room #"+roomId+" (unknown)");
+				} else {
+					placedItems.addElement(Item.byId(oldVal).toString().toLowerCase()+" -> "+Item.byId(newVal).toString().toLowerCase()+" in Room #"+roomId+", \""+room.name()+"\"");
+				}
+			}
+			right.setModel(placedItems);
 		} else {
 			right.setModel(new ItemArrayListModel(new ArrayElement()));
 		}
 	}
 	
-	private static class ItemArrayListModel implements ListModel<Item> {
+	private static class ItemArrayListModel implements ListModel<String> {
 		private final ArrayElement items;
 		
 		public ItemArrayListModel(ArrayElement items) {
 			this.items = items;
 		}
-		
-		@Override
-		public void addListDataListener(ListDataListener l) {
-			
-		}
 
 		@Override
-		public Item getElementAt(int index) {
+		public String getElementAt(int index) {
 			int itemId = items.getPrimitive(index).asInt().orElse(-1);
-			return Item.byId(itemId);
+			return Item.byId(itemId).toString().toLowerCase();
 		}
 
 		@Override
@@ -105,11 +124,9 @@ public class DebugLogFrame extends JFrame implements ListSelectionListener {
 		}
 
 		@Override
-		public void removeListDataListener(ListDataListener l) {
-			
-		}
-		
+		public void removeListDataListener(ListDataListener l) {}
+		@Override
+		public void addListDataListener(ListDataListener l) {}
 	}
-	
 	
 }

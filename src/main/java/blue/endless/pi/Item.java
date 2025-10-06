@@ -35,7 +35,7 @@ public enum Item {
 	AEGIS_CORE      ( 31, ItemType.CORE),
 	CRYSTAL_CORE    ( 32, ItemType.CORE),
 	MAGNET_CORE     ( 33, ItemType.CORE),
-	PHASON_CORE     ( 34, ItemType.CORE),
+	PHAZON_CORE     ( 34, ItemType.CORE),
 	CHRONO_CORE     ( 35, ItemType.CORE),
 	PHANTOM_CORE    ( 36, ItemType.CORE),
 	SENSOR_CORE     ( 37, ItemType.CORE),
