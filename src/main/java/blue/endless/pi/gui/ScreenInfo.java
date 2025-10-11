@@ -2,23 +2,33 @@ package blue.endless.pi.gui;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
+import blue.endless.jankson.impl.document.DoubleElementImpl;
+import blue.endless.jankson.impl.document.LongElementImpl;
+import blue.endless.pi.Assets;
 import blue.endless.pi.Direction;
 import blue.endless.pi.DoorType;
+import blue.endless.pi.ItemType;
 import blue.endless.pi.Wall;
 
 public class ScreenInfo {
 	private ObjectElement json;
 	
+	private static final int EMPTY_TILE = 0;
+	
 	public ScreenInfo(ObjectElement json) {
 		this.json = json;
 	}
+	
+	public ObjectElement json() { return this.json; }
 	
 	public int x() {
 		return json.getPrimitive("x").asInt().orElse(0);
@@ -30,6 +40,64 @@ public class ScreenInfo {
 	
 	public int area() {
 		return json.getObject("MAP").getPrimitive("area").asInt().orElse(0);
+	}
+	
+	public int fgTileAt(int x, int y) {
+		ArrayElement tiles = json.getArray("TILES").getArray(2);
+		return tileAt(tiles, x, y);
+	}
+	
+	public int midTileAt(int x, int y) {
+		ArrayElement tiles = json.getArray("TILES").getArray(1);
+		int tile = tileAt(tiles, x, y);
+		//if (tile > 0x1FF) System.out.println("SUCCESS: "+Integer.toHexString(tile));
+		return tile;
+		//return tileAt(tiles, x, y);
+	}
+	
+	public int bgTileAt(int x, int y) {
+		ArrayElement tiles = json.getArray("TILES").getArray(0);
+		return tileAt(tiles, x, y);
+	}
+	
+	public int liquidTileAt(int x, int y) {
+		ArrayElement tiles = json.getArray("LIQUIDS");
+		return tileAt(tiles, x, y);
+	}
+	
+	public int enemyCount() {
+		return json.getArray("ENEMIES").size();
+	}
+	
+	public ObjectElement enemy(int i) {
+		return json.getArray("ENEMIES").getObject(i);
+	}
+	
+	public int objectCount() {
+		return json.getArray("OBJECTS").size();
+	}
+	
+	public ObjectElement object(int i) {
+		return json.getArray("OBJECTS").getObject(i);
+	}
+	
+	private static int tileAt(ArrayElement plane, int x, int y) {
+		if (x<0 || y<0) return EMPTY_TILE;
+		
+		if (x >= plane.size()) return EMPTY_TILE;
+		ArrayElement column = plane.getArray(x);
+		
+		if (y >= column.size()) return EMPTY_TILE;
+		PrimitiveElement prim = column.getPrimitive(y);
+		
+		if (prim instanceof DoubleElementImpl d) {
+			// Work around bad data - vigorously cast back to int so we can bit-manipulate
+			return (int) d.asDouble().getAsDouble();
+		} else if (prim instanceof LongElementImpl l) {
+			return (int) l.asLong().getAsLong();
+		} else {
+			return EMPTY_TILE;
+		}
 	}
 	
 	public MinimapBaseShape mapShape() {
@@ -291,6 +359,67 @@ public class ScreenInfo {
 				g.fillRect(x + PlanetView.CELL_SIZE - 2, y + PlanetView.DOOR_OFFSET, 2, PlanetView.DOOR_SIZE);
 			}
 		}
+	}
+
+	public BufferedImage createImage(RoomInfo room) {
+		BufferedImage image = new BufferedImage(20 * 16, 15 * 16, BufferedImage.TYPE_INT_ARGB);
+		Graphics g = image.getGraphics();
+		
+		g.setColor(Color.GRAY);
+		for(int y=0; y<15; y++) {
+			for(int x=0; x<20; x++) {
+				int tile = bgTileAt(x, y);
+				if (tile != 0) {
+					Tileset.paintTile(g, x*16, y*16, tile, room);
+				}
+				
+				tile = midTileAt(x, y);
+				if (tile != 0) {
+					Tileset.paintTile(g, x*16, y*16, tile, room);
+				}
+				
+				tile = fgTileAt(x, y);
+				if (tile != 0) {
+					Tileset.paintTile(g, x*16, y*16, tile, room);
+				}
+			}
+		}
+		
+		for(int i=0; i<enemyCount(); i++) {
+			ObjectElement enemyObj = enemy(i);
+			int x = enemyObj.getPrimitive("x").asInt().orElse(0);
+			int y = enemyObj.getPrimitive("y").asInt().orElse(0);
+			g.setColor(Color.RED);
+			g.fillRect(x-2, y-2, 5, 5);
+		}
+		
+		
+		for(int i=0; i<objectCount(); i++) {
+			ObjectElement objectObj = object(i);
+			int x = objectObj.getPrimitive("x").asInt().orElse(0);
+			int y = objectObj.getPrimitive("y").asInt().orElse(0);
+			int type = objectObj.getPrimitive("type").asInt().orElse(0);
+			if (type == 0) {
+				/*
+				Item item = Item.byId(objectObj.getPrimitive("item").asInt().orElse(0));
+				Optional<BufferedImage> maybeImage = Assets.getCachedImage("items/"+item.spriteResource()+".png");
+				if (maybeImage.isPresent()) {
+					BufferedImage im = maybeImage.get();
+					g.drawImage(maybeImage.get(), x - (im.getWidth()/2), y - (im.getHeight()/2), null);
+				} else {
+					g.setColor(Color.RED);
+					g.fillRect(x-3, y-3, 7, 7);
+					g.setColor(Color.GREEN);
+					g.fillRect(x-2, y-2, 5, 5);
+				}*/
+			} else {
+				g.setColor(Color.GREEN);
+				g.fillRect(x-2, y-2, 5, 5);
+			}
+		}
+		
+		g.dispose();
+		return image;
 	}
 	
 	

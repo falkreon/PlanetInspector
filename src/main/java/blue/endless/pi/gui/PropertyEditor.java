@@ -50,15 +50,18 @@ public class PropertyEditor extends JPanel {
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 	}
 	
-	public void setObject(ObjectElement obj, Map<String, SchemaType> knownKeys) {
+	public void setObject(ObjectElement obj, Map<String, SchemaType<?>> knownKeys) {
+		this.value = obj;
 		List<String> remainingKeys = new ArrayList<>(obj.keySet());
 		editorPanel = new JPanel();
 		editorPanel.setLayout(new GridLayout(0, 2));
 		
-		for(Map.Entry<String, SchemaType> entry : knownKeys.entrySet()) {
-			//System.out.println("Adding schema line for "+entry.getKey());
-			addLine(entry.getKey(), obj.get(entry.getKey()), entry.getValue());
-			remainingKeys.remove(entry.getKey());
+		if (knownKeys != null) {
+			for(Map.Entry<String, SchemaType<?>> entry : knownKeys.entrySet()) {
+				//System.out.println("Adding schema line for "+entry.getKey());
+				addLine(entry.getKey(), obj.get(entry.getKey()), entry.getValue());
+				remainingKeys.remove(entry.getKey());
+			}
 		}
 		
 		for(String s : remainingKeys) {
@@ -93,8 +96,9 @@ public class PropertyEditor extends JPanel {
 		}
 	}
 	
-	private JComponent createEditorComponent(ValueElement value, SchemaType schema) {
+	private JComponent createEditorComponent(ValueElement value, SchemaType<?> schema) {
 		// First, booleans.
+		/*
 		if (schema == SchemaType.BOOLEAN) {
 			JCheckBox field = new JCheckBox();
 			if (value instanceof BooleanElementImpl b) {
@@ -129,7 +133,7 @@ public class PropertyEditor extends JPanel {
 			}
 		}
 		
-		if (schema == SchemaType.FLOAT) {
+		if (schema == SchemaType.DOUBLE) {
 			if (value instanceof PrimitiveElement prim) {
 				OptionalDouble opt = prim.asDouble();
 				if (opt.isPresent()) {
@@ -138,16 +142,17 @@ public class PropertyEditor extends JPanel {
 					return field;
 				}
 			}
-		}
+		}*/
 		
+		/*
 		if (schema == SchemaType.STRING) {
 			if (value instanceof StringElementImpl s) {
 				JTextField field = new JTextField();
 				field.setText(represent(value));
 				return field;
 			}
-		}
-		
+		}*/
+		/*
 		if (schema == SchemaType.OBJECT) {
 			if (value instanceof ObjectElement) {
 				// Report good but not-editable
@@ -165,9 +170,10 @@ public class PropertyEditor extends JPanel {
 				field.setEnabled(false);
 				return field;
 			}
-		}
+		}*/
 		
 		// Misc values that have *no* schemaType
+		
 		if (schema == null) {
 			JTextField field = new JTextField();
 			field.setText(represent(value));
@@ -185,11 +191,16 @@ public class PropertyEditor extends JPanel {
 		return field;
 	}
 	
-	private void addLine(String key, ValueElement value, SchemaType schema) {
+	private void addLine(String key, ValueElement value, SchemaType<?> schema) {
 		JLabel label = new JLabel(key);
 		editorPanel.add(label);
 		
-		JComponent editorComponent = createEditorComponent(value, schema);
+		JComponent editorComponent;
+		if (schema != null) {
+			editorComponent = schema.createEditor(this.value, key);
+		} else {
+			editorComponent = createEditorComponent(value, schema);
+		}
 		editorPanel.add(editorComponent);
 	}
 }

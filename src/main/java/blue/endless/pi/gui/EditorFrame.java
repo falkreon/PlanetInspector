@@ -26,6 +26,7 @@ import blue.endless.jankson.api.SyntaxError;
 import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
+import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.jankson.api.io.json.JsonWriterOptions;
 import blue.endless.pi.SchemaType;
 
@@ -33,47 +34,47 @@ import blue.endless.pi.SchemaType;
  * This is the main application window - but not a lot of real behavior lives here. It's mainly in the individual panels this frame hosts.
  */
 public class EditorFrame extends JFrame {
-	private static Map<String, SchemaType> ROOM_SCHEMA = Map.of(
-			"META", SchemaType.OBJECT,
-			"GENERAL", SchemaType.OBJECT,
-			"EVENTS", SchemaType.ARRAY,
-			"PATHING", SchemaType.ARRAY,
-			"HAZARD", SchemaType.OBJECT,
-			"PALETTES", SchemaType.ARRAY,
-			"SCREENS", SchemaType.ARRAY
+	private static Map<String, SchemaType<?>> ROOM_SCHEMA = Map.of(
+			"META", SchemaType.NON_EDITABLE,
+			"GENERAL", SchemaType.NON_EDITABLE,
+			"EVENTS", SchemaType.NON_EDITABLE,
+			"PATHING", SchemaType.NON_EDITABLE,
+			"HAZARD", SchemaType.NON_EDITABLE,
+			"PALETTES", SchemaType.NON_EDITABLE,
+			"SCREENS", SchemaType.NON_EDITABLE
 			);
 	
-	private static Map<String, SchemaType> SCREEN_SCHEMA = Map.of(
+	private static Map<String, SchemaType<?>> SCREEN_SCHEMA = Map.of(
 			"x", SchemaType.INT,
 			"y", SchemaType.INT,
-			"boss", SchemaType.BOOLEAN
+			"boss", SchemaType.NON_EDITABLE // boolean
 			);
 	
-	static Map<String, SchemaType> ROOM_GENERAL_SCHEMA = Map.ofEntries(
+	static Map<String, SchemaType<?>> ROOM_GENERAL_SCHEMA = Map.ofEntries(
 			Map.entry("name", SchemaType.STRING),
 			Map.entry("designer", SchemaType.STRING),
 			Map.entry("bg_color", SchemaType.INT),
-			Map.entry("powered", SchemaType.BOOLEAN),
-			Map.entry("no_floor", SchemaType.BOOLEAN),
+			Map.entry("powered", SchemaType.NON_EDITABLE), // boolean
+			Map.entry("no_floor", SchemaType.NON_EDITABLE), // boolean
 			Map.entry("area", SchemaType.INT),
 			Map.entry("sector", SchemaType.INT),
 			Map.entry("bgm", SchemaType.STRING),
-			Map.entry("gravity_multiplier", SchemaType.FLOAT),
-			Map.entry("focus", SchemaType.ARRAY),
-			Map.entry("areas", SchemaType.ARRAY),
-			Map.entry("magnet", SchemaType.OBJECT),
-			Map.entry("tags", SchemaType.ARRAY)
+			Map.entry("gravity_multiplier", SchemaType.DOUBLE),
+			Map.entry("focus", SchemaType.NON_EDITABLE),
+			Map.entry("areas", SchemaType.NON_EDITABLE),
+			Map.entry("magnet", SchemaType.NON_EDITABLE),
+			Map.entry("tags", SchemaType.NON_EDITABLE)
 			);
 	
-	private static Map<String, SchemaType> WORLD_META_SCHEMA = Map.of(
+	private static Map<String, SchemaType<?>> WORLD_META_SCHEMA = Map.of(
 			"id", SchemaType.INT,
-			"world_version", SchemaType.FLOAT,
-			"version", SchemaType.FLOAT,
+			"world_version", SchemaType.DOUBLE,
+			"version", SchemaType.DOUBLE,
 			"description", SchemaType.STRING,
-			"stats", SchemaType.OBJECT,
+			"stats", SchemaType.DOUBLE,
 			"name", SchemaType.STRING,
 			"name_full", SchemaType.STRING,
-			"key", SchemaType.FLOAT
+			"key", SchemaType.DOUBLE
 			);
 	
 	private ScrollingPlanetView planetView = new ScrollingPlanetView();
@@ -117,6 +118,8 @@ public class EditorFrame extends JFrame {
 		
 		
 		this.setJMenuBar(menuBar);
+		
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
 	public void setWorld(ObjectElement obj, ObjectElement meta) {
@@ -153,9 +156,14 @@ public class EditorFrame extends JFrame {
 			writer = new OutputStream(baos, StandardCharsets.UTF_8);
 			Jankson.writeJson(world.json(), writer, JsonWriterOptions.ONE_LINE);
 			*/
-			world.metaJson().put("description", PrimitiveElement.of("MODIFIED WORLD\nUSE WITH CARE"));
+			world.metaJson().put("description", PrimitiveElement.of("MODIFIED WORLD\\nUSE WITH CARE"));
 			world.metaJson().put("name", PrimitiveElement.of("PSEUDO-EUGENIA"));
 			world.metaJson().put("name_full", PrimitiveElement.of("EUGENIA - DEMO 69420"));
+			ObjectElement toolObj = new ObjectElement();
+			toolObj.put("author", PrimitiveElement.of("FALKREON"));
+			toolObj.put("editor_tool", PrimitiveElement.of("planet_inspector"));
+			world.metaJson().put("external_editor", toolObj);
+			
 			
 			FileOutputStream fileOut = new FileOutputStream("out.mp_world"); // TODO: File chooser
 			DeflaterOutputStream deflaterOut = new DeflaterOutputStream(fileOut, new Deflater(), 4096, true);
@@ -180,6 +188,14 @@ public class EditorFrame extends JFrame {
 			//deflaterOut = new DeflaterOutputStream(fileOut, new Deflater(), 4096, true);
 			writer = new OutputStreamWriter(fileOut, StandardCharsets.UTF_8);
 			Jankson.writeJson(world.json(), writer, JsonWriterOptions.ONE_LINE);
+			writer.flush();
+			writer.close();
+			
+			// write meta
+			
+			fileOut = new FileOutputStream("meta_out.mp_world.json");
+			writer = new OutputStreamWriter(fileOut, StandardCharsets.UTF_8);
+			Jankson.writeJson(world.metaJson(), writer, JsonWriterOptions.ONE_LINE);
 			writer.flush();
 			writer.close();
 			

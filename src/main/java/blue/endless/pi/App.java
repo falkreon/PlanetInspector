@@ -42,6 +42,7 @@ import blue.endless.jankson.impl.io.objectwriter.RecordDeserializer;
 import blue.endless.pi.datastruct.IntGrid;
 import blue.endless.pi.datastruct.Vec2;
 import blue.endless.pi.gui.EditorFrame;
+import blue.endless.pi.gui.Tileset;
 import blue.endless.pi.room.Door;
 import blue.endless.pi.room.MinimapCell;
 import blue.endless.pi.room.Room;
@@ -57,6 +58,7 @@ public class App {
 	public static final int ROTATED = 1 << 30;
 	
 	public static void main(String... args) {
+		Tileset.init();
 		
 		Path worldFile = Path.of("test.mp_world");
 		
@@ -372,12 +374,12 @@ public class App {
 				}
 				case "ITEM_DATA" -> {
 					if (kvp.getValue() instanceof ArrayElement arr) {
-						EnumSet<Item> itemsPresent = EnumSet.noneOf(Item.class);
+						EnumSet<ItemType> itemsPresent = EnumSet.noneOf(ItemType.class);
 						int i = 0;
 						for(ValueElement val : arr) {
-							Item item = Item.byId(i);
+							ItemType item = ItemType.byId(i);
 							//if (item == Item.INVALID) System.out.println(i+": "+val);
-							itemsPresent.add(Item.byId(i));
+							itemsPresent.add(ItemType.byId(i));
 							i++;
 						}
 						

@@ -1,0 +1,257 @@
+{
+    "zoomer": {
+        "id": 0,
+        "name": "Zoomer",
+        "sprite": "spr_Enemy_zoomer_NEW_0"
+    },
+    "nova": {
+        "id": 1,
+        "name": "Nova",
+        "sprite": "spr_Enemy_Nova_NEW_0"
+    },
+    "zeela": {
+        "id": 2,
+        "name": "Zeela",
+        "sprite": "spr_Enemy_Zeela_NEW_0"
+    },
+    "viola": {
+        "id": 3,
+        "name": "Viola",
+        "sprite": "spr_Enemy_Viola_NEW_0"
+    },
+    "zeb": {
+        "id": 4,
+        "name": "Zeb",
+        "sprite": "spr_Enemy_Zeb_NEW_0"
+    },
+    "gamet": {
+        "id": 5,
+        "name": "Gamet",
+        "sprite": "spr_Enemy_Gamet_NEW_0"
+    },
+    "zebbo": {
+        "id": 6,
+        "name": "Zebbo",
+        "sprite": "spr_Enemy_Zebbo_NEW_0"
+    },
+    "geega": {
+        "id": 7,
+        "name": "Geega",
+        "sprite": "spr_Enemy_Geega_NEW_0"
+    },
+    "squeept": {
+        "id": 8,
+        "name": "Squeept",
+        "sprite": "spr_Enemy_Squeept_NEW_0"
+    },
+    "waver": {
+        "id": 9,
+        "name": "Waver",
+        "sprite": "spr_Enemy_Waver_NEW_3"
+    },
+    "skree": {
+        "id": 10,
+        "name": "Skree",
+        "sprite": "spr_Enemy_Skree_NEW_0"
+    },
+    "rio": {
+        "id": 11,
+        "name": "Rio",
+        "sprite": "spr_Enemy_Rio_NEW_0"
+    },
+    "ripper_2": {
+        "id": 12,
+        "name": "Ripper II",
+        "sprite": "s[r_Enemy_Ripper_II_NEW_0]"
+    },
+    "dragon": {
+        "id": 13,
+        "name": "Dragon",
+        "sprite": "spr_Enemy_Dragon_NEW_0"
+    },
+    "geruta": {
+        "id": 14,
+        "name": "Geruta",
+        "sprite": "spr_Enemy_Geruta_Up_0"
+    },
+    "side_hopper": {
+        "id": 15,
+        "name": "Side Hopper",
+        "sprite": "spr_Enemy_Side_Hopper_NEW_0"
+    },
+    "dessgeega": {
+        "id": 16,
+        "name": "Dessgeega",
+        "sprite": "spr_Enemy_Desgeega_NEW_0"
+    },
+    "holtz": {
+        "id": 17,
+        "name": "Holtz",
+        "sprite": "spr_Enemy_Holtz_Up_0"
+    },
+    "ripper": {
+        "id": 18,
+        "name": "Ripper",
+        "sprite": "spr_Enemy_Ripper_NEW_0"
+    },
+    "multiviola": {
+        "id": 19,
+        "name": "Multiviola",
+        "sprite": "spr_Enemy_Multiviola_NEW_0"
+    },
+    "flower": {
+        "id": 20,
+        "name": "Flower",
+        "sprite": "spr_Enemy_Flower_0"
+    },
+    "short_vine": {
+        "id": 21,
+        "name": "Vine (short)",
+        "sprite": "spr_Enemy_Short_Vine_NEW_0"
+    },
+    "long_vine": {
+        "id": 22,
+        "name": "Vine (long)",
+        "sprite": "spr_Enemy_Long_Vine_NEW_0"
+    },
+    "mellow": {
+        "id": 23,
+        "name": "Mellow",
+        "sprite": "spr_Enemy_Mellow_0"
+    },
+    "memu": {
+        "id": 24,
+        "name": "Memu",
+        "sprite": "spr_Enemy_Memu_0"
+    },
+    "mella": {
+        "id": 25,
+        "name": "Mella",
+        "sprite": "spr_Enemy_Mella_0"
+    },
+    "metroid": {
+        "id": 26,
+        "name": "Metroid",
+        "sprite": "spr_Enemy_Metroid_0"
+    },
+    "rinka": {
+        "id": 27,
+        "name": "Rinka",
+        "sprite": "spr_Enemy_Rinka_2"
+    },
+    "turret": {
+        "id": 28,
+        "name": "Turret",
+        "sprite": "spr_Enemy_Turret_2_0"
+    },
+    "polyp": {
+        "id": 29,
+        "name": "Polyp",
+        "sprite": "spr_Enemy_Polyp_0"
+    },
+    "fake_kraid": { // Blue fake Kraid (despawns immediately)
+        "id": 30,
+        "name": "Fake Kraid",
+        "sprite": "spr_Boss_Kraid_0"
+    },
+    "zebetite": {
+        "id": 31,
+        "name": "Zebetite",
+        "sprite": "spr_Enemy_Zebetite_1_0"
+    },
+    "atomic": {
+        "id": 32,
+        "name": "Atomic",
+        "sprite": "spr_Enemy_Atomic_NEW_0"
+    },
+    "worker": {
+        "id": 33,
+        "name": "Worker",
+        "sprite": "spr_Enemy_Worker_0"
+    },
+    "kraid": {
+        "id": 34,
+        "name": "Kraid",
+        "sprite": "spr_Boss_Kraid_0"
+    },
+    "ridley": {
+        "id": 35,
+        "name": "Ridley",
+        "sprite": "spr_Boss_Ridley_Upper_0"
+    },
+    "mother_brain": {
+        "id": 36,
+        "name": "Mother Brain",
+        "sprite": "spr_Boss_MB_Head_0"
+    },
+    "spark": {
+        "id": 37,
+        "name": "Spark",
+        "sprite": "spr_Enemy_Spark_2"
+    },
+    "kabedora": { // eye door; crashes on load if variable "eye" not defined
+        "id": 38,
+        "name": "Gadora",
+        // There is no sprite; currently it presents as a yellow rectangle
+    },
+    "spore_spawn": {
+        "id": 39,
+        "name": "Spore Spawn",
+        "sprite": "spr_Boss_Spore_Spawn_3"
+    },
+    "phantoon": { // (crashes on testing)
+        "id": 40,
+        "name": "Phantoon",
+        "sprite": "spr_Boss_Phantoon_0"
+    },
+    "super_kraid": { // Super Kraid's head (crashes on testing)
+        "id": 41,
+        "name": "Super Kraid",
+        "sprite": "spr_Boss_Kraid_Big_Body_0"
+    },
+    "super_ridley": { // Super Ridley's body (crashes on testing)
+        "id": 42,
+        "name": "Super Ridley",
+        "sprite": "spr_Boss_Super_Ridley_Body_0"
+    },
+    "super_mother_brain": { // (crashes on testing)
+        "id": 43,
+        "name": "Super Mother Brain",
+        "sprite": "spr_Boss_MB_Head_0"
+    },
+    "tangle_weed": {
+        "id": 44,
+        "name": "Tangle Weed",
+        "sprite": "spr_Enemy_Tangle_Weed_1_0"
+    },
+    "giant_hopper": {
+        "id": 45,
+        "name": "Giant Hopper",
+        "sprite": "spr_Enemy_Giant_Hopper_0"
+    },
+    "hive": {
+        "id": 46,
+        "name": "Hive",
+        "sprite": "spr_Enemy_Hive_Nest_NEW_0"
+    },
+    "yakchi": {
+        "id": 47,
+        "name": "Yakchi",
+        "sprite": "spr_Enemy_Yakchi_Hang_0"
+    },
+    "cacti": {
+        "id": 48,
+        "name": "Cacti",
+        "sprite": "spr_Enemy_Cacti_5"
+    },
+    "spore_bud": {
+        "id": 49,
+        "name": "Spore Bud",
+        "sprite": "spr_Enemy_Spore_Bud_0"
+    },
+    "giant_dessgeega": {
+        "id": 50,
+        "name": "Giant Dessgeega",
+        "sprite": "spr_Enemy_Giant_Dessgeega_0"
+    }
+}

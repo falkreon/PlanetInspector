@@ -29,7 +29,7 @@ public class ScrollingPlanetView extends JScrollPane {
 		planetView.setWorld(world);
 	}
 	
-	public void setPropertiesConsumer(BiConsumer<ObjectElement, Map<String, SchemaType>> propertiesConsumer) {
+	public void setPropertiesConsumer(BiConsumer<ObjectElement, Map<String, SchemaType<?>>> propertiesConsumer) {
 		planetView.setPropertiesConsumer(propertiesConsumer);
 	}
 }

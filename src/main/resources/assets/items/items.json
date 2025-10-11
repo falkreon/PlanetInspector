@@ -1,0 +1,1692 @@
+[
+    {
+        "id": "unknown",
+        "name": "Unknown",
+        "category": "OTHER",
+        "parameters": {}
+        "sprite": "spr_ITEM_Beam_Amp_1",
+        "sprite_palette": [ 0, 16, 32 ]
+    },
+    {
+        "id": "long_beam",
+        "name": "Long Beam",
+        "category": "BEAM_UPGRADE",
+        "parameters": {
+            "damage": 0.0 // How much this increases damage output
+        },
+        "sprite": "spr_ITEM_Beam_Long_0",
+        "sprite_palette": [ 22, 26, 40 ]
+    },
+    {
+        "id": "charge_beam",
+        "name": "Charge Beam",
+        "category": "BEAM_UPGRADE",
+        "parameters": {
+            "damage_multiplier": 3.0,// How to calculate the damage output of charged shots
+            "allow_autofire": false, // If normal shots can be fired while charging
+            "damage": 0.0            // How much this increases damage of normal shots
+        },
+        "sprite": "spr_ITEM_Beam_Charge_0",
+        "sprite_palette": [ 22, 16, 32 ]
+    },
+    {
+        "id": "ice_beam",
+        "name": "Ice Beam",
+        "category": "BEAM",
+        "parameters": {
+            "cooldown": 0.0,                  // Additional cooldown frames when firing this beam
+            "damage": 0.0,                    // How much this increases damage of normal shots
+            "freeze_style": 0,
+            "freeze_with_charge_only": false, // Enemies only freeze from charge shots
+            "shot_amount_max": 5.0,           // How many bullets can be shot at once via Spazer/Spread
+            "heat_protection": true,          // Will holding a charge shot grant protection from extreme heat?
+        },
+        "sprite": "spr_ITEM_Beam_Ice_0",
+        "sprite_palette": [ 22, 18, 33 ]
+    },
+    {
+        "id": "wave_beam",
+        "name": "Wave Beam",
+        "category": "BEAM",
+        "parameters": {
+            "damage": 1.0,          // How much this increases damage of normal shots
+            "cooldown": 0.0,        // Additional cooldown frames when firing this beam
+            "shot_amount_max": 2.0  // How many bullets can be shot at once via Spazer/Spread
+        },
+        "sprite": "spr_ITEM_Beam_Wave_0",
+        "sprite_palette": [ 22, 20, 52 ]
+    },
+    {
+        "id": "spazer_beam",
+        "name": "Spazer Beam",
+        "category": "BEAM",
+        "parameters": {
+            "damage": 1.0,           // How much this increases damage of normal shots
+            "cooldown": 0.0,         // Additional cooldown frames when firing this beam
+            "shot_amount": 3.0,      // How many bullets this beam potentiallly allows per shot
+            "shot_amount_max": 3.0   // How many bullets can be shot at once via Spazer/Spread
+        },
+        "sprite": "spr_ITEM_Beam_Spazer_0",
+        "sprite_palette": [ 22, 40, 56 ]
+    },
+    {
+        "id": "plasma_beam",
+        "name": "Plasma Beam",
+        "category": "BEAM",
+        "parameters": {
+            "damage": 1.0,          // How much this increases damage of normal shots
+            "cooldown": 0.0,        // Additional cooldown frames when firing this beam
+            "shot_amount_max": 2.0  // How many bullets can be shot at once via Spazer/Spread
+        },
+        "sprite": "spr_ITEM_Beam_Plasma_0",
+        "sprite_palette": [ 22, 42, 40 ]
+    },
+    {
+        "id": "energy_tank",
+        "name": "Energy Tank",
+        "category": "TANK",
+        "parameters": {
+            "full_restore": true  // Whether the tank should completely restore energy on pickup
+        },
+        "sprite": "spr_ITEM_Energy_Tank_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "gravity_suit",
+        "name": "Gravity Suit",
+        "category": "SUIT",
+        "parameters": {
+            "armor": 0.25,
+            "hazard_full_protection": [],
+            "hazard_partial_protection": [],
+            "suit_palette": [ 3, 20, 33 ],
+            "suit_skin": 2,
+            "liquid_protection": [ 1 ]
+        },
+        "sprite": "spr_ITEM_Gravity_0",
+        "sprite_palette": [ 21, 56, 33 ]
+    },
+    {
+        "id": "phazon_suit",
+        "name": "Phazon Suit",
+        "category": "SUIT",
+        "parameters": {
+            "armor": 0.25,
+            "hazard_full_protection": [ 8 ],
+            "hazard_partial_protection": [],
+            "suit_palette": [ 12, 16, 21 ],
+            "suit_skin": 2,
+            "liquid_protection": []
+        },
+        "sprite": "spr_ITEM_Suit_Type_1_0",
+        "sprite_palette": [ 16, 22, 33 ]
+    },
+    {
+        "id": "morph_ball",
+        "name": "Morph Ball",
+        "category": "BALL",
+        "parameters": {
+            "bounce": 0.5 // Modifies the amount of bounce when landing
+        },
+        "sprite": "spr_ITEM_Morph_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "spring_ball",
+        "name": "Spring Ball",
+        "category": "BALL",
+        "parameters": {
+            "height": 3.55 // Modifies jump height
+        },
+        "sprite": "spr_ITEM_Spring_Ball_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "boost_ball",
+        "name": "Boost Ball",
+        "category": "BALL",
+        "parameters": {},
+        "sprite": "spr_ITEM_Boost_Ball_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "spider_ball",
+        "name": "Spider Ball",
+        "category": "BALL",
+        "parameters": {},
+        "sprite": "spr_ITEM_Spider_Ball_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "bombs",
+        "name": "Bombs",
+        "category": "BOMB",
+        "parameters": {
+            "timer": 56.0,             // Number of frames until bombs explode
+            "launch_power": 2.75,      // How high bombs launch while morphed
+            "capacity": 3.0,           // Max number of bombs active at a time
+            "enable_springhop": false, // Enable a lesser version of spring ball?
+            "charge_spread": true,     // Spread 5 bombs outwards when morphine while beam charged?
+            "limit_in_air": false      // Prevent using more than the capacity while in the air?
+        },
+        "sprite": "spr_ITEM_Bomb_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "power_bomb_tank",
+        "name": "Power Bombs",
+        "category": "TANK",
+        "parameters": {
+            "capacity": 2.0 // How many power bombs this tank adds
+        },
+        "sprite": "spr_ITEM_POWER_BOMB_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "missile_tank",
+        "name": "Missile Tank",
+        "category": "TANK",
+        "parameters": {
+            "capacity": 5.0 // How many missiles this tank adds
+        },
+        "sprite": "spr_ITEM_Missile_0",
+        "sprite_palette": [ 7, 48, 21 ]
+    },
+    {
+        "id": "super_missile_tank",
+        "name": "Super Missile Tank",
+        "category": "TANK",
+        "parameters": {
+            "capacity": 2.0 // How many super missiles this tank adds
+        },
+        "sprite": "spr_ITEM_Super_Missile_0",
+        "sprite_palette": [ 26, 48, 43 ]
+    },
+    {
+        "id": "high_jump",
+        "name": "High Jump",
+        "category": "OTHER",
+        "parameters": {
+            "spring_height": 0.8,    // Additional jump power granted while morphed
+            "enable_spring": false,  // Grant spring ball whenever high jump is gained?
+            "height": 1.0            // The additional jump power granted
+        },
+        "sprite": "spr_ITEM_High_Jump_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "space_jump",
+        "name": "Space Jump",
+        "category": "OTHER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Space_Jump_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "speed_booster",
+        "name": "Speed Booster",
+        "category": "OTHER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Speed_Booster_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "screw_attack",
+        "name": "Screw Attack",
+        "category": "OTHER",
+        "parameters": {
+            "enable_horizonjump": false,// Grant the effect of Horizon Jump?
+            "break_bomb_blocks": false, // Break bomb blocks with screw attack?
+            "ignore_projectiles": true, // Invulnerable to projectiles during spin jumps?
+            "break_shot_blocks": false, // Break shot blocks with screw attack?
+            "enable_spacejump": false,  // Grant the effect of Space Jump?
+            "damage_frequency": 4.0,    // Number of frames between damage ticks
+            "prevent_drops": false,     // Enemies damaged by screw attack won't drop refills?
+            "damage": 16.0,             // Modifies the damage to enemies on collision
+            "knockback": false          // Should enemies that don't die from screw attack cause knockback?
+        },
+        "sprite": "spr_ITEM_Screw_Attack_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "hammer_ball",
+        "name": "Hammer Ball",
+        "parameters": {
+            "speed": 5.0,                // Downward movement speed
+            "break_bomb_blocks": false,  // Break bomb blocks?
+            "damage": 16.0,              // Base damage on collision
+            "infinite_impact": false,    // Fly downwards infinitely until impace?
+            "break_shot_blocks": true    // Break shot blocks?
+        },
+        "sprite": "spr_ITEM_Hammer_Ball_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "thermal_visor",
+        "name":"Thermal Visor",
+        "category": "VISOR",
+        "parameters": {},
+        "sprite": "spr_ITEM_Visor_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "x_ray_visor",
+        "name": "X-Ray Visor",
+        "category": "VISOR",
+        "parameters": {},
+        "sprite": "spr_ITEM_Visor_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "refill",
+        "name": "Refill",
+        "category": "PICKUP",
+        "parameters": {
+            "restore_missiles_on_pickup": 10.0,       // Missiles to refill
+            "restore_power_bombs_on_pickup": 2.0,     // Power Bombs to refill
+            "restore_super_missiles_on_pickup": 2.0,  // Super Missiles to refill
+            "restore_universal_ammo_on_pickup": 10.0, // Universal Ammo to refill
+            "restore_energy_on_pickup": 40.0,         // Energy to refill
+            "restore_hyper_missiles_on_pickup": 2.0   // Hyper Missiles to refill
+        },
+        "sprite": "spr_ITEM_Refill_0",
+        "sprite_palette": [ 25, 42, 66 ]
+    },
+    {
+        "id": "power_grip",
+        "name": "Power Grip",
+        "category": "OTHER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Power_Grip_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "grapple_beam",
+        "name": "Grapple Beam",
+        "category": "OTHER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Grapple_Beam_0",
+        "sprite_palette": [ 22, 49, 34 ]
+    },
+    {
+        "id": "flash_shift",
+        "name": "Flash Shift",
+        "category": "OTHER",
+        "parameters": {
+            "invulnerable": true,     // Grant invulnerability while shifting?
+            "aeon": 0.0,              // Amount of Aeon consumed per shift
+            "consecutive_shifts": 1.0 // How many shifts can be used before landing (1-3)
+        },
+        "sprite": "spr_ITEM_Flash_Shift_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "energy_tank_half",
+        "name": "Energy Tank Half",
+        "category": "TANK",
+        "parameters": {},
+        "sprite": "spr_ITEM_Energy_Half_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "stun_core",
+        "name": "Stun Core",
+        "category": "CORE",
+        "parameters": {
+            "stun_bosses": true,  // Stun bosses too?
+            "stun_mooks": true    // Stun regular enemies?
+        },
+        "sprite": "spr_ITEM_Core_Stun_0",
+        "sprite_palette": [ 16, 22, 48 ]
+    },
+    {
+        "id": "aegis_core",
+        "name": "Aegis Core",
+        "category": "CORE",
+        "parameters": {
+            "prevent_knockback": true,      // Should prevent knockback?
+            "invincibility_multiplier": 1.0 // Extra i-frames after taking damage
+        },
+        "sprite": "spr_ITEM_Core_Aegis_0",
+        "sprite_palette": [ 16, 26, 48 ]
+    },
+    {
+        "id": "crystal_core",
+        "name": "Crystal Core",
+        "category": "CORE",
+        "parameters": {
+            "ammo_to_energy_value": 5.0  // How much energy a single ammo unit grants
+        },
+        "sprite": "spr_ITEM_Core_Crystal_0",
+        "sprite_palette": [ 16, 20, 48 ]
+    },
+    {
+        "id": "magnet_core",
+        "name": "Magnet Core",
+        "category": "CORE",
+        "parameters": {},
+        "sprite": "spr_ITEM_Core_Magnet_0",
+        "sprite_palette": [ 16, 40, 48 ]
+    },
+    {
+        "id": "phazon_core",
+        "name": "Phazon Core",
+        "category": "CORE",
+        "parameters": {
+            "weapon_damage_multiplier": 2.0, // Additional damage multiplier added to weapon
+            "minimum_health": 50.0,          // The minimum energy self-damage can reduce you to
+            "damage_rate": 13.0,             // How many frames between self-damage ticks
+            "damage_amount": 1.0             // How much damage per self-damage tick
+        },
+        "sprite": "spr_ITEM_Core_Phazon_0",
+        "sprite_palette": [ 16, 44, 48 ]
+    },
+    {
+        "id": "chrono_core",
+        "name": "Chrono Core",
+        "category": "CORE",
+        "parameters": {
+            "effect_distance": 90.0, // How far the slowing effect reaches
+            "slow_crumbles": false,  // Should the field slow down crumble blocks?
+            "slow_time": 3.0         // How strong the slowing effect is
+        },
+        "sprite": "spr_ITEM_Core_Chrono_0",
+        "sprite_palette": [ 16, 32, 48 ]
+    },
+    {
+        "id": "phantom_core",
+        "name": "Phantom Core",
+        "parameters": {
+            "refresh_timer": 15.0 // How many frames of cooldown after attacking or being hit
+        },
+        "sprite": "spr_ITEM_Core_Phantom_0",
+        "sprite_palette": [ 16, 12, 48 ]
+    },
+    {
+        "id": "sensor_core",
+        "name": "Sensor Core",
+        "parameters": {
+            "disable_map": false // Should disable the map while using this item?
+        },
+        "sprite": "spr_ITEM_Core_Sensor_0",
+        "sprite_palette": [ 16, 39, 48 ]
+    },
+    {
+        "id": "core_dynamo",
+        "name": "Core Dynamo",
+        "category": "CORE_UPGRADE",
+        "parameters": {
+            "time_reduction": 120.0 // How many *seconds* this reduces the core swap CD
+        },
+        "sprite": "spr_ITEM_Core_Dynamo_0",
+        "sprite_palette": [ 16, 36, 48 ]
+    },
+    {
+        "id": "core_capacitor",
+        "name": "Core Capacitor",
+        "category": "CORE_UPGRADE",
+        "parameters": {},
+        "sprite_palette": [ 16, 34, 39 ]
+    },
+    {
+        "id": "paralyzer_beam",
+        "name": "Paralyzer Pistol",
+        "category": "BEAM",
+        "parameters": {
+            "charge_damage": 0.0 // How much damage a charged shot inflicts
+        },
+        "sprite": "spr_ITEM_Pistol_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "power_suit",
+        "name": "Power Suit",
+        "category": "SUIT",
+        "parameters": {
+            "armor": 1.0,
+            "hazard_full_protection": [],
+            "hazard_partial_protection": [],
+            "suit_palette": [ 22, 40, 26 ],
+            "suit_skin": 1,
+            "liquid_protection": []
+        },
+        "sprite": "spr_ITEM_Suit_Type_1_0",
+        "sprite_palette": [ 21, 36, 19 ]
+    },
+    {
+        "id": "varia_suit",
+        "name": "Varia Suit",
+        "category": "SUIT",
+        "parameters": {
+            "armor": 0.5,
+            "hazard_full_protection": [],
+            "hazard_partial_protection": [],
+            "suit_palette": [ 22, 54, 26 ],
+            "suit_skin": 2,
+            "liquid_protection": []
+        },
+        "sprite": "spr_ITEM_Varia_0",
+        "sprite_palette": [ 21, 56, 33 ]
+    },
+    {
+        "id": "missile_tank_plus",
+        "name": "Missile Tank+",
+        "category": "TANK",
+        "parameters": {
+            "capacity": 10.0 // Number of missiles to increase capacity by
+        },
+        "sprite": "spr_ITEM_Missile_Pack_0",
+        "sprite_palette": [ 7, 48, 21 ]
+    },
+    {
+        "id": "wall_jump",
+        "name": "Wall Jump",
+        "category": "OTHER",
+        "parameters": {
+            "enable_in_liquids": false,  // Allow wall-jumps while in liquids?
+            "kinetic_walls_only": false  // Can jumps only be made off of "Kinetic Surfaces"?
+        },
+        "sprite": "spr_ITEM_Wall_Jump_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "talon_grip",
+        "name": "Talon Grip",
+        "category": "OTHER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Talon_Grip_0",
+        "sprite_palette": [ 22, 16, 32 ]
+    },
+    {
+        "id": "missile_launcher",
+        "name": "Missile Launcher",
+        "category": "MISSILE",
+        "parameters": {
+            "base_class": 0.0, // What type of missile the launcher uses
+            "capacity": 0.0    // How many missiles you can carry
+        },
+
+        "sprite": "spr_ITEM_Missile_Launcher_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "unknown_missile_launcher",
+        "name": "Missile Launcher (Unknown)",
+        "category": "MISSILE",
+        "parameters": {
+            "base_class": 1.0, // What type of missile the launcher uses
+            "capacity": 0.0    // How many missiles you can carry
+        },
+        "sprite": "spr_ITEM_Missile_Launcher_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "zero_suit",
+        "name": "Zero Suit",
+        "category": "SUIT",
+        "parameters": {
+            "hazard_full_protection": [],
+            "allow_crawling": true,
+            "grant_powergrip": true,
+            "hazard_partial_protection": [],
+            "suit_palette": [ 18, 53, 23 ],
+            "allow_walljump": false,
+            "armor": -1.0,
+            "grant_walljump": true,
+            "suit_skin": 0,
+            "allow_powergrip": false,
+            "liquid_protection": []
+        },
+        "sprite": "spr_ITEM_Suit_Zero_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "core_driver",
+        "name": "Core Driver",
+        "category": "CORE_UPGRADE",
+        "parameters": {
+            "base_cooldown": 300.0 // Number of seconds of equip CD after equipping a core
+        },
+        "sprite": "spr_ITEM_Core_Driver_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "energy_tank_part",
+        "name": "Energy Tank Part",
+        "category": "TANK",
+        "parameters": {},
+        "sprite": "spr_ITEM_Energy_Tank_Part_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "warp_drive",
+        "name": "Warp Drive",
+        "category": "OTHER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Warp_Drive_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "reserve_tank",
+        "name": "Reserve Tank",
+        "category": "TANK",
+        "parameters": {
+            "capacity": 100.0,   // The amount of energy refilled when used
+            "consumable": false  // Whether to destroy on use
+        },
+        "sprite": "spr_ITEM_Reserve_Tank_0",
+        "sprite_palette": [ 16, 32, 48 ]
+    },
+    {
+        "id": "spin_boost",
+        "name": "Spin Boost",
+        "category": "OTHER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Spin_Boost_0"
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "cross_bombs",
+        "name": "Cross Bombs",
+        "category": "BOMB",
+        "parameters": {
+            "damage_bonus": 0.0 // Extra damage granted to the charged bombs
+        },
+        "sprite": "spr_ITEM_Cross_Bombs_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "translator_module",
+        "name": "Translator Module",
+        "category": "OTHER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Translator_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "auto_charger",
+        "name": "Auto Charger",
+        "category": "BEAM_UPGRADE",
+        "parameters": {},
+        "sprite": "spr_ITEM_Auto_Charger_0",
+        "sprite_palette": [ 40, 24, 57 ]
+    },
+    {
+        "id": "gravity_boost",
+        "name": "Gravity Boost",
+        "category": "OTHER",
+        "parameters": {
+            "rocket": true,          // Cause a jump when floating and reaching the surface?
+            "speed": 2.75,           // Max float speed
+            "time": 57.0,            // Time the float effect lasts (0 for infinite)
+            "gravity_module": true   // Normalizes movement in liquids
+        },
+        "sprite": "spr_ITEM_Gravity_Boost_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "glide_thrusters",
+        "name": "Glide Thrusters",
+        "category": "OTHER",
+        "parameters": {
+            "fall_speed": 0.5, // Modifies the fall speed
+            "time": 180.0      // How many frames the glide lasts (0 for infinite)
+        },
+        "sprite": "spr_ITEM_Glide_Thrusters_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "rocket_jump",
+        "name": "Rocket Jump",
+        "category": "OTHER",
+        "parameters": {
+            "enable_in_liquids": false,    // Allow in liquids even without liquid physics negation
+            "powered_by_hazard_types": [], // Only enable when in specified hazards
+            "powered_by_liquid_types": []  // Only enable while in specified liquids
+        },
+        "sprite": "spr_ITEM_Rocket_Jump_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "ice_missiles",
+        "name": "Ice Missiles",
+        "category": "MISSILE",
+        "parameters": {
+            "launcher": 0.0,       // Which launcher this upgrade applies to
+            "freeze_style": 2,     //
+            "extra_cooldown": 0.0, // Additional cooldown frames
+            "damage_bonus": 0.0    // Additional damage for missiles
+        },
+        "sprite": "spr_ITEM_Missile_Ice_Upgrade_0",
+        "sprite_palette": [ 18, 48, 33 ]
+    },
+    {
+        "id": "drill_missiles",
+        "name": "Drill Missiles",
+        "category": "MISSILE",
+        "parameters": {
+            "launcher": 0.0,        // Which launcher this upgrade applies to
+            "drill_distance": 80.0, // How far a missile can pass through solids (0 for infinite)
+            "extra_cooldown": 0.0,  // Additional cooldown frames
+            "damage_bonus": 0.0     // Additional damage for missiles
+        },
+        "sprite": "spr_ITEM_Missile_Drill_Upgrade_0",
+        "sprite_palette": [ 20, 48, 52 ]
+    },
+    {
+        "id": "diffusion_missiles",
+        "name": "Diffusion Missiles",
+        "category": "MISSILE",
+        "parameters": {
+            "launcher": 0.0,       // Which launcher this upgrade applies to
+            "range": 100.0,        // How far the diffusion effect spreads
+            "extra_cooldown": 0.0, // Additional cooldown frames
+            "damage_bonus": 0.0    // Additional damage for missiles
+        },
+        "sprite": "spr_ITEM_Missile_Diffusion_Upgrade_0",
+        "sprite_palette": [ 24, 48, 40 ]
+    },
+    {
+        "id": "power_bomb_launcher",
+        "name": "Power Bomb Launcher",
+        "category": "BOMB",
+        "parameters": {
+            "ammo_use": 1.0,  // How much ammo the launcher uses per shot
+            "capacity": 3.0   // How many bombs the launcher can hold
+        },
+        "sprite": "spr_ITEM_Power_Bomb_Launcher_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "diffusion_beam",
+        "name": "Diffusion Beam",
+        "category": "BEAM",
+        "parameters": {
+            "range": 32.0, // How far the diffusion effect reaches
+            "damage": 0.0  // How much this increases damage output of charged shots
+        },
+        "sprite": "spr_ITEM_Beam_Diffusion_0",
+        "sprite_palette": [ 22, 16, 32 ]
+    },
+    {
+        "id": "power_beam",
+        "name": "Power Beam",
+        "category": "BEAM",
+        "parameters": {
+            "damage": 0.0,         // Additional damage over base beam damage
+            "cooldown": 0.0,       // Additional cooldown frames when firing this beam
+            "unique_beam": false,  // Prevents stacking with other beams unless Beam Fusion is equipped
+            "shot_amount_max": 5.0 // Number of bullets that can be shot at once with Spazer/Spread
+        },
+        "sprite": "spr_ITEM_Beam_Power_0",
+        "sprite_palette": [ 22, 40, 56 ]
+    },
+    {
+        "id": "accel_charge",
+        "name": "Accel Charge",
+        "category": "BEAM_UPGRADE",
+        "parameters": {
+            "time": 10.0 // How many frames is charge time reduced by?
+        },
+        "sprite": "spr_ITEM_Accel_Charge_0",
+        "sprite_palette": [ 16, 26, 40 ]
+    },
+    {
+        "id": "beam_amp",
+        "name": "Beam Amp",
+        "category": "BEAM_UPGRADE",
+        "parameters": {
+            "damage": 1.0,            // Additive damage increase
+            "multiplier_boost": 0.0   // Multiplicative damage increase
+        },
+        "sprite": "spr_ITEM_Beam_Amp_0",
+        "sprite_palette": [ 22, 16, 40 ]
+    },
+    {
+        "id": "super_missile_launcher",
+        "name": "Super Missile Launcher",
+        "category": "MISSILE",
+        "parameters": {
+            "launcher": 0.0 // Which launcher this upgrade applies to
+        },
+        "sprite": "spr_ITEM_Missile_Class_Super_Upgrade_0",
+        "sprite_palette": [ 26, 48, 43 ]
+    },
+    {
+        "id": "hyper_missile_launcher",
+        "name": "Hyper Missiles",
+        "category": "MISSILE",
+        "parameters": {
+            "launcher": 0.0 // Which launcher this upgrade applies to
+        },
+        "sprite": "spr_ITEM_Missile_Class_Hyper_Upgrade_0",
+        "sprite_palette": [ 28, 48, 44 ]
+    },
+    {
+        "id": "storm_missiles",
+        "name": "Storm Missiles",
+        "category": "MISSILE",
+        "parameters": {
+            "launcher": 0.0,       // Which launcher this applies to
+            "require_aim": true,   // Must be facing enemies to target them?
+            "require_sight": true, // Must have line of sight to an enemy to target them?
+            "ammo_use": 1.0        // How many missiles each mini-missile uses
+        },
+        "sprite": "spr_ITEM_Missile_Storm_Upgrade_0",
+        "sprite_palette": [ 26, 48, 42 ]
+    },
+    {
+        "id": "ion_missiles",
+        "name": "Ion Missiles",
+        "category": "MISSILE",
+        "parameters": {
+            "launcher": 0.0,       // Which launcher this upgrade applies to
+            "extra_cooldown": 0.0, // Additional cooldown frames for missiles
+            "damage_bonus": 0.0    // Additional damage for missiles
+        },
+        "sprite": "spr_ITEM_Missile_Ion_Upgrade_0",
+        "sprite_palette": [ 19, 48, 44 ]
+    },
+    {
+        "id": "turbo_missiles",
+        "name": "Turbo Missiles",
+        "category": "MISSILE",
+        "parameters": {
+            "launcher": 0.0,            // Which launcher this upgrade applies to
+            "screen_limit": 10.0,       // New maximum limit for number of missiles onscreen
+            "cooldown_reduction": 10.0, // How much the fire-rate CD is decreased by
+            "enable_autofire": true     // Allow you to autofire missiles?
+        },
+        "sprite": "spr_ITEM_Missile_Turbo_Upgrade_0",
+        "sprite_palette": [ 22, 48, 40 ]
+    },
+    {
+        "id": "arc_bombs",
+        "name": "Arc Bombs",
+        "category": "BOMB",
+        "parameters": {
+            "damage_bonus": 0.0 // Extra damage granted to the charged bombs
+        },
+        "sprite": "spr_ITEM_Arc_Bombs_0",
+        "sprite_palette": [ 17, 40, 26 ]
+    },
+    {
+        "id": "volt_beam",
+        "name": "Volt Beam",
+        "category": "BEAM",
+        "parameters": {
+            "damage": 1.0,         // How much this increases damage output
+            "cooldown": 0.0,       // Additional cooldown frames
+            "shot_amount_max": 3.0 // How many bullets can be shot at once with Spazer/Spread
+        },
+        "sprite": "spr_ITEM_Beam_Volt_0",
+        "sprite_palette": [ 22, 19, 52 ]
+    },
+    {
+        "id": "magma_beam",
+        "name": "Magma Beam",
+        "category": "BEAM",
+        "parameters": {
+            "damage": 1.0,          // How much this increases damage output
+            "cooldown": 0.0,        // Additional cooldown frames
+            "shot_amount_max": 3.0  // How many bullets can be shot at once with Spazer/Spread
+        },
+        "sprite": "spr_ITEM_Beam_Magma_0",
+        "sprite_palette": [ 22, 38, 52 ]
+    },
+    {
+        "id": "light_beam",
+        "name": "Light Beam",
+        "category": "BEAM",
+        "parameters": {
+            "damage": 1.0,
+            "cooldown": 0.0,
+            "shot_amount_max": 3.0
+        },
+        "sprite": "spr_ITEM_Beam_Light_0",
+        "sprite_palette": [ 22, 48, 52 ]
+    },
+    {
+        "id": "energy_tank_quarter",
+        "name": "Energy Tank Quarter",
+        "category": "TANK",
+        "parameters": {},
+        "sprite": "spr_ITEM_Energy_Quarter_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "barrier_layer",
+        "name": "Barrier Layer",
+        "category": "OTHER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Barrier_Layer_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "slide_gears",
+        "name": "Slide Gears",
+        "category": "OTHER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Speed_Gear_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "magnet_ball",
+        "name": "Magnet Ball",
+        "category": "BALL",
+        "parameters": {},
+        "sprite": "spr_ITEM_Spider_Ball_1",
+        "sprite_palette": [ 21, 40, 17 ]
+    },
+    {
+        "id": "magnet_grip",
+        "name": "Magnet Grip",
+        "category": "OTHER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Power_Grip_0",
+        "sprite_palette": [ 17, 40, 18 ]
+    },
+    {
+        "id": "dash_booster",
+        "name": "Dash Booster",
+        "category": "OTHER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Dash_Booster_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "shinespark",
+        "name": "Shinespark",
+        "category": "OTHER",
+        "parameters": {
+            "drain": false,         // Should shinespark consume Energy?
+            "startup_delay": true,  // Add a short delay before shinespark executes after triggering?
+            "store_time": 5.0       // How many seconds a stored spark lasts
+        },
+        "sprite": "spr_ITEM_Shinespark_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "arm_blades",
+        "name": "Arm Blades",
+        "category": "OTHER",
+        "parameters": {
+            "speed": 0.75,           // The speed at which you descend while wall sliding
+            "time": 60.0,            // The number of frames you can slide (0 is infinite)
+            "crumble_blocks": true,  // Break crumble blocks when sliding on them?
+            "enable_walljump": false // Should this item enable walljump?
+        },
+        "sprite": "spr_ITEM_Wall_Blades_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "beam_fusion",
+        "name": "Beam Fusion",
+        "catgegory": "BEAM_UPGRADE",
+        "parameters": {},
+        "sprite": "spr_ITEM_Beam_Fusion_0",
+        "sprite_palette": [ 0, 32, 48 ]
+    },
+    {
+        "id": "core_octopart",
+        "name": "Core Octopart",
+        "category": "CORE_UPGRADE",
+        "parameters": {},
+        "sprite": "spr_ITEM_Core_Octopart_0",
+        "sprite_palette": [ 16, 34, 39 ]
+    },
+    {
+        "id": "ammo_tank_plus",
+        "name": "Ammo Tank+",
+        "category": "TANK",
+        "parameters": {
+            "capacity": 10.0 // How much to increase Universal Ammo capacity by
+        },
+        "sprite": "spr_ITEM_Ammo_Tank_Plus_0"
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "dark_beam",
+        "name": "Dark Beam",
+        "category": "BEAM",
+        "parameters": {
+            "damage": 1.0,         // How much this increases damage output
+            "cooldown": 0.0,       // Additional cooldown frames between shots
+            "shot_amount_max": 3.0 // How many bullets can be shot at once by Spazer/Spread
+        },
+        "sprite": "spr_ITEM_Beam_Dark_0",
+        "sprite_palette": [ 22, 1, 52 ]
+    },
+    {
+        "id": "charge_magnet",
+        "name": "Charge Magnet",
+        "category": "BEAM_UPGRADE",
+        "parameters": {},
+        "sprite": "spr_ITEM_Charge_Magnet_0",
+        "sprite_palette": [ 22, 16, 32 ]
+    },
+    {
+        "id": "pseudo_screw",
+        "name": "Pseude Screw",
+        "category": "OTHER",
+        "parameters": {
+            "base_damage": 0.0,                   // Base damage to hit enemies
+            "scale_damage_from_beams": 0.0,       // Additional damage as a multiple of beam damage
+            "add_damage_from_screw_attack": true  // Add screw attack damage?
+        },
+        "sprite": "spr_ITEM_Pseudo_Screw_0",
+        "sprite_palette": [ 22, 16, 32 ]
+    },
+    {
+        "id": "charge_flare",
+        "name": "Charge Flare",
+        "category": "OTHER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Charge_Flare_0",
+        "sprite_palette": [ 22, 16, 32 ]
+    },
+    {
+        "id": "pickup_magnet",
+        "name": "Pickup Magnet",
+        "category": "OTHER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Pickup_Magnet_0",
+        "sprite_palette": [ 22, 16, 32 ]
+    },
+    {
+        "id": "speed_gear",
+        "name": "Speed Gear",
+        "category": "OTHER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Speed_Gear_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "advanced_driver",
+        "name": "Advanced Driver",
+        "category": "OTHER",
+        "parameters": {
+            "items": []
+        },
+        "sprite": "spr_ITEM_Advanced_Driver_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "stamina_tank",
+        "name": "Stamina Tank",
+        "category": "TANK",
+        "parameters": {},
+        "sprite": "spr_ITEM_Stamina_Tank_0",
+        "sprite_palette": [ 27, 42, 40 ]
+    },
+    {
+        "id": "stamina_reactor",
+        "name": "Stamina Reactor",
+        "category": "OTHER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Stamina_Reactor_0",
+        "sprite_palette": [ 27, 42, 40 ]
+    },
+    {
+        "id": "dash_thrusters",
+        "name": "Dash Thrusters",
+        "category": "OTHER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Dash_Thrusters_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "horizon_jump",
+        "name": "Horizon Jump",
+        "category": "OTHER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Horizon_Jump_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "ammo_tank",
+        "name": "Ammo Tank",
+        "category": "TANK",
+        "parameters": {
+            "capacity": 5.0 // How much Universal Ammo this tank increases by
+        },
+        "sprite": "spr_ITEM_Ammo_Tank_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "place_impassable",
+        "name": "Impossible to Collect",
+        "category": "PLACEHOLDER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Other_3_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "place_major",
+        "name": "Major Item",
+        "category": "PLACEHOLDER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Other_3_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "place_minor",
+        "name": "Minor Item",
+        "category": "PLACEHOLDER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Other_3_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "place_hazard_run",
+        "name": "Hazard Run Reward",
+        "category": "PLACEHOLDER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Other_3_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "place_core",
+        "name": "Any Core",
+        "category": "PLACEHOLDER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Core_0",
+        "sprite_palette": [ 26, 64, 40 ]
+    },
+    {
+        "id", "place_missiles",
+        "name": "Missile or Tank",
+        "category": "PLACEHOLDER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Missile_Launcher_0",
+        "sprite_palette": [ 26, 64, 40 ]
+    },
+    {
+        "id": "place_super_missiles",
+        "name": "Super Missile or Tank",
+        "category": "PLACEHOLDER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Missile_Class_Super_Upgrade_0",
+        "sprite_palette": [ 26, 64, 40 ]
+    },
+    {
+        "id": "place_hyper_missiles",
+        "name": "Hyper Missile or Tank",
+        "category": "PLACEHOLDER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Missile_Class_Hyper_Upgrade_0",
+        "sprite_palette": [ 26, 64, 40 ]
+    },
+    {
+        "id": "place_power_bombs",
+        "name": "Power Bombs or Tank",
+        "category": "PLACEHOLDER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Power_Bomb_Launcher_0",
+        "sprite_palette": [ 26, 64, 40 ]
+    },
+    {
+        "id": "unknown",
+        "name": "Unknown",
+        "category": "OTHER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Other_3_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "annihilator_beam",
+        "name": "Annihilator Beam",
+        "category": "BEAM",
+        "parameters": {
+            "damage": 1.0,
+            "cooldown": 0.0,
+            "shot_amount_max": 3.0
+        },
+        "sprite": "spr_ITEM_Beam_Annihilator_0",
+        "sprite_palette": [ 22, 16, 52 ]
+    },
+    {
+        "id": "nova_beam",
+        "name": "Nova Beam",
+        "category": "BEAM",
+        "parameters": {
+            "damage": 1.0,
+            "cooldown": 0.0,
+            "shot_amount_max": 3.0
+        },
+        "sprite": "spr_ITEM_Beam_Nova_0",
+        "sprite_palette": [ 22, 16, 52 ]
+    },
+    {
+        "id": "hyper_beam",
+        "name": "Hyper Beam",
+        "category": "BEAM",
+        "parameters": {
+            "damage": 1.0,
+            "cooldown": 0.0,
+            "shot_amount_max": 1.0
+        },
+        "sprite": "spr_ITEM_Beam_Hyper_0",
+        "sprite_palette": [ 22, 16, 52 ]
+    },
+    {
+        "id": "phazon_beam",
+        "name": "Phazon Beam",
+        "category": "BEAM",
+        "parameters": {
+            "damage": 1.0,
+            "cooldown": 0.0,
+            "shot_amount_max": 1.0
+        },
+        "sprite": "spr_ITEM_Beam_Phazon_0",
+        "sprite_palette": [ 22, 16, 52 ]
+    },
+    {
+        "id": "beam_ammo_tank",
+        "name": "Beam Ammo Tank",
+        "category": "TANK",
+        "parameters": {
+            "capacity": 20.0 // How much to increase beam ammo by
+        },
+        "sprite": "spr_ITEM_Beam_Ammo_Tank_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "cryo_suit",
+        "name": "Cryo Suit",
+        "category": "SUIT",
+        "parameters": {
+            "armor": 0.25,
+            "hazard_full_protection": [ 4 ],
+            "hazard_partial_protection": [],
+            "suit_palette": [ 17, 44, 25 ],
+            "suit_skin": 2,
+            "liquid_protection": []
+        },
+        "sprite": "spr_ITEM_Suit_Type_1_0",
+        "sprite_palette": [ 16, 22, 33 ]
+    },
+    {
+        "id": "dark_suit",
+        "name": "Dark Suit",
+        "category": "SUIT",
+        "parameters": {
+            "armor": 0.25,
+            "hazard_full_protection": [],
+            "hazard_partial_protection": [ 11 ],
+            "suit_palette": [ 8, 23, 32 ],
+            "suit_skin": 2,
+            "liquid_protection": []
+        },
+        "sprite": "spr_ITEM_Suit_Type_1_0",
+        "sprite_palette": [ 16, 22, 33 ]
+    },
+    {
+        "id": "light_suit",
+        "name": "Light Suit",
+        "category": "SUIT",
+        "parameters": {
+            "armor": 0.25,
+            "hazard_full_protection": [ 11 ],
+            "hazard_partial_protection": [],
+            "suit_palette": [ 16, 48, 39 ],
+            "suit_skin": 2,
+            "liquid_protection": []
+        },
+        "sprite": "spr_ITEM_Suit_Type_1_0",
+        "sprite_palette": [ 16, 22, 33 ]
+    },
+    {
+        "id": "ped_suit",
+        "name": "Ped Suit",
+        "category": "SUIT",
+        "parameters": {
+            "armor": 0.25,
+            "hazard_full_protection": [ 8 ],
+            "hazard_partial_protection": [],
+            "suit_palette": [ 22, 32, 26 ],
+            "suit_skin": 2,
+            "liquid_protection": []
+        },
+        "sprite": "spr_ITEM_Suit_Type_1_0",
+        "sprite_palette": [ 16, 22, 33 ]
+    },
+    {
+        "id": "hazard_shield",
+        "name": "Hazard Shield",
+        "category": "OTHER",
+        "parameters": {
+            "liquid_protection": [],
+            "hazard_full_protection": [],
+            "hazard_partial_protection": []
+        },
+        "sprite": "spr_ITEM_Hazard_Shield_0",
+        "sprite_palette": [ 21, 17, 40 ]
+    },
+    {
+        "id": "metroid_suit",
+        "name": "Metroid Suit",
+        "category": "SUIT",
+        "parameters": {
+            "armor": 0.25,
+            "hazard_full_protection": [],
+            "hazard_partial_protection": [],
+            "suit_palette": [ 21, 42, 25 ],
+            "suit_skin": 2,
+            "liquid_protection": []
+        },
+        "sprite": "spr_ITEM_Suit_Type_1_0",
+        "sprite_palette": [ 16, 22, 33 ]
+    },
+    {
+        "id": "acid_suit",
+        "name": "Acid Suit",
+        "category": "SUIT",
+        "parameters": {
+            "armor": 0.25,
+            "hazard_full_protection": [ 5 ],
+            "hazard_partial_protection": [],
+            "suit_palette": [ 17, 44, 25 ],
+            "suit_skin": 2,
+            "liquid_protection": []
+        },
+        "sprite": "spr_ITEM_Suit_Type_1_0",
+        "sprite_palette": [ 16, 22, 33 ]
+    },
+    {
+        "id": "verdure_suit",
+        "name": "Verdure Suit",
+        "category": "SUIT",
+        "parameters": {
+            "armor": 0.25,
+            "hazard_full_protection": [ 6, 7 ],
+            "hazard_partial_protection": [],
+            "suit_palette": [ 17, 44, 25 ],
+            "suit_skin": 2,
+            "liquid_protection": []
+        },
+        "sprite": "spr_ITEM_Suit_Type_1_0",
+        "sprite_palette": [ 16, 22, 33 ]
+    },
+    {
+        "id": "custom_suit_1",
+        "name": "Custom Suit 1",
+        "category": "SUIT",
+        "parameters": {
+            "armor": 0.25,
+            "hazard_full_protection": [],
+            "hazard_partial_protection": [],
+            "suit_palette": [ 17, 44, 25 ],
+            "suit_skin": 2,
+            "liquid_protection": []
+        },
+        "sprite": "spr_ITEM_Suit_Type_1_0",
+        "sprite_palette": [ 16, 22, 33 ]
+    },
+    {
+        "id": "custom_suit_2",
+        "name": "Custom Suit 2",
+        "category": "SUIT",
+        "parameters": {
+            "armor": 0.25,
+            "hazard_full_protection": [],
+            "hazard_partial_protection": [],
+            "suit_palette": [ 17, 44, 25 ],
+            "suit_skin": 2,
+            "liquid_protection": []
+        },
+        "sprite": "spr_ITEM_Suit_Type_1_0",
+        "sprite_palette": [ 16, 22, 33 ]
+    },
+    {
+        "id": "custom_suit_3",
+        "name": "Custom Suit 3",
+        "category": "SUIT",
+        "parameters": {
+            "armor": 0.25,
+            "hazard_full_protection": [],
+            "hazard_partial_protection": [],
+            "suit_palette": [ 17, 44, 25 ],
+            "suit_skin": 2,
+            "liquid_protection": []
+        },
+        "sprite": "spr_ITEM_Suit_Type_1_0",
+        "sprite_palette": [ 16, 22, 33 ]
+    },
+    {
+        "id": "spread_beam",
+        "name": "Spread Beam",
+        "category": "BEAM",
+        "parameters": {
+            "quantity": 1.0,    // How many bullets this adds
+            "incremental": true // Can multiples be collected?
+        },
+        "sprite": "spr_ITEM_Beam_Spread_0",
+        "sprite_palette": [ 22, 16, 32 ]
+    },
+    {
+        "id": "oxygen_tank",
+        "name": "Oxygen Tank",
+        "category": "TANK",
+        "parameters": {
+            "capacity": 10.0 // How many SECONDS of Oxygen does this grant
+        },
+        "sprite": "spr_ITEM_Oxygen_Tank_0",
+        "sprite_palette": [ 17, 33, 40 ]
+    },
+    {
+        "id": "oxygen_synthesizer",
+        "name": "Oxygen Synthesizer",
+        "category": "OTHER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Oxygen_Synthesizer_0",
+        "sprite_palette": [ 17, 33, 40 ]
+    },
+    {
+        "id": "translator_violet",
+        "name": "Translator Module: Violet",
+        "category": "VISOR",
+        "parameters": {},
+        "sprite": "spr_ITEM_Translator_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "translator_amber",
+        "name": "Translator Module: Amber",
+        "category": "VISOR",
+        "parameters": {},
+        "sprite": "spr_ITEM_Translator_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "translator_emerald",
+        "name": "Translator Module: Emerald",
+        "category": "VISOR",
+        "parameters": {},
+        "sprite": "spr_ITEM_Translator_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "translator_cobalt",
+        "name": "Translator Module: Cobalt",
+        "category": "VISOR",
+        "parameters": {},
+        "sprite": "spr_ITEM_Translator_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "grand_bomb",
+        "name": "Grand Bomb",
+        "category": "BOMB",
+        "parameters": {
+            "damage_bonus": 0.0 // Extra damage granted to bombs
+        },
+        "sprite": "spr_ITEM_Grand_Bomb_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "chozo_spirit",
+        "name": "Chozo Spirit",
+        "category": "OTHER",
+        "parameters": {
+            "stackable": true,        // Can multiple be collected?
+            "damage_multiplier": 1.0, // Multiplier added to beam damage
+            "energy_limit": 30.0      // Maximum energy you can have with the benefit
+        },
+        "sprite": "spr_ITEM_Chozo_Spirit_0",
+        "sprite_palette": [ 22, 16, 32 ]
+    },
+    {
+        "id": "hyper_missile_tank",
+        "name": "Hyper Missile Tank",
+        "category": "TANK",
+        "parameters": {
+            "capacity": 2.0 // How many hyper missiles is capacity increased by
+        },
+        "sprite": "spr_ITEM_Hyper_Missile_Tank_0",
+        "sprite_palette": [ 28, 48, 44 ]
+    },
+    {
+        "id": "seeker_missiles",
+        "name": "Seeker Missiles",
+        "category": "MISSILE",
+        "parameters": {
+            "launcher": 0.0,      // Which launcher to apply to
+            "require_aim": true,  // If you must be facing enemies to target them
+            "require_sight": true // If you need line of sight to target enemies
+        },
+        "sprite": "spr_ITEM_Missile_Seeker_Upgrade_0",
+        "sprite_palette": [ 20, 48, 40 ]
+    },
+    {
+        "id": "crystal_flash",
+        "name": "Crystal Flash",
+        "category": "OTHER",
+        "parameters": {
+            "invincible": false,
+            "energy_limit": 50.0,
+            "ammo_use": [ 0, 10, 10, 0, 10, 0, 0 ],
+            "refill_reserve_tanks": true
+        },
+        "sprite": "spr_ITEM_Crystal_Flash_0",
+        "sprite_palette": [ 22, 16, 32 ]
+    },
+    {
+        "id": "scan_visor",
+        "name": "Scan Visor",
+        "category": "VISOR",
+        "parameters": {},
+        "sprite": "spr_ITEM_Visor_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "combat_visor",
+        "name": "Combat Visor",
+        "category": "VISOR",
+        "parameters": {},
+        "sprite": "spr_ITEM_Visor_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "super_charge",
+        "name": "Super Charge",
+        "category": "BEAM_UPGRADE",
+        "parameters": {
+            "damage_multiplier": 1.0, // Damage as a multiple of charge shot damage
+            "ammo_use": 5.0           // How much ammo this consumes per shot
+        },
+        "sprite": "spr_ITEM_Beam_Charge_0",
+        "sprite_palette": [ 16, 40, 48 ]
+    },
+    {
+        "id": "diamond_dust",
+        "name": "Diamond Dust",
+        "category": "BEAM_UPGRADE",
+        "parameters": {
+            "damage_multiplier": 1.0,
+            "ammo_use": 10.0,
+            "unique_traits": true
+        },
+        "sprite": "spr_ITEM_Beam_Amp_1",
+        "sprite_palette": [ 16, 18, 48 ]
+    },
+    {
+        "id": "ice_spreader",
+        "name": "Ice Spreader",
+        "category": "BEAM_UPGRADE",
+        "parameters": {
+            "damage_multiplier": 1.0,
+            "ammo_use": 10.0,
+            "unique_traits": true
+        },
+        "sprite": "spr_ITEM_Beam_Amp_1",
+        "sprite_palette": [ 16, 18, 48 ]
+    },
+    {
+        "id": "asteroid_belt",
+        "name": "Asteroid Belt",
+        "category": "Beam Upgrade",
+        "parameters": {
+            "damage_multiplier": 1.0,
+            "ammo_use": 10.0,
+            "unique_traits": true
+        },
+        "sprite": "spr_ITEM_Beam_Amp_1",
+        "sprite_palette": [ 16, 18, 48 ]
+    },
+    {
+        "id": "stardust_shower",
+        "name": "Stardust Shower",
+        "category": "BEAM_UPGRADE",
+        "parameters": {
+            "damage_multiplier": 1.0,
+            "ammo_use": 10.0,
+            "unique_traits": true
+        },
+        "sprite": "spr_ITEM_Beam_Amp_1",
+        "sprite_palette": [ 16, 18, 48 ]
+    },
+    {
+        "id": "emerald_splash",
+        "name": "Emerald Splash",
+        "category": "BEAM_UPGRADE",
+        "parameters": {
+            "damage_multiplier": 1.0,
+            "ammo_use": 10.0,
+            "unique_traits": true
+        },
+        "sprite": "spr_ITEM_Beam_Amp_1",
+        "sprite_palette": [ 16, 18, 48 ]
+    },
+    {
+        "id": "voltbuster",
+        "name": "Voltbuster",
+        "category": "BEAM_UPGRADE",
+        "parameters": {
+            "damage_multiplier": 1.0,
+            "ammo_use": 10.0,
+            "unique_traits": true
+        },
+        "sprite": "spr_ITEM_Beam_Amp_1",
+        "sprite_palette": [ 16, 18, 48 ]
+    },
+    {
+        "id": "flamethrower",
+        "name": "Flamethrower",
+        "category": "BEAM_UPGRADE",
+        "parameters": {
+            "damage_multiplier": 1.0,
+            "ammo_use": 10.0,
+            "unique_traits": true
+        },
+        "sprite": "spr_ITEM_Beam_Amp_1",
+        "sprite_palette": [ 16, 18, 48 ]
+    },
+    {
+        "id": "sunburst",
+        "name": "Sunburst",
+        "category": "BEAM_UPGRADE",
+        "parameters": {
+            "ammo_beam_use": 30.0,
+            "damage_multiplier": 1.0,
+            "ammo_use": 10.0,
+            "unique_traits": true
+        },
+        "sprite": "spr_ITEM_Beam_Amp_1",
+        "sprite_palette": [ 16, 18, 48 ]
+    },
+    {
+        "id": "darkburst",
+        "name": "Darkburst",
+        "category": "BEAM_UPGRADE",
+        "parameters": {
+            "ammo_beam_use": 30.0,
+            "damage_multiplier": 1.0,
+            "ammo_use": 10.0,
+            "unique_traits": true
+        },
+        "sprite": "spr_ITEM_Beam_Amp_1",
+        "sprite_palette": [ 16, 18, 48 ]
+    },
+    {
+        "id": "sonic_boom",
+        "name": "Sonic Boom",
+        "category": "BEAM_UPGRADE",
+        "parameters": {
+            "ammo_beam_use": 30.0,
+            "damage_multiplier": 1.0,
+            "ammo_use": 10.0,
+            "unique_traits": true
+        },
+        "sprite": "spr_ITEM_Beam_Amp_1",
+        "sprite_palette": [ 16, 18, 48 ]
+    },
+    {
+        "id": "chozo_artifact",
+        "name": "Chozo Artifact",
+        "category": "OTHER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Djinni_Venus_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "dark_temple_key",
+        "name": "Dark Temple Key",
+        "category": "OTHER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Beam_Amp_1",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "sky_temple_key",
+        "name": "Sky Temple Key",
+        "category": "OTHER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Beam_Amp_1",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "energy_cell",
+        "name": "Energy Cell",
+        "category": "OTHER",
+        "parameters": {},
+        "sprite": "spr_ITEM_Beam_Amp_1",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "x_ray_scope",
+        "name": "X-Ray Scope",
+        "category": "VISOR",
+        "parameters": {},
+        "sprite": "spr_ITEM_Visor_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "dark_visor",
+        "name": "Dark Visor",
+        "category": "VISOR",
+        "parameters": {},
+        "sprite": "spr_ITEM_Visor_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "echo_visor",
+        "name": "Echo Visor",
+        "category": "VISOR",
+        "parameters": {},
+        "sprite": "spr_ITEM_Visor_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    },
+    {
+        "id": "screw_shield",
+        "name": "Screw Shield",
+        "parameters": {
+            "enable_horizonjump": false,
+            "break_bomb_blocks": false,
+            "break_shot_blocks": false,
+            "enable_spacejump": false
+        },
+        "sprite": "spr_ITEM_Screw_Shield_0",
+        "sprite_palette": [ 22, 40, 26 ]
+    }
+]

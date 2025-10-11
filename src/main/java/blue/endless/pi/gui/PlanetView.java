@@ -22,7 +22,7 @@ import blue.endless.pi.datastruct.Vec2;
 
 public class PlanetView extends JPanel implements MouseListener, MouseMotionListener {
 	private WorldInfo world;
-	private BiConsumer<ObjectElement, Map<String, SchemaType>> propertiesConsumer = (o, s) -> {};
+	private BiConsumer<ObjectElement, Map<String, SchemaType<?>>> propertiesConsumer = (o, s) -> {};
 	private int selectedRoom = -1;
 	private int dragRoom = -1;
 	private int dragStartX = -1;
@@ -157,6 +157,13 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 			selectedRoom = clickedRoom;
 			propertiesConsumer.accept(world.rooms().get(clickedRoom).general(), EditorFrame.ROOM_GENERAL_SCHEMA);
 			this.repaint();
+		}
+		
+		if (e.getClickCount() == 2) {
+			// Let's go!
+			System.out.println("Opening configurator for room " + clickedRoom);
+			RoomConfiguratorFrame configurator = new RoomConfiguratorFrame(world, clickedRoom);
+			configurator.setVisible(true);
 		}
 		/*
 		if (world != null && world.rooms().size() > 0) {
@@ -328,7 +335,7 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 		}
 	}
 
-	public void setPropertiesConsumer(BiConsumer<ObjectElement, Map<String, SchemaType>> propertiesConsumer) {
+	public void setPropertiesConsumer(BiConsumer<ObjectElement, Map<String, SchemaType<?>>> propertiesConsumer) {
 		this.propertiesConsumer = propertiesConsumer;
 	}
 

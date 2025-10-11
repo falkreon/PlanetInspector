@@ -15,7 +15,7 @@ import javax.swing.event.ListSelectionListener;
 
 import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.ObjectElement;
-import blue.endless.pi.Item;
+import blue.endless.pi.ItemType;
 
 public class DebugLogFrame extends JFrame implements ListSelectionListener {
 	private final WorldInfo world;
@@ -87,16 +87,17 @@ public class DebugLogFrame extends JFrame implements ListSelectionListener {
 			for(int i=0; i<placedItemsArr.size(); i++) {
 				ObjectElement obj = placedItemsArr.getObject(i);
 				int roomId = obj.getPrimitive("room_id").asInt().orElse(0);
-				int id = obj.getPrimitive("id").asInt().orElse(0);
+				// We're not using / displaying item-object id
+				//int id = obj.getPrimitive("id").asInt().orElse(0);
 				int oldVal = obj.getPrimitive("old_val").asInt().orElse(0);
 				int newVal = obj.getPrimitive("new_val").asInt().orElse(0);
 				
 				RoomInfo room = null;
 				if (roomId < world.rooms().size()) room = world.rooms().get(roomId);
 				if (room == null) {
-					placedItems.addElement(Item.byId(oldVal).toString().toLowerCase()+" -> "+Item.byId(newVal).toString().toLowerCase()+" in Room #"+roomId+" (unknown)");
+					placedItems.addElement(ItemType.byId(oldVal).toString().toLowerCase()+" -> "+ItemType.byId(newVal).toString().toLowerCase()+" in Room #"+roomId+" (unknown)");
 				} else {
-					placedItems.addElement(Item.byId(oldVal).toString().toLowerCase()+" -> "+Item.byId(newVal).toString().toLowerCase()+" in Room #"+roomId+", \""+room.name()+"\"");
+					placedItems.addElement(ItemType.byId(oldVal).toString().toLowerCase()+" -> "+ItemType.byId(newVal).toString().toLowerCase()+" in Room #"+roomId+", \""+room.name()+"\"");
 				}
 			}
 			right.setModel(placedItems);
@@ -115,7 +116,7 @@ public class DebugLogFrame extends JFrame implements ListSelectionListener {
 		@Override
 		public String getElementAt(int index) {
 			int itemId = items.getPrimitive(index).asInt().orElse(-1);
-			return Item.byId(itemId).toString().toLowerCase();
+			return ItemType.byId(itemId).toString().toLowerCase();
 		}
 
 		@Override
