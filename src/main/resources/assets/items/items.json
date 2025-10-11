@@ -1,14 +1,14 @@
-[
-    {
-        "id": "unknown",
+{
+    "unknown": {
+        "id": 0,
         "name": "Unknown",
         "category": "OTHER",
         "parameters": {}
         "sprite": "spr_ITEM_Beam_Amp_1",
         "sprite_palette": [ 0, 16, 32 ]
     },
-    {
-        "id": "long_beam",
+    "long_beam": {
+        "id": 1,
         "name": "Long Beam",
         "category": "BEAM_UPGRADE",
         "parameters": {
@@ -17,8 +17,8 @@
         "sprite": "spr_ITEM_Beam_Long_0",
         "sprite_palette": [ 22, 26, 40 ]
     },
-    {
-        "id": "charge_beam",
+    "charge_beam": {
+        "id": 2,
         "name": "Charge Beam",
         "category": "BEAM_UPGRADE",
         "parameters": {
@@ -29,8 +29,8 @@
         "sprite": "spr_ITEM_Beam_Charge_0",
         "sprite_palette": [ 22, 16, 32 ]
     },
-    {
-        "id": "ice_beam",
+    "ice_beam": {
+        "id": 3,
         "name": "Ice Beam",
         "category": "BEAM",
         "parameters": {
@@ -44,8 +44,8 @@
         "sprite": "spr_ITEM_Beam_Ice_0",
         "sprite_palette": [ 22, 18, 33 ]
     },
-    {
-        "id": "wave_beam",
+    "wave_beam": {
+        "id": 4,
         "name": "Wave Beam",
         "category": "BEAM",
         "parameters": {
@@ -56,8 +56,8 @@
         "sprite": "spr_ITEM_Beam_Wave_0",
         "sprite_palette": [ 22, 20, 52 ]
     },
-    {
-        "id": "spazer_beam",
+    "spazer_beam": {
+        "id": 5,
         "name": "Spazer Beam",
         "category": "BEAM",
         "parameters": {
@@ -69,8 +69,8 @@
         "sprite": "spr_ITEM_Beam_Spazer_0",
         "sprite_palette": [ 22, 40, 56 ]
     },
-    {
-        "id": "plasma_beam",
+    "plasma_beam": {
+        "id": 6,
         "name": "Plasma Beam",
         "category": "BEAM",
         "parameters": {
@@ -81,8 +81,8 @@
         "sprite": "spr_ITEM_Beam_Plasma_0",
         "sprite_palette": [ 22, 42, 40 ]
     },
-    {
-        "id": "energy_tank",
+    "energy_tank": {
+        "id": 7,
         "name": "Energy Tank",
         "category": "TANK",
         "parameters": {
@@ -91,8 +91,8 @@
         "sprite": "spr_ITEM_Energy_Tank_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "gravity_suit",
+    "gravity_suit": {
+        "id": 8,
         "name": "Gravity Suit",
         "category": "SUIT",
         "parameters": {
@@ -106,8 +106,8 @@
         "sprite": "spr_ITEM_Gravity_0",
         "sprite_palette": [ 21, 56, 33 ]
     },
-    {
-        "id": "phazon_suit",
+    "phazon_suit": {
+        "id": 9,
         "name": "Phazon Suit",
         "category": "SUIT",
         "parameters": {
@@ -121,8 +121,8 @@
         "sprite": "spr_ITEM_Suit_Type_1_0",
         "sprite_palette": [ 16, 22, 33 ]
     },
-    {
-        "id": "morph_ball",
+    "morph_ball": {
+        "id": 10,
         "name": "Morph Ball",
         "category": "BALL",
         "parameters": {
@@ -131,8 +131,8 @@
         "sprite": "spr_ITEM_Morph_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "spring_ball",
+    "spring_ball": {
+        "id": 11,
         "name": "Spring Ball",
         "category": "BALL",
         "parameters": {
@@ -141,24 +141,24 @@
         "sprite": "spr_ITEM_Spring_Ball_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "boost_ball",
+    "boost_ball": {
+        "id": 12,
         "name": "Boost Ball",
         "category": "BALL",
         "parameters": {},
         "sprite": "spr_ITEM_Boost_Ball_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "spider_ball",
+    "spider_ball": {
+        "id": 13,
         "name": "Spider Ball",
         "category": "BALL",
         "parameters": {},
         "sprite": "spr_ITEM_Spider_Ball_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "bombs",
+    "bombs": {
+        "id": 14,
         "name": "Bombs",
         "category": "BOMB",
         "parameters": {
@@ -172,8 +172,8 @@
         "sprite": "spr_ITEM_Bomb_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "power_bomb_tank",
+    "power_bomb_tank": {
+        "id": 15,
         "name": "Power Bombs",
         "category": "TANK",
         "parameters": {
@@ -182,8 +182,8 @@
         "sprite": "spr_ITEM_POWER_BOMB_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "missile_tank",
+    "missile_tank": {
+        "id": 16,
         "name": "Missile Tank",
         "category": "TANK",
         "parameters": {
@@ -192,8 +192,8 @@
         "sprite": "spr_ITEM_Missile_0",
         "sprite_palette": [ 7, 48, 21 ]
     },
-    {
-        "id": "super_missile_tank",
+    "super_missile_tank": {
+        "id": 17,
         "name": "Super Missile Tank",
         "category": "TANK",
         "parameters": {
@@ -202,8 +202,8 @@
         "sprite": "spr_ITEM_Super_Missile_0",
         "sprite_palette": [ 26, 48, 43 ]
     },
-    {
-        "id": "high_jump",
+    "high_jump": {
+        "id": 18,
         "name": "High Jump",
         "category": "OTHER",
         "parameters": {
@@ -214,24 +214,24 @@
         "sprite": "spr_ITEM_High_Jump_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "space_jump",
+    "space_jump": {
+        "id": 19,
         "name": "Space Jump",
         "category": "OTHER",
         "parameters": {},
         "sprite": "spr_ITEM_Space_Jump_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "speed_booster",
+    "speed_booster": {
+        "id": 20,
         "name": "Speed Booster",
         "category": "OTHER",
         "parameters": {},
         "sprite": "spr_ITEM_Speed_Booster_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "screw_attack",
+    "screw_attack": {
+        "id": 21,
         "name": "Screw Attack",
         "category": "OTHER",
         "parameters": {
@@ -248,8 +248,8 @@
         "sprite": "spr_ITEM_Screw_Attack_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "hammer_ball",
+    "hammer_ball": {
+        "id": 22,
         "name": "Hammer Ball",
         "parameters": {
             "speed": 5.0,                // Downward movement speed
@@ -261,26 +261,26 @@
         "sprite": "spr_ITEM_Hammer_Ball_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "thermal_visor",
+    "thermal_visor": {
+        "id": 23,
         "name":"Thermal Visor",
         "category": "VISOR",
         "parameters": {},
         "sprite": "spr_ITEM_Visor_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "x_ray_visor",
+    "x_ray_visor": {
+        "id": 24,
         "name": "X-Ray Visor",
         "category": "VISOR",
         "parameters": {},
         "sprite": "spr_ITEM_Visor_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "refill",
+    "refill": {
+        "id": 25,
         "name": "Refill",
-        "category": "PICKUP",
+        "category": "OTHER",
         "parameters": {
             "restore_missiles_on_pickup": 10.0,       // Missiles to refill
             "restore_power_bombs_on_pickup": 2.0,     // Power Bombs to refill
@@ -292,24 +292,24 @@
         "sprite": "spr_ITEM_Refill_0",
         "sprite_palette": [ 25, 42, 66 ]
     },
-    {
-        "id": "power_grip",
+    "power_grip": {
+        "id": 26,
         "name": "Power Grip",
         "category": "OTHER",
         "parameters": {},
         "sprite": "spr_ITEM_Power_Grip_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "grapple_beam",
+    "grapple_beam": {
+        "id": 27,
         "name": "Grapple Beam",
         "category": "OTHER",
         "parameters": {},
         "sprite": "spr_ITEM_Grapple_Beam_0",
         "sprite_palette": [ 22, 49, 34 ]
     },
-    {
-        "id": "flash_shift",
+    "flash_shift": {
+        "id": 28,
         "name": "Flash Shift",
         "category": "OTHER",
         "parameters": {
@@ -320,16 +320,16 @@
         "sprite": "spr_ITEM_Flash_Shift_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "energy_tank_half",
+    "energy_tank_half": {
+        "id": 29,
         "name": "Energy Tank Half",
         "category": "TANK",
         "parameters": {},
         "sprite": "spr_ITEM_Energy_Half_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "stun_core",
+    "stun_core": {
+        "id": 30,
         "name": "Stun Core",
         "category": "CORE",
         "parameters": {
@@ -339,8 +339,8 @@
         "sprite": "spr_ITEM_Core_Stun_0",
         "sprite_palette": [ 16, 22, 48 ]
     },
-    {
-        "id": "aegis_core",
+    "aegis_core": {
+        "id": 31,
         "name": "Aegis Core",
         "category": "CORE",
         "parameters": {
@@ -350,8 +350,8 @@
         "sprite": "spr_ITEM_Core_Aegis_0",
         "sprite_palette": [ 16, 26, 48 ]
     },
-    {
-        "id": "crystal_core",
+    "crystal_core": {
+        "id": 32,
         "name": "Crystal Core",
         "category": "CORE",
         "parameters": {
@@ -360,16 +360,16 @@
         "sprite": "spr_ITEM_Core_Crystal_0",
         "sprite_palette": [ 16, 20, 48 ]
     },
-    {
-        "id": "magnet_core",
+    "magnet_core": {
+        "id": 33,
         "name": "Magnet Core",
         "category": "CORE",
         "parameters": {},
         "sprite": "spr_ITEM_Core_Magnet_0",
         "sprite_palette": [ 16, 40, 48 ]
     },
-    {
-        "id": "phazon_core",
+    "phazon_core": {
+        "id": 34,
         "name": "Phazon Core",
         "category": "CORE",
         "parameters": {
@@ -381,8 +381,8 @@
         "sprite": "spr_ITEM_Core_Phazon_0",
         "sprite_palette": [ 16, 44, 48 ]
     },
-    {
-        "id": "chrono_core",
+    "chrono_core": {
+        "id": 35,
         "name": "Chrono Core",
         "category": "CORE",
         "parameters": {
@@ -393,8 +393,8 @@
         "sprite": "spr_ITEM_Core_Chrono_0",
         "sprite_palette": [ 16, 32, 48 ]
     },
-    {
-        "id": "phantom_core",
+    "phantom_core": {
+        "id": 36,
         "name": "Phantom Core",
         "parameters": {
             "refresh_timer": 15.0 // How many frames of cooldown after attacking or being hit
@@ -402,8 +402,8 @@
         "sprite": "spr_ITEM_Core_Phantom_0",
         "sprite_palette": [ 16, 12, 48 ]
     },
-    {
-        "id": "sensor_core",
+    "sensor_core": {
+        "id": 37,
         "name": "Sensor Core",
         "parameters": {
             "disable_map": false // Should disable the map while using this item?
@@ -411,8 +411,8 @@
         "sprite": "spr_ITEM_Core_Sensor_0",
         "sprite_palette": [ 16, 39, 48 ]
     },
-    {
-        "id": "core_dynamo",
+    "core_dynamo": {
+        "id": 38,
         "name": "Core Dynamo",
         "category": "CORE_UPGRADE",
         "parameters": {
@@ -421,15 +421,15 @@
         "sprite": "spr_ITEM_Core_Dynamo_0",
         "sprite_palette": [ 16, 36, 48 ]
     },
-    {
-        "id": "core_capacitor",
+    "core_capacitor": {
+        "id": 39,
         "name": "Core Capacitor",
         "category": "CORE_UPGRADE",
         "parameters": {},
         "sprite_palette": [ 16, 34, 39 ]
     },
-    {
-        "id": "paralyzer_beam",
+    "paralyzer_beam": {
+        "id": 40,
         "name": "Paralyzer Pistol",
         "category": "BEAM",
         "parameters": {
@@ -438,8 +438,8 @@
         "sprite": "spr_ITEM_Pistol_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "power_suit",
+    "power_suit": {
+        "id": 41,
         "name": "Power Suit",
         "category": "SUIT",
         "parameters": {
@@ -453,8 +453,8 @@
         "sprite": "spr_ITEM_Suit_Type_1_0",
         "sprite_palette": [ 21, 36, 19 ]
     },
-    {
-        "id": "varia_suit",
+    "varia_suit": {
+        "id": 42,
         "name": "Varia Suit",
         "category": "SUIT",
         "parameters": {
@@ -468,8 +468,8 @@
         "sprite": "spr_ITEM_Varia_0",
         "sprite_palette": [ 21, 56, 33 ]
     },
-    {
-        "id": "missile_tank_plus",
+    "missile_tank_plus": {
+        "id": 43,
         "name": "Missile Tank+",
         "category": "TANK",
         "parameters": {
@@ -478,8 +478,8 @@
         "sprite": "spr_ITEM_Missile_Pack_0",
         "sprite_palette": [ 7, 48, 21 ]
     },
-    {
-        "id": "wall_jump",
+    "wall_jump": {
+        "id": 44,
         "name": "Wall Jump",
         "category": "OTHER",
         "parameters": {
@@ -489,16 +489,16 @@
         "sprite": "spr_ITEM_Wall_Jump_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "talon_grip",
+    "talon_grip": {
+        "id": 45,
         "name": "Talon Grip",
         "category": "OTHER",
         "parameters": {},
         "sprite": "spr_ITEM_Talon_Grip_0",
         "sprite_palette": [ 22, 16, 32 ]
     },
-    {
-        "id": "missile_launcher",
+    "missile_launcher": {
+        "id": 46,
         "name": "Missile Launcher",
         "category": "MISSILE",
         "parameters": {
@@ -509,8 +509,8 @@
         "sprite": "spr_ITEM_Missile_Launcher_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "unknown_missile_launcher",
+    "unknown_missile_launcher": {
+        "id": 47,
         "name": "Missile Launcher (Unknown)",
         "category": "MISSILE",
         "parameters": {
@@ -520,8 +520,8 @@
         "sprite": "spr_ITEM_Missile_Launcher_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "zero_suit",
+    "zero_suit": {
+        "id": 48,
         "name": "Zero Suit",
         "category": "SUIT",
         "parameters": {
@@ -540,8 +540,8 @@
         "sprite": "spr_ITEM_Suit_Zero_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "core_driver",
+    "core_driver": {
+        "id": 49,
         "name": "Core Driver",
         "category": "CORE_UPGRADE",
         "parameters": {
@@ -550,24 +550,24 @@
         "sprite": "spr_ITEM_Core_Driver_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "energy_tank_part",
+    "energy_tank_part": {
+        "id": 50,
         "name": "Energy Tank Part",
         "category": "TANK",
         "parameters": {},
         "sprite": "spr_ITEM_Energy_Tank_Part_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "warp_drive",
+    "warp_drive": {
+        "id": 51,
         "name": "Warp Drive",
         "category": "OTHER",
         "parameters": {},
         "sprite": "spr_ITEM_Warp_Drive_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "reserve_tank",
+    "reserve_tank": {
+        "id": 52,
         "name": "Reserve Tank",
         "category": "TANK",
         "parameters": {
@@ -577,16 +577,16 @@
         "sprite": "spr_ITEM_Reserve_Tank_0",
         "sprite_palette": [ 16, 32, 48 ]
     },
-    {
-        "id": "spin_boost",
+    "spin_boost": {
+        "id": 53,
         "name": "Spin Boost",
         "category": "OTHER",
         "parameters": {},
         "sprite": "spr_ITEM_Spin_Boost_0"
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "cross_bombs",
+    "cross_bombs": {
+        "id": 54,
         "name": "Cross Bombs",
         "category": "BOMB",
         "parameters": {
@@ -595,24 +595,24 @@
         "sprite": "spr_ITEM_Cross_Bombs_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "translator_module",
+    "translator_module": {
+        "id": 55,
         "name": "Translator Module",
         "category": "OTHER",
         "parameters": {},
         "sprite": "spr_ITEM_Translator_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "auto_charger",
+    "auto_charger": {
+        "id": 56,
         "name": "Auto Charger",
         "category": "BEAM_UPGRADE",
         "parameters": {},
         "sprite": "spr_ITEM_Auto_Charger_0",
         "sprite_palette": [ 40, 24, 57 ]
     },
-    {
-        "id": "gravity_boost",
+    "gravity_boost": {
+        "id": 57,
         "name": "Gravity Boost",
         "category": "OTHER",
         "parameters": {
@@ -624,8 +624,8 @@
         "sprite": "spr_ITEM_Gravity_Boost_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "glide_thrusters",
+    "glide_thrusters": {
+        "id": 58,
         "name": "Glide Thrusters",
         "category": "OTHER",
         "parameters": {
@@ -635,8 +635,8 @@
         "sprite": "spr_ITEM_Glide_Thrusters_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "rocket_jump",
+    "rocket_jump": {
+        "id": 59,
         "name": "Rocket Jump",
         "category": "OTHER",
         "parameters": {
@@ -647,8 +647,8 @@
         "sprite": "spr_ITEM_Rocket_Jump_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "ice_missiles",
+    "ice_missiles": {
+        "id": 60,
         "name": "Ice Missiles",
         "category": "MISSILE",
         "parameters": {
@@ -660,8 +660,8 @@
         "sprite": "spr_ITEM_Missile_Ice_Upgrade_0",
         "sprite_palette": [ 18, 48, 33 ]
     },
-    {
-        "id": "drill_missiles",
+    "drill_missiles": {
+        "id": 61,
         "name": "Drill Missiles",
         "category": "MISSILE",
         "parameters": {
@@ -673,8 +673,8 @@
         "sprite": "spr_ITEM_Missile_Drill_Upgrade_0",
         "sprite_palette": [ 20, 48, 52 ]
     },
-    {
-        "id": "diffusion_missiles",
+    "diffusion_missiles": {
+        "id": 62,
         "name": "Diffusion Missiles",
         "category": "MISSILE",
         "parameters": {
@@ -686,8 +686,8 @@
         "sprite": "spr_ITEM_Missile_Diffusion_Upgrade_0",
         "sprite_palette": [ 24, 48, 40 ]
     },
-    {
-        "id": "power_bomb_launcher",
+    "power_bomb_launcher": {
+        "id": 63,
         "name": "Power Bomb Launcher",
         "category": "BOMB",
         "parameters": {
@@ -697,8 +697,8 @@
         "sprite": "spr_ITEM_Power_Bomb_Launcher_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "diffusion_beam",
+    "diffusion_beam": {
+        "id": 64,
         "name": "Diffusion Beam",
         "category": "BEAM",
         "parameters": {
@@ -708,8 +708,8 @@
         "sprite": "spr_ITEM_Beam_Diffusion_0",
         "sprite_palette": [ 22, 16, 32 ]
     },
-    {
-        "id": "power_beam",
+    "power_beam": {
+        "id": 65,
         "name": "Power Beam",
         "category": "BEAM",
         "parameters": {
@@ -721,8 +721,8 @@
         "sprite": "spr_ITEM_Beam_Power_0",
         "sprite_palette": [ 22, 40, 56 ]
     },
-    {
-        "id": "accel_charge",
+    "accel_charge": {
+        "id": 66,
         "name": "Accel Charge",
         "category": "BEAM_UPGRADE",
         "parameters": {
@@ -731,8 +731,8 @@
         "sprite": "spr_ITEM_Accel_Charge_0",
         "sprite_palette": [ 16, 26, 40 ]
     },
-    {
-        "id": "beam_amp",
+    "beam_amp": {
+        "id": 67,
         "name": "Beam Amp",
         "category": "BEAM_UPGRADE",
         "parameters": {
@@ -742,8 +742,8 @@
         "sprite": "spr_ITEM_Beam_Amp_0",
         "sprite_palette": [ 22, 16, 40 ]
     },
-    {
-        "id": "super_missile_launcher",
+    "super_missile_launcher": {
+        "id": 68,
         "name": "Super Missile Launcher",
         "category": "MISSILE",
         "parameters": {
@@ -752,8 +752,8 @@
         "sprite": "spr_ITEM_Missile_Class_Super_Upgrade_0",
         "sprite_palette": [ 26, 48, 43 ]
     },
-    {
-        "id": "hyper_missile_launcher",
+    "hyper_missile_launcher": {
+        "id": 69,
         "name": "Hyper Missiles",
         "category": "MISSILE",
         "parameters": {
@@ -762,8 +762,8 @@
         "sprite": "spr_ITEM_Missile_Class_Hyper_Upgrade_0",
         "sprite_palette": [ 28, 48, 44 ]
     },
-    {
-        "id": "storm_missiles",
+    "storm_missiles": {
+        "id": 70,
         "name": "Storm Missiles",
         "category": "MISSILE",
         "parameters": {
@@ -775,8 +775,8 @@
         "sprite": "spr_ITEM_Missile_Storm_Upgrade_0",
         "sprite_palette": [ 26, 48, 42 ]
     },
-    {
-        "id": "ion_missiles",
+    "ion_missiles": {
+        "id": 71,
         "name": "Ion Missiles",
         "category": "MISSILE",
         "parameters": {
@@ -787,8 +787,8 @@
         "sprite": "spr_ITEM_Missile_Ion_Upgrade_0",
         "sprite_palette": [ 19, 48, 44 ]
     },
-    {
-        "id": "turbo_missiles",
+    "turbo_missiles": {
+        "id": 72,
         "name": "Turbo Missiles",
         "category": "MISSILE",
         "parameters": {
@@ -800,8 +800,8 @@
         "sprite": "spr_ITEM_Missile_Turbo_Upgrade_0",
         "sprite_palette": [ 22, 48, 40 ]
     },
-    {
-        "id": "arc_bombs",
+    "arc_bombs": {
+        "id": 73,
         "name": "Arc Bombs",
         "category": "BOMB",
         "parameters": {
@@ -810,8 +810,8 @@
         "sprite": "spr_ITEM_Arc_Bombs_0",
         "sprite_palette": [ 17, 40, 26 ]
     },
-    {
-        "id": "volt_beam",
+    "volt_beam": {
+        "id": 74,
         "name": "Volt Beam",
         "category": "BEAM",
         "parameters": {
@@ -822,8 +822,8 @@
         "sprite": "spr_ITEM_Beam_Volt_0",
         "sprite_palette": [ 22, 19, 52 ]
     },
-    {
-        "id": "magma_beam",
+    "magma_beam": {
+        "id": 75,
         "name": "Magma Beam",
         "category": "BEAM",
         "parameters": {
@@ -834,8 +834,8 @@
         "sprite": "spr_ITEM_Beam_Magma_0",
         "sprite_palette": [ 22, 38, 52 ]
     },
-    {
-        "id": "light_beam",
+    "light_beam": {
+        "id": 76,
         "name": "Light Beam",
         "category": "BEAM",
         "parameters": {
@@ -846,56 +846,56 @@
         "sprite": "spr_ITEM_Beam_Light_0",
         "sprite_palette": [ 22, 48, 52 ]
     },
-    {
-        "id": "energy_tank_quarter",
+    "energy_tank_quarter": {
+        "id": 77,
         "name": "Energy Tank Quarter",
         "category": "TANK",
         "parameters": {},
         "sprite": "spr_ITEM_Energy_Quarter_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "barrier_layer",
+    "barrier_layer": {
+        "id": 78,
         "name": "Barrier Layer",
         "category": "OTHER",
         "parameters": {},
         "sprite": "spr_ITEM_Barrier_Layer_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "slide_gears",
+    "slide_gears": {
+        "id": 79,
         "name": "Slide Gears",
         "category": "OTHER",
         "parameters": {},
         "sprite": "spr_ITEM_Speed_Gear_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "magnet_ball",
+    "magnet_ball": {
+        "id": 80,
         "name": "Magnet Ball",
         "category": "BALL",
         "parameters": {},
         "sprite": "spr_ITEM_Spider_Ball_1",
         "sprite_palette": [ 21, 40, 17 ]
     },
-    {
-        "id": "magnet_grip",
+    "magnet_grip": {
+        "id": 81,
         "name": "Magnet Grip",
         "category": "OTHER",
         "parameters": {},
         "sprite": "spr_ITEM_Power_Grip_0",
         "sprite_palette": [ 17, 40, 18 ]
     },
-    {
-        "id": "dash_booster",
+    "dash_booster": {
+        "id": 82,
         "name": "Dash Booster",
         "category": "OTHER",
         "parameters": {},
         "sprite": "spr_ITEM_Dash_Booster_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "shinespark",
+    "shinespark": {
+        "id": 83,
         "name": "Shinespark",
         "category": "OTHER",
         "parameters": {
@@ -906,8 +906,8 @@
         "sprite": "spr_ITEM_Shinespark_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "arm_blades",
+    "arm_blades": {
+        "id": 84,
         "name": "Arm Blades",
         "category": "OTHER",
         "parameters": {
@@ -919,24 +919,24 @@
         "sprite": "spr_ITEM_Wall_Blades_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "beam_fusion",
+    "beam_fusion": {
+        "id": 85,
         "name": "Beam Fusion",
         "catgegory": "BEAM_UPGRADE",
         "parameters": {},
         "sprite": "spr_ITEM_Beam_Fusion_0",
         "sprite_palette": [ 0, 32, 48 ]
     },
-    {
-        "id": "core_octopart",
+    "core_octopart": {
+        "id": 86,
         "name": "Core Octopart",
         "category": "CORE_UPGRADE",
         "parameters": {},
         "sprite": "spr_ITEM_Core_Octopart_0",
         "sprite_palette": [ 16, 34, 39 ]
     },
-    {
-        "id": "ammo_tank_plus",
+    "ammo_tank_plus": {
+        "id": 87 ,
         "name": "Ammo Tank+",
         "category": "TANK",
         "parameters": {
@@ -945,8 +945,8 @@
         "sprite": "spr_ITEM_Ammo_Tank_Plus_0"
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "dark_beam",
+    "dark_beam": {
+        "id": 88,
         "name": "Dark Beam",
         "category": "BEAM",
         "parameters": {
@@ -957,16 +957,16 @@
         "sprite": "spr_ITEM_Beam_Dark_0",
         "sprite_palette": [ 22, 1, 52 ]
     },
-    {
-        "id": "charge_magnet",
+    "charge_magnet": {
+        "id": 89,
         "name": "Charge Magnet",
         "category": "BEAM_UPGRADE",
         "parameters": {},
         "sprite": "spr_ITEM_Charge_Magnet_0",
         "sprite_palette": [ 22, 16, 32 ]
     },
-    {
-        "id": "pseudo_screw",
+    "pseudo_screw": {
+        "id": 90,
         "name": "Pseude Screw",
         "category": "OTHER",
         "parameters": {
@@ -977,32 +977,32 @@
         "sprite": "spr_ITEM_Pseudo_Screw_0",
         "sprite_palette": [ 22, 16, 32 ]
     },
-    {
-        "id": "charge_flare",
+    "charge_flare": {
+        "id": 91,
         "name": "Charge Flare",
         "category": "OTHER",
         "parameters": {},
         "sprite": "spr_ITEM_Charge_Flare_0",
         "sprite_palette": [ 22, 16, 32 ]
     },
-    {
-        "id": "pickup_magnet",
+    "pickup_magnet": {
+        "id": 92,
         "name": "Pickup Magnet",
         "category": "OTHER",
         "parameters": {},
         "sprite": "spr_ITEM_Pickup_Magnet_0",
         "sprite_palette": [ 22, 16, 32 ]
     },
-    {
-        "id": "speed_gear",
+    "speed_gear": {
+        "id": 93,
         "name": "Speed Gear",
         "category": "OTHER",
         "parameters": {},
         "sprite": "spr_ITEM_Speed_Gear_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "advanced_driver",
+    "advanced_driver": {
+        "id": 94,
         "name": "Advanced Driver",
         "category": "OTHER",
         "parameters": {
@@ -1011,40 +1011,40 @@
         "sprite": "spr_ITEM_Advanced_Driver_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "stamina_tank",
+    "stamina_tank": {
+        "id": 95,
         "name": "Stamina Tank",
         "category": "TANK",
         "parameters": {},
         "sprite": "spr_ITEM_Stamina_Tank_0",
         "sprite_palette": [ 27, 42, 40 ]
     },
-    {
-        "id": "stamina_reactor",
+    "stamina_reactor": {
+        "id": 96,
         "name": "Stamina Reactor",
         "category": "OTHER",
         "parameters": {},
         "sprite": "spr_ITEM_Stamina_Reactor_0",
         "sprite_palette": [ 27, 42, 40 ]
     },
-    {
-        "id": "dash_thrusters",
+    "dash_thrusters": {
+        "id": 97,
         "name": "Dash Thrusters",
         "category": "OTHER",
         "parameters": {},
         "sprite": "spr_ITEM_Dash_Thrusters_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "horizon_jump",
+    "horizon_jump": {
+        "id": 98,
         "name": "Horizon Jump",
         "category": "OTHER",
         "parameters": {},
         "sprite": "spr_ITEM_Horizon_Jump_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "ammo_tank",
+    "ammo_tank": {
+        "id": 99,
         "name": "Ammo Tank",
         "category": "TANK",
         "parameters": {
@@ -1053,88 +1053,88 @@
         "sprite": "spr_ITEM_Ammo_Tank_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "place_impassable",
+    "place_impassable": {
+        "id": 100,
         "name": "Impossible to Collect",
         "category": "PLACEHOLDER",
         "parameters": {},
         "sprite": "spr_ITEM_Other_3_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "place_major",
+    "place_major": {
+        "id": 101,
         "name": "Major Item",
         "category": "PLACEHOLDER",
         "parameters": {},
         "sprite": "spr_ITEM_Other_3_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "place_minor",
+    "place_minor": {
+        "id": 102,
         "name": "Minor Item",
         "category": "PLACEHOLDER",
         "parameters": {},
         "sprite": "spr_ITEM_Other_3_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "place_hazard_run",
+    "place_hazard_run": {
+        "id": 103,
         "name": "Hazard Run Reward",
         "category": "PLACEHOLDER",
         "parameters": {},
         "sprite": "spr_ITEM_Other_3_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "place_core",
+    "place_core": {
+        "id": 104,
         "name": "Any Core",
         "category": "PLACEHOLDER",
         "parameters": {},
         "sprite": "spr_ITEM_Core_0",
         "sprite_palette": [ 26, 64, 40 ]
     },
-    {
-        "id", "place_missiles",
+    "place_missiles": {
+        "id": 105,
         "name": "Missile or Tank",
         "category": "PLACEHOLDER",
         "parameters": {},
         "sprite": "spr_ITEM_Missile_Launcher_0",
         "sprite_palette": [ 26, 64, 40 ]
     },
-    {
-        "id": "place_super_missiles",
+    "place_super_missiles": {
+        "id": 106,
         "name": "Super Missile or Tank",
         "category": "PLACEHOLDER",
         "parameters": {},
         "sprite": "spr_ITEM_Missile_Class_Super_Upgrade_0",
         "sprite_palette": [ 26, 64, 40 ]
     },
-    {
-        "id": "place_hyper_missiles",
+    "place_hyper_missiles": {
+        "id": 107,
         "name": "Hyper Missile or Tank",
         "category": "PLACEHOLDER",
         "parameters": {},
         "sprite": "spr_ITEM_Missile_Class_Hyper_Upgrade_0",
         "sprite_palette": [ 26, 64, 40 ]
     },
-    {
-        "id": "place_power_bombs",
+    "place_power_bombs": {
+        "id": 108,
         "name": "Power Bombs or Tank",
         "category": "PLACEHOLDER",
         "parameters": {},
         "sprite": "spr_ITEM_Power_Bomb_Launcher_0",
         "sprite_palette": [ 26, 64, 40 ]
     },
-    {
-        "id": "unknown",
-        "name": "Unknown",
-        "category": "OTHER",
+    "place_unknown": {
+        "id": 109,
+        "name": "Unknown Placeholder",
+        "category": "PLACEHOLDER",
         "parameters": {},
         "sprite": "spr_ITEM_Other_3_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "annihilator_beam",
+    "annihilator_beam": {
+        "id": 110,
         "name": "Annihilator Beam",
         "category": "BEAM",
         "parameters": {
@@ -1145,8 +1145,8 @@
         "sprite": "spr_ITEM_Beam_Annihilator_0",
         "sprite_palette": [ 22, 16, 52 ]
     },
-    {
-        "id": "nova_beam",
+    "nova_beam": {
+        "id": 111,
         "name": "Nova Beam",
         "category": "BEAM",
         "parameters": {
@@ -1157,8 +1157,8 @@
         "sprite": "spr_ITEM_Beam_Nova_0",
         "sprite_palette": [ 22, 16, 52 ]
     },
-    {
-        "id": "hyper_beam",
+    "hyper_beam": {
+        "id": 112,
         "name": "Hyper Beam",
         "category": "BEAM",
         "parameters": {
@@ -1169,8 +1169,8 @@
         "sprite": "spr_ITEM_Beam_Hyper_0",
         "sprite_palette": [ 22, 16, 52 ]
     },
-    {
-        "id": "phazon_beam",
+    "phazon_beam": {
+        "id": 113,
         "name": "Phazon Beam",
         "category": "BEAM",
         "parameters": {
@@ -1181,8 +1181,8 @@
         "sprite": "spr_ITEM_Beam_Phazon_0",
         "sprite_palette": [ 22, 16, 52 ]
     },
-    {
-        "id": "beam_ammo_tank",
+    "beam_ammo_tank": {
+        "id": 114,
         "name": "Beam Ammo Tank",
         "category": "TANK",
         "parameters": {
@@ -1191,8 +1191,8 @@
         "sprite": "spr_ITEM_Beam_Ammo_Tank_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "cryo_suit",
+    "cryo_suit": {
+        "id": 115,
         "name": "Cryo Suit",
         "category": "SUIT",
         "parameters": {
@@ -1206,8 +1206,8 @@
         "sprite": "spr_ITEM_Suit_Type_1_0",
         "sprite_palette": [ 16, 22, 33 ]
     },
-    {
-        "id": "dark_suit",
+    "dark_suit": {
+        "id": 116,
         "name": "Dark Suit",
         "category": "SUIT",
         "parameters": {
@@ -1221,8 +1221,8 @@
         "sprite": "spr_ITEM_Suit_Type_1_0",
         "sprite_palette": [ 16, 22, 33 ]
     },
-    {
-        "id": "light_suit",
+    "light_suit": {
+        "id": 117,
         "name": "Light Suit",
         "category": "SUIT",
         "parameters": {
@@ -1236,8 +1236,8 @@
         "sprite": "spr_ITEM_Suit_Type_1_0",
         "sprite_palette": [ 16, 22, 33 ]
     },
-    {
-        "id": "ped_suit",
+    "ped_suit": {
+        "id": 118,
         "name": "Ped Suit",
         "category": "SUIT",
         "parameters": {
@@ -1251,8 +1251,8 @@
         "sprite": "spr_ITEM_Suit_Type_1_0",
         "sprite_palette": [ 16, 22, 33 ]
     },
-    {
-        "id": "hazard_shield",
+    "hazard_shield": {
+        "id": 119,
         "name": "Hazard Shield",
         "category": "OTHER",
         "parameters": {
@@ -1263,8 +1263,8 @@
         "sprite": "spr_ITEM_Hazard_Shield_0",
         "sprite_palette": [ 21, 17, 40 ]
     },
-    {
-        "id": "metroid_suit",
+    "metroid_suit": {
+        "id": 120,
         "name": "Metroid Suit",
         "category": "SUIT",
         "parameters": {
@@ -1278,8 +1278,8 @@
         "sprite": "spr_ITEM_Suit_Type_1_0",
         "sprite_palette": [ 16, 22, 33 ]
     },
-    {
-        "id": "acid_suit",
+    "acid_suit": {
+        "id": 121,
         "name": "Acid Suit",
         "category": "SUIT",
         "parameters": {
@@ -1293,8 +1293,8 @@
         "sprite": "spr_ITEM_Suit_Type_1_0",
         "sprite_palette": [ 16, 22, 33 ]
     },
-    {
-        "id": "verdure_suit",
+    "verdure_suit": {
+        "id": 122,
         "name": "Verdure Suit",
         "category": "SUIT",
         "parameters": {
@@ -1308,8 +1308,8 @@
         "sprite": "spr_ITEM_Suit_Type_1_0",
         "sprite_palette": [ 16, 22, 33 ]
     },
-    {
-        "id": "custom_suit_1",
+    "custom_suit_1": {
+        "id": 123,
         "name": "Custom Suit 1",
         "category": "SUIT",
         "parameters": {
@@ -1323,8 +1323,8 @@
         "sprite": "spr_ITEM_Suit_Type_1_0",
         "sprite_palette": [ 16, 22, 33 ]
     },
-    {
-        "id": "custom_suit_2",
+    "custom_suit_2": {
+        "id": 124,
         "name": "Custom Suit 2",
         "category": "SUIT",
         "parameters": {
@@ -1338,8 +1338,8 @@
         "sprite": "spr_ITEM_Suit_Type_1_0",
         "sprite_palette": [ 16, 22, 33 ]
     },
-    {
-        "id": "custom_suit_3",
+    "custom_suit_3": {
+        "id": 125,
         "name": "Custom Suit 3",
         "category": "SUIT",
         "parameters": {
@@ -1353,8 +1353,8 @@
         "sprite": "spr_ITEM_Suit_Type_1_0",
         "sprite_palette": [ 16, 22, 33 ]
     },
-    {
-        "id": "spread_beam",
+    "spread_beam": {
+        "id": 126,
         "name": "Spread Beam",
         "category": "BEAM",
         "parameters": {
@@ -1364,8 +1364,8 @@
         "sprite": "spr_ITEM_Beam_Spread_0",
         "sprite_palette": [ 22, 16, 32 ]
     },
-    {
-        "id": "oxygen_tank",
+    "oxygen_tank": {
+        "id": 127,
         "name": "Oxygen Tank",
         "category": "TANK",
         "parameters": {
@@ -1374,48 +1374,48 @@
         "sprite": "spr_ITEM_Oxygen_Tank_0",
         "sprite_palette": [ 17, 33, 40 ]
     },
-    {
-        "id": "oxygen_synthesizer",
+    "oxygen_synthesizer": {
+        "id": 128,
         "name": "Oxygen Synthesizer",
         "category": "OTHER",
         "parameters": {},
         "sprite": "spr_ITEM_Oxygen_Synthesizer_0",
         "sprite_palette": [ 17, 33, 40 ]
     },
-    {
-        "id": "translator_violet",
+    "translator_violet": {
+        "id": 129,
         "name": "Translator Module: Violet",
         "category": "VISOR",
         "parameters": {},
         "sprite": "spr_ITEM_Translator_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "translator_amber",
+    "translator_amber": {
+        "id": 130,
         "name": "Translator Module: Amber",
         "category": "VISOR",
         "parameters": {},
         "sprite": "spr_ITEM_Translator_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "translator_emerald",
+    "translator_emerald": {
+        "id": 131,
         "name": "Translator Module: Emerald",
         "category": "VISOR",
         "parameters": {},
         "sprite": "spr_ITEM_Translator_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "translator_cobalt",
+    "translator_cobalt": {
+        "id": 132,
         "name": "Translator Module: Cobalt",
         "category": "VISOR",
         "parameters": {},
         "sprite": "spr_ITEM_Translator_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "grand_bomb",
+    "grand_bomb": {
+        "id": 133,
         "name": "Grand Bomb",
         "category": "BOMB",
         "parameters": {
@@ -1424,8 +1424,8 @@
         "sprite": "spr_ITEM_Grand_Bomb_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "chozo_spirit",
+    "chozo_spirit": {
+        "id": 134,
         "name": "Chozo Spirit",
         "category": "OTHER",
         "parameters": {
@@ -1436,8 +1436,8 @@
         "sprite": "spr_ITEM_Chozo_Spirit_0",
         "sprite_palette": [ 22, 16, 32 ]
     },
-    {
-        "id": "hyper_missile_tank",
+    "hyper_missile_tank": {
+        "id": 135,
         "name": "Hyper Missile Tank",
         "category": "TANK",
         "parameters": {
@@ -1446,8 +1446,8 @@
         "sprite": "spr_ITEM_Hyper_Missile_Tank_0",
         "sprite_palette": [ 28, 48, 44 ]
     },
-    {
-        "id": "seeker_missiles",
+    "seeker_missiles": {
+        "id": 136,
         "name": "Seeker Missiles",
         "category": "MISSILE",
         "parameters": {
@@ -1458,8 +1458,8 @@
         "sprite": "spr_ITEM_Missile_Seeker_Upgrade_0",
         "sprite_palette": [ 20, 48, 40 ]
     },
-    {
-        "id": "crystal_flash",
+    "crystal_flash": {
+        "id": 137,
         "name": "Crystal Flash",
         "category": "OTHER",
         "parameters": {
@@ -1471,24 +1471,24 @@
         "sprite": "spr_ITEM_Crystal_Flash_0",
         "sprite_palette": [ 22, 16, 32 ]
     },
-    {
-        "id": "scan_visor",
+    "scan_visor": {
+        "id": 138,
         "name": "Scan Visor",
         "category": "VISOR",
         "parameters": {},
         "sprite": "spr_ITEM_Visor_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "combat_visor",
+    "combat_visor": {
+        "id": 139,
         "name": "Combat Visor",
         "category": "VISOR",
         "parameters": {},
         "sprite": "spr_ITEM_Visor_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "super_charge",
+    "super_charge": {
+        "id": 140,
         "name": "Super Charge",
         "category": "BEAM_UPGRADE",
         "parameters": {
@@ -1498,8 +1498,8 @@
         "sprite": "spr_ITEM_Beam_Charge_0",
         "sprite_palette": [ 16, 40, 48 ]
     },
-    {
-        "id": "diamond_dust",
+    "diamond_dust": {
+        "id": 141,
         "name": "Diamond Dust",
         "category": "BEAM_UPGRADE",
         "parameters": {
@@ -1510,8 +1510,8 @@
         "sprite": "spr_ITEM_Beam_Amp_1",
         "sprite_palette": [ 16, 18, 48 ]
     },
-    {
-        "id": "ice_spreader",
+    "ice_spreader": {
+        "id": 142,
         "name": "Ice Spreader",
         "category": "BEAM_UPGRADE",
         "parameters": {
@@ -1522,8 +1522,8 @@
         "sprite": "spr_ITEM_Beam_Amp_1",
         "sprite_palette": [ 16, 18, 48 ]
     },
-    {
-        "id": "asteroid_belt",
+    "asteroid_belt": {
+        "id": 143,
         "name": "Asteroid Belt",
         "category": "Beam Upgrade",
         "parameters": {
@@ -1534,8 +1534,8 @@
         "sprite": "spr_ITEM_Beam_Amp_1",
         "sprite_palette": [ 16, 18, 48 ]
     },
-    {
-        "id": "stardust_shower",
+    "stardust_shower": {
+        "id": 144,
         "name": "Stardust Shower",
         "category": "BEAM_UPGRADE",
         "parameters": {
@@ -1546,8 +1546,8 @@
         "sprite": "spr_ITEM_Beam_Amp_1",
         "sprite_palette": [ 16, 18, 48 ]
     },
-    {
-        "id": "emerald_splash",
+    "emerald_splash": {
+        "id": 145,
         "name": "Emerald Splash",
         "category": "BEAM_UPGRADE",
         "parameters": {
@@ -1558,8 +1558,8 @@
         "sprite": "spr_ITEM_Beam_Amp_1",
         "sprite_palette": [ 16, 18, 48 ]
     },
-    {
-        "id": "voltbuster",
+    "voltbuster": {
+        "id": 146,
         "name": "Voltbuster",
         "category": "BEAM_UPGRADE",
         "parameters": {
@@ -1570,8 +1570,8 @@
         "sprite": "spr_ITEM_Beam_Amp_1",
         "sprite_palette": [ 16, 18, 48 ]
     },
-    {
-        "id": "flamethrower",
+    "flamethrower": {
+        "id": 147,
         "name": "Flamethrower",
         "category": "BEAM_UPGRADE",
         "parameters": {
@@ -1582,8 +1582,8 @@
         "sprite": "spr_ITEM_Beam_Amp_1",
         "sprite_palette": [ 16, 18, 48 ]
     },
-    {
-        "id": "sunburst",
+    "sunburst": {
+        "id": 148,
         "name": "Sunburst",
         "category": "BEAM_UPGRADE",
         "parameters": {
@@ -1595,8 +1595,8 @@
         "sprite": "spr_ITEM_Beam_Amp_1",
         "sprite_palette": [ 16, 18, 48 ]
     },
-    {
-        "id": "darkburst",
+    "darkburst": {
+        "id": 149,
         "name": "Darkburst",
         "category": "BEAM_UPGRADE",
         "parameters": {
@@ -1608,8 +1608,8 @@
         "sprite": "spr_ITEM_Beam_Amp_1",
         "sprite_palette": [ 16, 18, 48 ]
     },
-    {
-        "id": "sonic_boom",
+    "sonic_boom": {
+        "id": 150,
         "name": "Sonic Boom",
         "category": "BEAM_UPGRADE",
         "parameters": {
@@ -1621,64 +1621,64 @@
         "sprite": "spr_ITEM_Beam_Amp_1",
         "sprite_palette": [ 16, 18, 48 ]
     },
-    {
-        "id": "chozo_artifact",
+    "chozo_artifact": {
+        "id": 151,
         "name": "Chozo Artifact",
         "category": "OTHER",
         "parameters": {},
         "sprite": "spr_ITEM_Djinni_Venus_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "dark_temple_key",
+    "dark_temple_key": {
+        "id": 152,
         "name": "Dark Temple Key",
         "category": "OTHER",
         "parameters": {},
         "sprite": "spr_ITEM_Beam_Amp_1",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "sky_temple_key",
+    "sky_temple_key": {
+        "id": 153,
         "name": "Sky Temple Key",
         "category": "OTHER",
         "parameters": {},
         "sprite": "spr_ITEM_Beam_Amp_1",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "energy_cell",
+    "energy_cell": {
+        "id": 154,
         "name": "Energy Cell",
         "category": "OTHER",
         "parameters": {},
         "sprite": "spr_ITEM_Beam_Amp_1",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "x_ray_scope",
+    "x_ray_scope": {
+        "id": 155,
         "name": "X-Ray Scope",
         "category": "VISOR",
         "parameters": {},
         "sprite": "spr_ITEM_Visor_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "dark_visor",
+    "dark_visor": {
+        "id": 156,
         "name": "Dark Visor",
         "category": "VISOR",
         "parameters": {},
         "sprite": "spr_ITEM_Visor_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "echo_visor",
+    "echo_visor": {
+        "id": 157,
         "name": "Echo Visor",
         "category": "VISOR",
         "parameters": {},
         "sprite": "spr_ITEM_Visor_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
-    {
-        "id": "screw_shield",
+    "screw_shield": {
+        "id": 158,
         "name": "Screw Shield",
         "parameters": {
             "enable_horizonjump": false,
@@ -1689,4 +1689,4 @@
         "sprite": "spr_ITEM_Screw_Shield_0",
         "sprite_palette": [ 22, 40, 26 ]
     }
-]
+}
