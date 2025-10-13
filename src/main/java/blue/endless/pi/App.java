@@ -20,8 +20,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
@@ -59,6 +62,10 @@ public class App {
 	
 	public static void main(String... args) {
 		Tileset.init();
+		Optional<ObjectElement> itemsJson = Assets.readObject("items/items.json");
+		if (itemsJson.isPresent()) {
+			ItemType.load(itemsJson.get());
+		}
 		
 		Path worldFile = Path.of("test.mp_world");
 		
@@ -94,7 +101,7 @@ public class App {
 			DeflaterOutputStream dout = new DeflaterOutputStream(new BufferedOutputStream(out));
 			
 			ObjectElement worldMetaObj = Jankson.readJsonObject(new ByteArrayInputStream(files.get(0)));
-			System.out.println(worldMetaObj.toString());
+			//System.out.println(worldMetaObj.toString());
 			worldMetaObj.put("description", PrimitiveElement.of("THIS IS A MODIFIED WORLD\nUSE WITH CARE"));
 			worldMetaObj.put("name_full", PrimitiveElement.of("EUGENIA - DEMO -69420"));
 			
@@ -374,12 +381,12 @@ public class App {
 				}
 				case "ITEM_DATA" -> {
 					if (kvp.getValue() instanceof ArrayElement arr) {
-						EnumSet<ItemType> itemsPresent = EnumSet.noneOf(ItemType.class);
+						Set<ItemType> itemsPresent = new HashSet<>();
 						int i = 0;
 						for(ValueElement val : arr) {
-							ItemType item = ItemType.byId(i);
+							ItemType item = ItemType.of(i);
 							//if (item == Item.INVALID) System.out.println(i+": "+val);
-							itemsPresent.add(ItemType.byId(i));
+							itemsPresent.add(ItemType.of(i));
 							i++;
 						}
 						

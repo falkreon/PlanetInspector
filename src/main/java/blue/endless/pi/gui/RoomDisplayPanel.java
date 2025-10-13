@@ -27,8 +27,8 @@ public class RoomDisplayPanel extends JPanel {
 	private final ArrayList<MapObjectInfo.EnemyInfo> enemies = new ArrayList<>();
 	
 	private float scale = 1.0f;
-	private final int SCREEN_WIDTH = 20 * 16;
-	private final int SCREEN_HEIGHT = 15 * 16;
+	// final int SCREEN_WIDTH = 20 * 16;
+	//private final int SCREEN_HEIGHT = 15 * 16;
 	
 	public RoomDisplayPanel(WorldInfo world, int roomId) {
 		this.room = world.rooms().get(roomId);
@@ -50,7 +50,7 @@ public class RoomDisplayPanel extends JPanel {
 			for(ValueElement val : objectsArr) {
 				if (val instanceof ObjectElement objObj) {
 					if (ObjectType.of(objObj) == ObjectType.ITEM) {
-						items.add(new MapObjectInfo.ItemInfo(objObj));
+						items.add(new MapObjectInfo.ItemInfo(s,                     objObj));
 					}
 				}
 			}
@@ -58,7 +58,7 @@ public class RoomDisplayPanel extends JPanel {
 			ArrayElement enemiesArr = s.json().getArray("ENEMIES");
 			for(ValueElement val : enemiesArr) {
 				if (val instanceof ObjectElement enemyObj) {
-					enemies.add(new MapObjectInfo.EnemyInfo(enemyObj));
+					enemies.add(new MapObjectInfo.EnemyInfo(s, enemyObj));
 				}
 			}
 		}
@@ -88,24 +88,27 @@ public class RoomDisplayPanel extends JPanel {
 			}
 			
 			if (tileImage != null) {
-				g.drawImage(tileImage, SCREEN_WIDTH * (pos.x() - offset.x()), SCREEN_HEIGHT * (pos.y() - offset.y()), null);
+				g.drawImage(tileImage, ScreenInfo.PIXEL_WIDTH * (pos.x() - offset.x()), ScreenInfo.PIXEL_HEIGHT * (pos.y() - offset.y()), null);
 			}
 		}
 		
 		for(MapObjectInfo.ItemInfo item : items) {
-			Optional<BufferedImage> maybeImage = Assets.getCachedImage("items/"+item.item().spriteResource()+".png");
-			if (maybeImage.isPresent()) {
-				BufferedImage image = maybeImage.get();
+			BufferedImage image = item.item().getSprite();
+			//Optional<BufferedImage> maybeImage = Assets.getCachedImage("items/"+item.item().spriteResource()+".png");
+			//if (maybeImage.isPresent()) {
+				//BufferedImage image = maybeImage.get();
 				
 				// Draw the item
 				int halfWidth = image.getWidth() / 2;
 				int halfHeight = image.getHeight() / 2;
-				g.drawImage(image, item.x() - halfWidth, item.y() - halfHeight, null);
+				int baseX = item.roomX() - (offset.x() * ScreenInfo.PIXEL_WIDTH);
+				int baseY = item.roomY() - (offset.y() * ScreenInfo.PIXEL_HEIGHT);
+				g.drawImage(image, baseX - halfWidth, baseY - halfHeight, null);
 				
 				// Draw a selection box around it
 				g.setColor(Color.WHITE);
-				g.drawRect(item.x() - halfWidth - 1, item.y() - halfHeight - 1, image.getWidth() + 2, image.getHeight() + 2);
-			}
+				g.drawRect(baseX - halfWidth - 1, baseY - halfHeight - 1, image.getWidth() + 2, image.getHeight() + 2);
+			//}
 		}
 	}
 }

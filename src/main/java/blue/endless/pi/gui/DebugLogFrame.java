@@ -95,9 +95,9 @@ public class DebugLogFrame extends JFrame implements ListSelectionListener {
 				RoomInfo room = null;
 				if (roomId < world.rooms().size()) room = world.rooms().get(roomId);
 				if (room == null) {
-					placedItems.addElement(ItemType.byId(oldVal).toString().toLowerCase()+" -> "+ItemType.byId(newVal).toString().toLowerCase()+" in Room #"+roomId+" (unknown)");
+					placedItems.addElement(ItemType.of(oldVal).toString().toLowerCase()+" -> "+ItemType.of(newVal).toString().toLowerCase()+" in Room #"+roomId+" (unknown)");
 				} else {
-					placedItems.addElement(ItemType.byId(oldVal).toString().toLowerCase()+" -> "+ItemType.byId(newVal).toString().toLowerCase()+" in Room #"+roomId+", \""+room.name()+"\"");
+					placedItems.addElement(ItemType.of(oldVal).toString().toLowerCase()+" -> "+ItemType.of(newVal).toString().toLowerCase()+" in Room #"+roomId+", \""+room.name()+"\"");
 				}
 			}
 			right.setModel(placedItems);
@@ -116,7 +116,7 @@ public class DebugLogFrame extends JFrame implements ListSelectionListener {
 		@Override
 		public String getElementAt(int index) {
 			int itemId = items.getPrimitive(index).asInt().orElse(-1);
-			return ItemType.byId(itemId).toString().toLowerCase();
+			return ItemType.of(itemId).toString().toLowerCase();
 		}
 
 		@Override

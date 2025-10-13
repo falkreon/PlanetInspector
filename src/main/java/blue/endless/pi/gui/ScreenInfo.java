@@ -23,6 +23,11 @@ public class ScreenInfo {
 	private ObjectElement json;
 	
 	private static final int EMPTY_TILE = 0;
+
+	public static final int TILE_WIDTH = 20;
+	public static final int TILE_HEIGHT = 15;
+	public static final int PIXEL_WIDTH = TILE_WIDTH * 16;
+	public static final int PIXEL_HEIGHT = TILE_HEIGHT * 16;
 	
 	public ScreenInfo(ObjectElement json) {
 		this.json = json;

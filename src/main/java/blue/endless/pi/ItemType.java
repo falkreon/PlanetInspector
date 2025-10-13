@@ -1,6 +1,24 @@
 package blue.endless.pi;
 
-public enum ItemType {
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+import org.jetbrains.annotations.Nullable;
+
+import blue.endless.jankson.api.document.ArrayElement;
+import blue.endless.jankson.api.document.KeyValuePairElement;
+import blue.endless.jankson.api.document.ObjectElement;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+
+public class ItemType {
+	public static final Map<String, ItemType> byName = new HashMap<>();
+	private static final Int2ObjectOpenHashMap<ItemType> values = new Int2ObjectOpenHashMap<ItemType>();
+	//public static final ArrayList<ItemType> values = new ArrayList<>();
+	
+	/*
 	UNKNOWN         (  0, ItemCategory.PICKUP,       "spr_ITEM_Beam_Amp_1",      new int[] {  0, 16, 32 }),
 	LONG_BEAM       (  1, ItemCategory.BEAM_UPGRADE, "spr_ITEM_Beam_Long_0",     new int[] { 22, 26, 40 }),
 	CHARGE_BEAM     (  2, ItemCategory.BEAM_UPGRADE, "spr_ITEM_Beam_Charge_0",   new int[] { 22, 16, 32 }),
@@ -178,12 +196,49 @@ public enum ItemType {
 	
 	INVALID(-1, ItemCategory.OTHER)
 	;
+	*/
+	public static void load(ObjectElement obj) {
+		for(KeyValuePairElement kvp : obj) {
+			if (kvp.getValue() instanceof ObjectElement ob2) {
+				String id = kvp.getKey();
+				ItemType item = new ItemType(ob2);
+				if (item.id() == -1 || item.type() == null) {
+					System.out.println("Error loading '"+id+"': "+ob2);
+					continue;
+				}
+				
+				byName.put(id, item);
+				values.put(item.id(), item);
+			}
+		}
+	}
 	
 	private final int id;
 	private final ItemCategory type;
 	private final String spriteResource;
 	private final int[] palette;
+	private final ObjectElement defaultParams;
 	
+	public ItemType(ObjectElement obj) {
+		Optional<String> category = obj.getPrimitive("category").asString();
+		if (category.isEmpty()) {
+			this.id = -1;
+			this.type = ItemCategory.OTHER;
+		} else {
+			this.id = obj.getPrimitive("id").asInt().orElse(-1);
+			this.type = ItemCategory.valueOf(category.get());
+		}
+		this.spriteResource = obj.getPrimitive("sprite").asString().orElse("");
+		ArrayElement paletteArr = obj.getArray("sprite_palette");
+		palette = new int[3];
+		for(int i=0; i<3; i++) {
+			if (i >= paletteArr.size()) break;
+			palette[i] = paletteArr.getPrimitive(i).asInt().orElse(0);
+		}
+		defaultParams = obj.getObject("parameters");
+	}
+	
+	/*
 	ItemType(int id, ItemCategory type) {
 		this.id = id;
 		this.type = type;
@@ -203,18 +258,24 @@ public enum ItemType {
 		this.type = type;
 		this.spriteResource = spriteResource;
 		this.palette = palette;
-	}
+	}*/
 	
 	public int id() { return this.id; }
 	public ItemCategory type() { return this.type; }
 	public String spriteResource() { return this.spriteResource; }
-	public int[] palette() { return this.palette; }
-	
-	public static ItemType byId(int id) {
-		for(ItemType item : values()) {
-			if (item.id == id) return item;
+	public BufferedImage getSprite() {
+		Optional<BufferedImage> opt = Assets.getPalettedImage("items/"+this.spriteResource+".png", this.palette);
+		if (opt.isEmpty()) {
+			System.out.println("Error getting sprite for item "+this.id);
+			return null;
+		} else {
+			return opt.get();
 		}
-		
-		return INVALID;
+	}
+	public int[] palette() { return this.palette; }
+	public ObjectElement defaultParams() { return this.defaultParams; }
+	
+	public static @Nullable ItemType of(int id) {
+		return values.getOrDefault(id, null);
 	}
 }

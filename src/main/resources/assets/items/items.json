@@ -3,7 +3,7 @@
         "id": 0,
         "name": "Unknown",
         "category": "OTHER",
-        "parameters": {}
+        "parameters": {},
         "sprite": "spr_ITEM_Beam_Amp_1",
         "sprite_palette": [ 0, 16, 32 ]
     },
@@ -251,6 +251,7 @@
     "hammer_ball": {
         "id": 22,
         "name": "Hammer Ball",
+        "category": "BALL",
         "parameters": {
             "speed": 5.0,                // Downward movement speed
             "break_bomb_blocks": false,  // Break bomb blocks?
@@ -396,6 +397,7 @@
     "phantom_core": {
         "id": 36,
         "name": "Phantom Core",
+        "category": "CORE",
         "parameters": {
             "refresh_timer": 15.0 // How many frames of cooldown after attacking or being hit
         },
@@ -405,6 +407,7 @@
     "sensor_core": {
         "id": 37,
         "name": "Sensor Core",
+        "category": "CORE",
         "parameters": {
             "disable_map": false // Should disable the map while using this item?
         },
@@ -426,6 +429,7 @@
         "name": "Core Capacitor",
         "category": "CORE_UPGRADE",
         "parameters": {},
+        "sprite": "spr_ITEM_Core_Capacitor_0",
         "sprite_palette": [ 16, 34, 39 ]
     },
     "paralyzer_beam": {
@@ -922,7 +926,7 @@
     "beam_fusion": {
         "id": 85,
         "name": "Beam Fusion",
-        "catgegory": "BEAM_UPGRADE",
+        "category": "BEAM_UPGRADE",
         "parameters": {},
         "sprite": "spr_ITEM_Beam_Fusion_0",
         "sprite_palette": [ 0, 32, 48 ]
@@ -1525,7 +1529,7 @@
     "asteroid_belt": {
         "id": 143,
         "name": "Asteroid Belt",
-        "category": "Beam Upgrade",
+        "category": "BEAM_UPGRADE",
         "parameters": {
             "damage_multiplier": 1.0,
             "ammo_use": 10.0,
@@ -1680,6 +1684,7 @@
     "screw_shield": {
         "id": 158,
         "name": "Screw Shield",
+        "category": "OTHER",
         "parameters": {
             "enable_horizonjump": false,
             "break_bomb_blocks": false,

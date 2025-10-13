@@ -1,8 +1,9 @@
 package blue.endless.pi;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 
-public class Palette {
+public final class Palette {
 	private static final Color[] COLORS = {
 		new Color(0x34, 0x34, 0x34), new Color(0x25, 0x18, 0x8c), new Color(0x00, 0x00, 0xaa), new Color(0x43, 0x00, 0x9d),
 		new Color(0x8f, 0x00, 0x76), new Color(0xa8, 0x00, 0x11), new Color(0xa4, 0x00, 0x00), new Color(0x7d, 0x08, 0x00),
@@ -35,5 +36,31 @@ public class Palette {
 		}
 		System.out.println("Invalid ID: "+id);
 		return Color.BLACK;
+	}
+	
+	/**
+	 * Colorizes this image in-place. This will ONLY use thresholds on the red value to decide on the color!
+	 * @param image The image to colorize. Note: The image will be modified!
+	 * @param palette The palette entry to use for colors.
+	 */
+	public static final void colorize(BufferedImage image, int[] palette) {
+		for(int y=0; y<image.getHeight(); y++) {
+			for(int x=0; x<image.getWidth(); x++) {
+				int paletteIndex = palette[0];
+				int rgb = image.getRGB(x, y);
+				int r = (rgb >> 16) & 0xFF;
+				if (r >= 0xe0) {
+					paletteIndex = palette[2];
+				} else if (r >= 0x96) {
+					paletteIndex = palette[1];
+				} else if (r >= 0x4b) {
+					paletteIndex = palette[0];
+				} else {
+					paletteIndex = 65;
+				}
+				
+				image.setRGB(x, y, COLORS[paletteIndex].getRGB());
+			}
+		}
 	}
 }
