@@ -49,6 +49,7 @@ public class ItemTile extends JButton {
 	public void setItem(ItemType item) {
 		this.item = item;
 		this.itemImage = item.getSprite();
+		this.setToolTipText(item.name());
 		this.repaint();
 	}
 	
@@ -57,7 +58,8 @@ public class ItemTile extends JButton {
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		if (itemImage != null) {
-			g.drawImage(itemImage, 0, 0, itemImage.getWidth()*scale, itemImage.getHeight()*scale, 0, 0, itemImage.getWidth(), itemImage.getHeight(), null);
+			int diff = (this.getWidth() - (itemImage.getWidth() * scale)) / 2;
+			g.drawImage(itemImage, diff, 0, itemImage.getWidth()*scale + diff, itemImage.getHeight()*scale, 0, 0, itemImage.getWidth(), itemImage.getHeight(), null);
 		}
 		if (selected) {
 			g.setColor(Color.GREEN);
@@ -65,6 +67,5 @@ public class ItemTile extends JButton {
 			g.drawRect(0, 0, this.getWidth(), this.getHeight());
 		}
 	}
-	
 	
 }

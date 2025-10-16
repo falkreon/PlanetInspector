@@ -8,28 +8,17 @@ import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.OptionalDouble;
 
-import javax.swing.Box;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import org.jetbrains.annotations.Nullable;
 
 import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
-import blue.endless.jankson.impl.document.BooleanElementImpl;
-import blue.endless.jankson.impl.document.DoubleElementImpl;
-import blue.endless.jankson.impl.document.LongElementImpl;
-import blue.endless.jankson.impl.document.StringElementImpl;
 import blue.endless.pi.SchemaType;
 
 public class PropertyEditor extends JPanel {

@@ -1,15 +1,21 @@
 package blue.endless.pi.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.util.ArrayList;
 
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
 import blue.endless.jankson.api.document.ObjectElement;
+import blue.endless.pi.ItemCategory;
+import blue.endless.pi.ItemType;
+import blue.endless.pi.gui.layout.CardLayout;
+import blue.endless.pi.gui.layout.LinearLayout;
 
 public class RoomConfiguratorFrame extends JFrame {
 	private final WorldInfo world;
@@ -26,6 +32,8 @@ public class RoomConfiguratorFrame extends JFrame {
 		
 		roomDisplay = new RoomDisplayPanel(world, roomId);
 		this.getContentPane().setLayout(new BorderLayout());
+		JScrollPane roomScroll = new JScrollPane(roomDisplay, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		roomScroll.setMinimumSize(new Dimension(400,400));
 		
 		
 		//this.getContentPane().add(new JScrollPane(roomDisplay, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
@@ -44,20 +52,42 @@ public class RoomConfiguratorFrame extends JFrame {
 				break;
 			}
 		}*/
+		ItemSelectorPanel rightPanel = new ItemSelectorPanel();
+		/*
 		JPanel rightPanel = new JPanel();
-		rightPanel.setMaximumSize(new Dimension(400, -1));
+		rightPanel.setMaximumSize(new Dimension(300, -1));
 		rightPanel.setMinimumSize(new Dimension(100, -1));
-		rightPanel.setPreferredSize(new Dimension(500, -1));
-		CardLayout layout = new CardLayout();
+		rightPanel.setPreferredSize(new Dimension(300, -1));
+		LinearLayout layout = new LinearLayout();
 		rightPanel.setLayout(layout);
-		for(int i=0; i<12; i++) {
+		TestCard selectedTile = new TestCard();
+		selectedTile.setPreferredSize(new Dimension(-1, 64));
+		rightPanel.add(selectedTile);
+		JComboBox<ItemCategory> dropdown = new JComboBox<>(ItemCategory.values());
+		//TestCard dropdown = new TestCard();
+		//dropdown.setPreferredSize(new Dimension(-1, 16));
+		rightPanel.add(dropdown);
+		JPanel tilesView = new JPanel();
+		tilesView.setLayout(new CardLayout());
+		for(ItemType type : ItemType.values.values()) {
+			ItemTile tile = new ItemTile();
+			tile.setItem(type);
+			tilesView.add(tile);
+		}
+		//TestCard tilesView = new TestCard();
+		tilesView.setPreferredSize(new Dimension(-1, -1));
+		tilesView.setBackground(Color.DARK_GRAY);
+		rightPanel.add(tilesView);*/
+		
+		
+		/*for(int i=0; i<12; i++) {
 			TestCard t = new TestCard();
 			rightPanel.add(t);
 			//layout.addLayoutComponent("", t);
-		}
+		}*/
 		//this.getContentPane().add(rightPanel, BorderLayout.EAST);
 		
-		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(roomDisplay, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), rightPanel);
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, roomScroll, rightPanel);
 		this.getContentPane().add(splitPane, BorderLayout.CENTER);
 		
 		

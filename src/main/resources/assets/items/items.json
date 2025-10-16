@@ -11,6 +11,8 @@
         "id": 1,
         "name": "Long Beam",
         "category": "BEAM_UPGRADE",
+        "released": true, // Something is considered "released" if it's present as a selectable starter upgrade in Enigma
+        // or otherwise cleared directly by vacant
         "parameters": {
             "damage": 0.0 // How much this increases damage output
         },
@@ -33,6 +35,7 @@
         "id": 3,
         "name": "Ice Beam",
         "category": "BEAM",
+        "released": true,
         "parameters": {
             "cooldown": 0.0,                  // Additional cooldown frames when firing this beam
             "damage": 0.0,                    // How much this increases damage of normal shots
@@ -48,6 +51,7 @@
         "id": 4,
         "name": "Wave Beam",
         "category": "BEAM",
+        "released": true,
         "parameters": {
             "damage": 1.0,          // How much this increases damage of normal shots
             "cooldown": 0.0,        // Additional cooldown frames when firing this beam
@@ -60,6 +64,7 @@
         "id": 5,
         "name": "Spazer Beam",
         "category": "BEAM",
+        "released": true,
         "parameters": {
             "damage": 1.0,           // How much this increases damage of normal shots
             "cooldown": 0.0,         // Additional cooldown frames when firing this beam
@@ -85,6 +90,7 @@
         "id": 7,
         "name": "Energy Tank",
         "category": "TANK",
+        "released": true,
         "parameters": {
             "full_restore": true  // Whether the tank should completely restore energy on pickup
         },
@@ -125,6 +131,7 @@
         "id": 10,
         "name": "Morph Ball",
         "category": "BALL",
+        "released": true,
         "parameters": {
             "bounce": 0.5 // Modifies the amount of bounce when landing
         },
@@ -135,6 +142,7 @@
         "id": 11,
         "name": "Spring Ball",
         "category": "BALL",
+        "released": true,
         "parameters": {
             "height": 3.55 // Modifies jump height
         },
@@ -161,6 +169,7 @@
         "id": 14,
         "name": "Bombs",
         "category": "BOMB",
+        "released": true,
         "parameters": {
             "timer": 56.0,             // Number of frames until bombs explode
             "launch_power": 2.75,      // How high bombs launch while morphed
@@ -174,18 +183,19 @@
     },
     "power_bomb_tank": {
         "id": 15,
-        "name": "Power Bombs",
+        "name": "Power Bomb Tank",
         "category": "TANK",
         "parameters": {
             "capacity": 2.0 // How many power bombs this tank adds
         },
-        "sprite": "spr_ITEM_POWER_BOMB_0",
+        "sprite": "spr_ITEM_Power_Bomb_0",
         "sprite_palette": [ 22, 40, 26 ]
     },
     "missile_tank": {
         "id": 16,
         "name": "Missile Tank",
         "category": "TANK",
+        "released": true,
         "parameters": {
             "capacity": 5.0 // How many missiles this tank adds
         },
@@ -206,6 +216,7 @@
         "id": 18,
         "name": "High Jump",
         "category": "OTHER",
+        "released": true,
         "parameters": {
             "spring_height": 0.8,    // Additional jump power granted while morphed
             "enable_spring": false,  // Grant spring ball whenever high jump is gained?
@@ -218,6 +229,7 @@
         "id": 19,
         "name": "Space Jump",
         "category": "OTHER",
+        "released": true,
         "parameters": {},
         "sprite": "spr_ITEM_Space_Jump_0",
         "sprite_palette": [ 22, 40, 26 ]
@@ -234,6 +246,7 @@
         "id": 21,
         "name": "Screw Attack",
         "category": "OTHER",
+        "released": true,
         "parameters": {
             "enable_horizonjump": false,// Grant the effect of Horizon Jump?
             "break_bomb_blocks": false, // Break bomb blocks with screw attack?
@@ -325,6 +338,7 @@
         "id": 29,
         "name": "Energy Tank Half",
         "category": "TANK",
+        "released": true,
         "parameters": {},
         "sprite": "spr_ITEM_Energy_Half_0",
         "sprite_palette": [ 22, 40, 26 ]
@@ -333,6 +347,7 @@
         "id": 30,
         "name": "Stun Core",
         "category": "CORE",
+        "released": true,
         "parameters": {
             "stun_bosses": true,  // Stun bosses too?
             "stun_mooks": true    // Stun regular enemies?
@@ -344,6 +359,7 @@
         "id": 31,
         "name": "Aegis Core",
         "category": "CORE",
+        "released": true,
         "parameters": {
             "prevent_knockback": true,      // Should prevent knockback?
             "invincibility_multiplier": 1.0 // Extra i-frames after taking damage
@@ -355,6 +371,7 @@
         "id": 32,
         "name": "Crystal Core",
         "category": "CORE",
+        "released": true,
         "parameters": {
             "ammo_to_energy_value": 5.0  // How much energy a single ammo unit grants
         },
@@ -365,6 +382,7 @@
         "id": 33,
         "name": "Magnet Core",
         "category": "CORE",
+        "released": true,
         "parameters": {},
         "sprite": "spr_ITEM_Core_Magnet_0",
         "sprite_palette": [ 16, 40, 48 ]
@@ -373,6 +391,7 @@
         "id": 34,
         "name": "Phazon Core",
         "category": "CORE",
+        "released": true,
         "parameters": {
             "weapon_damage_multiplier": 2.0, // Additional damage multiplier added to weapon
             "minimum_health": 50.0,          // The minimum energy self-damage can reduce you to
@@ -386,6 +405,7 @@
         "id": 35,
         "name": "Chrono Core",
         "category": "CORE",
+        "released": true,
         "parameters": {
             "effect_distance": 90.0, // How far the slowing effect reaches
             "slow_crumbles": false,  // Should the field slow down crumble blocks?
@@ -398,6 +418,7 @@
         "id": 36,
         "name": "Phantom Core",
         "category": "CORE",
+        "released": true,
         "parameters": {
             "refresh_timer": 15.0 // How many frames of cooldown after attacking or being hit
         },
@@ -408,6 +429,7 @@
         "id": 37,
         "name": "Sensor Core",
         "category": "CORE",
+        "released": true,
         "parameters": {
             "disable_map": false // Should disable the map while using this item?
         },
@@ -418,6 +440,7 @@
         "id": 38,
         "name": "Core Dynamo",
         "category": "CORE_UPGRADE",
+        "released": true,
         "parameters": {
             "time_reduction": 120.0 // How many *seconds* this reduces the core swap CD
         },
@@ -428,6 +451,7 @@
         "id": 39,
         "name": "Core Capacitor",
         "category": "CORE_UPGRADE",
+        "released": true,
         "parameters": {},
         "sprite": "spr_ITEM_Core_Capacitor_0",
         "sprite_palette": [ 16, 34, 39 ]
@@ -461,6 +485,7 @@
         "id": 42,
         "name": "Varia Suit",
         "category": "SUIT",
+        "released": true,
         "parameters": {
             "armor": 0.5,
             "hazard_full_protection": [],
@@ -476,6 +501,7 @@
         "id": 43,
         "name": "Missile Tank+",
         "category": "TANK",
+        "released": true,
         "parameters": {
             "capacity": 10.0 // Number of missiles to increase capacity by
         },
@@ -505,13 +531,15 @@
         "id": 46,
         "name": "Missile Launcher",
         "category": "MISSILE",
+        "released": true,
         "parameters": {
             "base_class": 0.0, // What type of missile the launcher uses
             "capacity": 0.0    // How many missiles you can carry
         },
 
         "sprite": "spr_ITEM_Missile_Launcher_0",
-        "sprite_palette": [ 22, 40, 26 ]
+        //"sprite_palette": [ 22, 40, 26 ]
+        "sprite_palette": [ 7, 48, 21 ],
     },
     "unknown_missile_launcher": {
         "id": 47,
@@ -558,6 +586,7 @@
         "id": 50,
         "name": "Energy Tank Part",
         "category": "TANK",
+        "released": true,
         "parameters": {},
         "sprite": "spr_ITEM_Energy_Tank_Part_0",
         "sprite_palette": [ 22, 40, 26 ]
@@ -739,6 +768,7 @@
         "id": 67,
         "name": "Beam Amp",
         "category": "BEAM_UPGRADE",
+        "released": true,
         "parameters": {
             "damage": 1.0,            // Additive damage increase
             "multiplier_boost": 0.0   // Multiplicative damage increase
@@ -854,6 +884,7 @@
         "id": 77,
         "name": "Energy Tank Quarter",
         "category": "TANK",
+        "released": true,
         "parameters": {},
         "sprite": "spr_ITEM_Energy_Quarter_0",
         "sprite_palette": [ 22, 40, 26 ]
@@ -971,14 +1002,14 @@
     },
     "pseudo_screw": {
         "id": 90,
-        "name": "Pseude Screw",
+        "name": "Pseudo Screw",
         "category": "OTHER",
         "parameters": {
             "base_damage": 0.0,                   // Base damage to hit enemies
             "scale_damage_from_beams": 0.0,       // Additional damage as a multiple of beam damage
             "add_damage_from_screw_attack": true  // Add screw attack damage?
         },
-        "sprite": "spr_ITEM_Pseudo_Screw_0",
+        "sprite": "spr_ITEM_Psuedo_Screw_0",
         "sprite_palette": [ 22, 16, 32 ]
     },
     "charge_flare": {

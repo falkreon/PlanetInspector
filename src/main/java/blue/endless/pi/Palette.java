@@ -48,6 +48,9 @@ public final class Palette {
 			for(int x=0; x<image.getWidth(); x++) {
 				int paletteIndex = palette[0];
 				int rgb = image.getRGB(x, y);
+				if ((rgb >> 24) == 0) {
+					continue;
+				}
 				int r = (rgb >> 16) & 0xFF;
 				if (r >= 0xe0) {
 					paletteIndex = palette[2];
@@ -58,8 +61,11 @@ public final class Palette {
 				} else {
 					paletteIndex = 65;
 				}
-				
-				image.setRGB(x, y, COLORS[paletteIndex].getRGB());
+				if (paletteIndex >= 0 && paletteIndex < COLORS.length) {
+					image.setRGB(x, y, COLORS[paletteIndex].getRGB());
+				} else {
+					image.setRGB(x, y, 0x00_000000);
+				}
 			}
 		}
 	}

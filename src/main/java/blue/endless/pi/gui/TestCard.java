@@ -15,8 +15,8 @@ public class TestCard extends JComponent {
 		color = new Color(r, g, b);
 		
 		this.setMinimumSize(new Dimension(32, 32));
-		this.setPreferredSize(new Dimension(64, 64));
-		this.setMaximumSize(new Dimension(128, 128));
+		this.setPreferredSize(new Dimension(32, 32));
+		this.setMaximumSize(new Dimension(32, 32));
 		
 		this.setSize(new Dimension(8, 8));
 	}
