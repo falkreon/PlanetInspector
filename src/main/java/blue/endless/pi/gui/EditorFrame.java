@@ -4,8 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.beans.PropertyChangeListener;
-import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -15,7 +13,6 @@ import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -23,10 +20,8 @@ import javax.swing.JMenuItem;
 
 import blue.endless.jankson.api.Jankson;
 import blue.endless.jankson.api.SyntaxError;
-import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
-import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.jankson.api.io.json.JsonWriterOptions;
 import blue.endless.pi.SchemaType;
 
@@ -34,7 +29,7 @@ import blue.endless.pi.SchemaType;
  * This is the main application window - but not a lot of real behavior lives here. It's mainly in the individual panels this frame hosts.
  */
 public class EditorFrame extends JFrame {
-	private static Map<String, SchemaType<?>> ROOM_SCHEMA = Map.of(
+	static Map<String, SchemaType<?>> ROOM_SCHEMA = Map.of(
 			"META", SchemaType.NON_EDITABLE,
 			"GENERAL", SchemaType.NON_EDITABLE,
 			"EVENTS", SchemaType.NON_EDITABLE,
@@ -44,7 +39,7 @@ public class EditorFrame extends JFrame {
 			"SCREENS", SchemaType.NON_EDITABLE
 			);
 	
-	private static Map<String, SchemaType<?>> SCREEN_SCHEMA = Map.of(
+	static Map<String, SchemaType<?>> SCREEN_SCHEMA = Map.of(
 			"x", SchemaType.INT,
 			"y", SchemaType.INT,
 			"boss", SchemaType.NON_EDITABLE // boolean

@@ -3,10 +3,13 @@ package blue.endless.pi.gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import javax.swing.JPanel;
 
@@ -27,6 +30,9 @@ public class RoomDisplayPanel extends JPanel {
 	private final ArrayList<MapObjectInfo.EnemyInfo> enemies = new ArrayList<>();
 	
 	private float scale = 1.0f;
+	
+	private Consumer<MapObjectInfo.ItemInfo> itemSelectCallback = (it) -> {};
+	private Consumer<MapObjectInfo.EnemyInfo> enemySelectCallback = (it) -> {};
 	// final int SCREEN_WIDTH = 20 * 16;
 	//private final int SCREEN_HEIGHT = 15 * 16;
 	
@@ -71,6 +77,23 @@ public class RoomDisplayPanel extends JPanel {
 		this.setMinimumSize(mapSize);
 		this.setPreferredSize(mapSize);
 		this.setMaximumSize(mapSize);
+		
+		this.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				for(MapObjectInfo.ItemInfo item : items) {
+					int halfWidth = 8;
+					int halfHeight = 8;
+					int baseX = item.roomX() - (offset.x() * ScreenInfo.PIXEL_WIDTH);
+					int baseY = item.roomY() - (offset.y() * ScreenInfo.PIXEL_HEIGHT);
+					
+					if (e.getX() >= baseX-halfWidth && e.getY() >= baseY-halfHeight && e.getX() < baseX+halfWidth && e.getY() < baseY+halfHeight) {
+						//System.out.println("Clicked on item "+item.item().name());
+						itemSelectCallback.accept(item);
+					}
+				}
+			}
+		});
 	}
 	
 	@Override
@@ -110,5 +133,9 @@ public class RoomDisplayPanel extends JPanel {
 				g.drawRect(baseX - halfWidth - 1, baseY - halfHeight - 1, image.getWidth() + 2, image.getHeight() + 2);
 			//}
 		}
+	}
+
+	public void setItemSelectCallback(Consumer<MapObjectInfo.ItemInfo> callback) {
+		this.itemSelectCallback = callback;
 	}
 }

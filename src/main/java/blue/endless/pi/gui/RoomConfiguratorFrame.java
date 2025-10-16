@@ -3,7 +3,10 @@ package blue.endless.pi.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -14,15 +17,23 @@ import javax.swing.JSplitPane;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.pi.ItemCategory;
 import blue.endless.pi.ItemType;
+import blue.endless.pi.datastruct.Rect;
 import blue.endless.pi.gui.layout.CardLayout;
 import blue.endless.pi.gui.layout.LinearLayout;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 public class RoomConfiguratorFrame extends JFrame {
 	private final WorldInfo world;
 	private int roomId;
 	private final RoomInfo room;
 	private final RoomDisplayPanel roomDisplay;
+	//private int selectedItem = -1;
+	//private int selectedEnemy = -1;
+	JSplitPane splitPane;
+	private ItemSelectorPanel itemSelector = new ItemSelectorPanel();
 	//private final PropertyEditor properties;
+	private Object2IntMap<Rect> selectableItems = new Object2IntOpenHashMap<Rect>();
 	
 	public RoomConfiguratorFrame(WorldInfo world, int roomId) {
 		super("Configuring "+world.rooms().get(roomId).name());
@@ -31,10 +42,14 @@ public class RoomConfiguratorFrame extends JFrame {
 		this.roomId = roomId;
 		
 		roomDisplay = new RoomDisplayPanel(world, roomId);
+		roomDisplay.setItemSelectCallback((item) -> {
+			itemSelector.selectItem(item);
+			itemSelector.setEditCallback(this::repaint);
+			splitPane.setRightComponent(itemSelector);
+		});
 		this.getContentPane().setLayout(new BorderLayout());
 		JScrollPane roomScroll = new JScrollPane(roomDisplay, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		roomScroll.setMinimumSize(new Dimension(400,400));
-		
 		
 		//this.getContentPane().add(new JScrollPane(roomDisplay, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
 		
@@ -52,7 +67,8 @@ public class RoomConfiguratorFrame extends JFrame {
 				break;
 			}
 		}*/
-		ItemSelectorPanel rightPanel = new ItemSelectorPanel();
+		JPanel rightPanel = new JPanel();
+		//ItemSelectorPanel rightPanel = new ItemSelectorPanel();
 		/*
 		JPanel rightPanel = new JPanel();
 		rightPanel.setMaximumSize(new Dimension(300, -1));
@@ -87,7 +103,7 @@ public class RoomConfiguratorFrame extends JFrame {
 		}*/
 		//this.getContentPane().add(rightPanel, BorderLayout.EAST);
 		
-		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, roomScroll, rightPanel);
+		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, roomScroll, rightPanel);
 		this.getContentPane().add(splitPane, BorderLayout.CENTER);
 		
 		

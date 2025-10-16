@@ -1,6 +1,7 @@
 package blue.endless.pi.gui;
 
 import blue.endless.jankson.api.document.ObjectElement;
+import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.pi.ItemType;
 
 public class MapObjectInfo {
@@ -54,6 +55,10 @@ public class MapObjectInfo {
 			int rawItem = json.getPrimitive("item").asInt().orElse(0);
 			ItemType result = ItemType.of(rawItem);
 			return result;
+		}
+
+		public void setItem(ItemType item) {
+			json.put("item", PrimitiveElement.of(item.id()));
 		}
 	}
 }

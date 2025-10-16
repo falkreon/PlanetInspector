@@ -23,6 +23,27 @@ public class CardLayout implements LayoutManager {
 	private SingleItemAxisLayout crossAxisLineLayout = SingleItemAxisLayout.FILL;
 	
 	
+	public void setLineAxis(LinearLayout.Axis axis) {
+		mainLineAxis = axis;
+		crossLineAxis = axis.opposite();
+	}
+	
+	public void setMainLineLayout(MultiItemAxisLayout layout) {
+		this.mainAxisLineLayout = layout;
+	}
+	
+	public void setCrossLineLayout(SingleItemAxisLayout layout) {
+		this.crossAxisLineLayout = layout;
+	}
+	
+	public void setInterCardSpacing(int spacing) {
+		this.interCardSpacing = spacing;
+	}
+	
+	public void setInterLineSpacing(int spacing) {
+		this.interLineSpacing = spacing;
+	}
+	
 	@Override
 	public void layoutContainer(Container container) {
 		Insets insets = container.getInsets();

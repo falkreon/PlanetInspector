@@ -48,8 +48,13 @@ public class ItemTile extends JButton {
 	
 	public void setItem(ItemType item) {
 		this.item = item;
-		this.itemImage = item.getSprite();
-		this.setToolTipText(item.name());
+		if (item != null) {
+			this.itemImage = item.getSprite();
+			this.setToolTipText(item.name());
+		} else {
+			this.itemImage = null;
+			this.setToolTipText(null);
+		}
 		this.repaint();
 	}
 	
@@ -68,4 +73,7 @@ public class ItemTile extends JButton {
 		}
 	}
 	
+	public void setOnClick(Runnable evt) {
+		this.onClick = evt;
+	}
 }

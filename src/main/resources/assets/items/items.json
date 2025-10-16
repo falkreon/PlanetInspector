@@ -501,7 +501,6 @@
         "id": 43,
         "name": "Missile Tank+",
         "category": "TANK",
-        "released": true,
         "parameters": {
             "capacity": 10.0 // Number of missiles to increase capacity by
         },
