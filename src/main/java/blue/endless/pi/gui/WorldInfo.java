@@ -1,11 +1,34 @@
 package blue.endless.pi.gui;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.zip.Deflater;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterInputStream;
 
+import blue.endless.jankson.api.Jankson;
+import blue.endless.jankson.api.SyntaxError;
 import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.ObjectElement;
+import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
+import blue.endless.jankson.api.io.json.JsonWriterOptions;
+import blue.endless.pi.world.WorldMeta;
 
 public record WorldInfo(ObjectElement json, ObjectElement metaJson, List<RoomInfo> rooms, List<AreaInfo> areas) {
 	public static WorldInfo of(ObjectElement json, ObjectElement metaJson) {
@@ -26,5 +49,186 @@ public record WorldInfo(ObjectElement json, ObjectElement metaJson, List<RoomInf
 		}
 		
 		return new WorldInfo(json, metaJson, rooms, areas);
+	}
+	
+	public void deleteRoom(int room) {
+		if (room >= 0 && room < rooms.size()) {
+			RoomInfo orphan = rooms.get(room);
+			rooms.remove(room);
+			ArrayElement roomsArray = json.getArray("ROOMS");
+			roomsArray.remove(room);
+			
+			ObjectElement stats = metaJson.getObject("stats");
+			
+			// Fix the counts in metaJson `stats.rooms` and `stats.screens` fields to keep map traversal stats accurate
+			int screens = (int) stats.getPrimitive("screens").asDouble().orElse(0);
+			int rooms = (int) stats.getPrimitive("rooms").asDouble().orElse(0);
+			
+			int traversableOrphanScreens = 0;
+			for(ScreenInfo screen : orphan.screens()) {
+				if (screen.mapShape() != MinimapBaseShape.BLANK) traversableOrphanScreens++;
+			}
+			
+			rooms = Math.max(rooms - 1, 0);
+			screens = Math.max(screens - traversableOrphanScreens, 0);
+			
+			stats.put("screens", PrimitiveElement.of(screens));
+			stats.put("rooms", PrimitiveElement.of(rooms));
+			
+			// Did we remove a boss room? What was the boss's id? (boss Id will probably be set to -1 for non-boss rooms)
+			boolean bossRoom = ((long) orphan.json().getObject("META").getPrimitive("boss_room").asDouble().orElse(0)) != 0;
+			int bossId = (int) orphan.json().getObject("META").getPrimitive("boss").asDouble().orElse(-1);
+			if (bossRoom) {
+				// Reduce the boss count in metaJson `stats.bosses` field
+				int bossCount = stats.getPrimitive("bosses").asInt().orElse(0);
+				bossCount = Math.max(bossCount - 1, 0);
+				stats.put("bosses", PrimitiveElement.of(bossCount));
+				
+				// Remove the boss id entry from `GENERAL.gate_bosses[*]`
+				Iterator<ValueElement> gateBosses = json.getObject("GENERAL").getArray("gate_bosses").iterator();
+				while(gateBosses.hasNext()) {
+					ValueElement value = gateBosses.next();
+					if (value instanceof PrimitiveElement prim) {
+						if (prim.asInt().getAsInt() == bossId) {
+							gateBosses.remove();
+							break;
+						}
+					}
+				}
+			}
+			
+			// Remove any spawn points referring to this room, and decrement the roomId references for Ids after this room.
+			Iterator<ValueElement> spawnPoints = json.getArray("SPAWN_POINTS").iterator();
+			while(spawnPoints.hasNext()) {
+				ValueElement value = spawnPoints.next();
+				if (value instanceof ObjectElement obj) {
+					int roomId = obj.getPrimitive("room_id").asInt().orElse(0);
+					if (roomId == room) {
+						spawnPoints.remove();
+					} else if (roomId > room) {
+						// Move room Ids down for references to subsequent indices
+						obj.put("room_id", PrimitiveElement.of(roomId - 1));
+					}
+				}
+			}
+			
+			
+			
+			for(RoomInfo checkRoom : rooms()) {
+				for (ScreenInfo checkScreen : checkRoom.screens()) {
+					
+					// Remove any door references to this room, and decrement the dest_rm references for Ids after this room.
+					for(ObjectElement checkDoor : checkScreen.doors()) {
+						int destRm = checkDoor.getPrimitive("dest_rm").asInt().orElse(-1);
+						if (destRm == room) {
+							// Mark the door as invlaid for quick validation
+							checkDoor.put("dest_rm", PrimitiveElement.of(-1));
+						} else if (destRm > room) {
+							// Move room Ids down for references to subsequent indices
+							checkDoor.put("dest_rm", PrimitiveElement.of(destRm - 1));
+						}
+					}
+					
+					// Remove any elevator references to this room, and decrement the dest_rm references for Ids after this room.
+					for(ValueElement checkElevatorVal : checkScreen.json().getArray("ELEVATORS")) {
+						if (checkElevatorVal instanceof ObjectElement checkElevator) {
+							int destRm = checkElevator.getPrimitive("dest_rm").asInt().orElse(-1);
+							if (destRm == room) {
+								// Mark the elevator as invalid for quick validation
+								checkElevator.put("dest_rm", PrimitiveElement.of(-1));
+							} else if (destRm > room) {
+								// Move room Ids down for references to subsequent indices
+								checkElevator.put("dest_rm", PrimitiveElement.of(destRm - 1));
+							}
+						}
+					}
+				}
+			}
+			
+			// Remove any references to this room from the Progression Log, and decrement references to later Ids
+			// TODO: This will become incompatible upon the introduction of sectors
+			Iterator<ValueElement> progressionLog = json.getArray("PROGRESSION_LOG").iterator();
+			while(progressionLog.hasNext()) {
+				if (progressionLog.next() instanceof ObjectElement logEntry) {
+					int roomId = logEntry.getPrimitive("room_id").asInt().orElse(0);
+					if (roomId == room) {
+						progressionLog.remove();
+					} else if (roomId > room) {
+						logEntry.put("room_id", PrimitiveElement.of(roomId - 1));
+					}
+				}
+			}
+			
+		}
+	}
+	
+	
+	public static WorldInfo load(Path worldFile) throws IOException, SyntaxError {
+		ArrayList<byte[]> files = new ArrayList<>();
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		try(InputStream in = Files.newInputStream(worldFile, StandardOpenOption.READ)) {
+			InflaterInputStream zin = new InflaterInputStream(new BufferedInputStream(in));
+			
+			// Buffer all world data. Yes, I know this is a bad idea.
+			
+			int data = 0;
+			while(data != -1) {
+				data = zin.read();
+				if (data == 0) {
+					if (bytes.size() > 0) {
+						files.add(bytes.toByteArray());
+						bytes.reset();
+					}
+				} else if (data == -1) {
+					break;
+				} else {
+					bytes.write(data);
+				}
+			}
+			
+			if (bytes.size() > 0) {
+				files.add(bytes.toByteArray());
+			}
+			
+			// Parse things
+			
+			if (files.size() != 2) {
+				throw new SyntaxError("Expected 2 embedded jsons");
+			}
+			
+			ObjectElement worldMetaObj = Jankson.readJsonObject(new ByteArrayInputStream(files.get(0)));
+			
+			// Check world version
+			double planetsVersion = worldMetaObj.getPrimitive("version").asDouble().orElse(-1.0);
+			double planetsWorldVersion = worldMetaObj.getPrimitive("worldVersion").asDouble().orElse(-1.0);
+			
+			if ((planetsVersion - 0.775) > 0.0001 | (planetsWorldVersion - 0.0) > 0.0001) {
+				throw new SyntaxError("Cannot open this world version (version: "+planetsVersion+", worldVersion: "+planetsWorldVersion);
+			}
+			
+			ObjectElement worldObj = Jankson.readJsonObject(new ByteArrayInputStream(files.get(1)));
+			
+			// We can do additional validation here but let's try to load anything we can.
+			
+			return WorldInfo.of(worldObj, worldMetaObj);
+		}
+	}
+	
+	public void save(Path worldFile) throws IOException, SyntaxError {
+		try (OutputStream fileOut = Files.newOutputStream(worldFile, StandardOpenOption.CREATE)) {
+			DeflaterOutputStream deflaterOut = new DeflaterOutputStream(fileOut, new Deflater(), 4096, true);
+			
+			OutputStreamWriter writer = new OutputStreamWriter(deflaterOut, StandardCharsets.UTF_8);
+			Jankson.writeJson(metaJson(), writer, JsonWriterOptions.ONE_LINE);
+			writer.flush();
+			deflaterOut.write(0);
+			Jankson.writeJson(json(), writer, JsonWriterOptions.ONE_LINE);
+			writer.flush();
+			deflaterOut.write(0);
+			
+			deflaterOut.finish();
+			deflaterOut.flush();
+			deflaterOut.close();
+		}
 	}
 }

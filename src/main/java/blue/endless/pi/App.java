@@ -18,14 +18,12 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -42,14 +40,12 @@ import blue.endless.jankson.api.io.StructuredDataReader;
 import blue.endless.jankson.api.io.ValueElementReader;
 import blue.endless.jankson.api.io.json.JsonWriterOptions;
 import blue.endless.jankson.impl.io.objectwriter.RecordDeserializer;
-import blue.endless.pi.datastruct.IntGrid;
 import blue.endless.pi.datastruct.Vec2;
 import blue.endless.pi.gui.EditorFrame;
 import blue.endless.pi.gui.Tileset;
 import blue.endless.pi.room.Door;
 import blue.endless.pi.room.MinimapCell;
 import blue.endless.pi.room.Room;
-import blue.endless.pi.room.Screen;
 import blue.endless.pi.world.WorldMeta;
 
 public class App {
@@ -67,6 +63,10 @@ public class App {
 			ItemType.load(itemsJson.get());
 		}
 		
+		EditorFrame editor = new EditorFrame();
+		editor.setVisible(true); // Launch the app proper!
+		
+		/*
 		Path worldFile = Path.of("test.mp_world");
 		
 		ArrayList<byte[]> files = new ArrayList<>();
@@ -130,80 +130,12 @@ public class App {
 		try {
 			processWorld(files);
 			
-			/*
-			Room r = processRoom(files);
-			long[][] planeData = r.screens().get(0).tiles()[1];
-			IntGrid fgPlane = new IntGrid(20, 15);
-			if (planeData.length > 0) {
-				for(int x=0; x<20; x++) {
-					for(int y=0; y<15; y++) {
-						
-						int tile = (int) planeData[x][y];
-						//tile &= 0x7FF;
-						fgPlane.set(x, y, tile);
-					}
-				}
-				
-				//TreeMap<Integer, Vec2> tileLocations = new TreeMap<>();
-				
-				for(int y=0; y<15; y++) {
-					for(int x=0; x<20; x++) {
-						int tile = fgPlane.get(x, y);
-						boolean flip = (tile & FLIPPED) != 0;
-						boolean mirror = (tile & MIRRORED) != 0;
-						boolean rotate = (tile & ROTATED) != 0;
-						
-						tile &= 0x7FF; // Erase high bits
-						
-						String orientation = " ";
-						if (flip & mirror & rotate) {
-							orientation = "<";
-						} else if (flip & mirror) {
-							orientation = "v";
-						} else if (flip & rotate) {
-							orientation = "q";
-						} else if (mirror & rotate) {
-							orientation = "p";
-						} else if (mirror) {
-							orientation = "m";
-						} else if (rotate) {
-							orientation = "r";
-						}
-						//tileLocations.put(tile, new Vec2(x, y));
-						
-						String disp = Integer.toHexString(tile);
-						while(disp.length() < 3) disp = "0" + disp;
-						System.out.print(orientation + disp + " ");
-					}
-					System.out.println();
-				}
-				
-				System.out.println();
-				
-				int leftDoor = fgPlane.get(0, 5);
-				String binary = Integer.toString(leftDoor, 2);
-				System.out.println("Left door top tile binary: "+binary);
-				
-				int rightBottom = fgPlane.get(19, 7);
-				binary = Integer.toString(rightBottom, 2);
-				System.out.println("Right door bottom tile binary: "+binary);
-
-				
-			}
 			
-			BufferedImage mapImage = r.screens().get(0).createMapImage();
-			File f = new File("scr.png");
-			ImageIO.write(mapImage, "png", f);
-			
-			BufferedImage roomImage = r.createMapImage();
-			f = new File("room.png");
-			ImageIO.write(roomImage, "png", f);
-			*/
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (SyntaxError e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 	
 	

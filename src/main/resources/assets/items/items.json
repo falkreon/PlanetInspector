@@ -11,8 +11,7 @@
         "id": 1,
         "name": "Long Beam",
         "category": "BEAM_UPGRADE",
-        "released": true, // Something is considered "released" if it's present as a selectable starter upgrade in Enigma
-        // or otherwise cleared directly by vacant
+        "released": true,
         "parameters": {
             "damage": 0.0 // How much this increases damage output
         },
@@ -537,7 +536,6 @@
         },
 
         "sprite": "spr_ITEM_Missile_Launcher_0",
-        //"sprite_palette": [ 22, 40, 26 ]
         "sprite_palette": [ 7, 48, 21 ],
     },
     "unknown_missile_launcher": {
@@ -957,6 +955,7 @@
         "id": 85,
         "name": "Beam Fusion",
         "category": "BEAM_UPGRADE",
+        "released": true, // OK'd by vacant
         "parameters": {},
         "sprite": "spr_ITEM_Beam_Fusion_0",
         "sprite_palette": [ 0, 32, 48 ]
@@ -1129,7 +1128,7 @@
     },
     "place_missiles": {
         "id": 105,
-        "name": "Missile or Tank",
+        "name": "Any Missile Tank",
         "category": "PLACEHOLDER",
         "parameters": {},
         "sprite": "spr_ITEM_Missile_Launcher_0",
@@ -1137,7 +1136,7 @@
     },
     "place_super_missiles": {
         "id": 106,
-        "name": "Super Missile or Tank",
+        "name": "Any Super Missile Tank",
         "category": "PLACEHOLDER",
         "parameters": {},
         "sprite": "spr_ITEM_Missile_Class_Super_Upgrade_0",
@@ -1145,7 +1144,7 @@
     },
     "place_hyper_missiles": {
         "id": 107,
-        "name": "Hyper Missile or Tank",
+        "name": "Any Hyper Missile Tank",
         "category": "PLACEHOLDER",
         "parameters": {},
         "sprite": "spr_ITEM_Missile_Class_Hyper_Upgrade_0",
@@ -1153,7 +1152,7 @@
     },
     "place_power_bombs": {
         "id": 108,
-        "name": "Power Bombs or Tank",
+        "name": "Any Power Bomb Tank",
         "category": "PLACEHOLDER",
         "parameters": {},
         "sprite": "spr_ITEM_Power_Bomb_Launcher_0",

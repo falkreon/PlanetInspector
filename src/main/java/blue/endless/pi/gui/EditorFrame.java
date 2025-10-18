@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -13,13 +14,16 @@ import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 
 import javax.swing.AbstractAction;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import blue.endless.jankson.api.Jankson;
 import blue.endless.jankson.api.SyntaxError;
+import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.io.json.JsonWriterOptions;
@@ -89,6 +93,14 @@ public class EditorFrame extends JFrame {
 		
 		JMenuBar menuBar = new JMenuBar();
 		JMenu fileMenu = new JMenu("File");
+		JMenuItem openMenuItem = new JMenuItem("Open...");
+		openMenuItem.setAction(new AbstractAction("Open...") {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				open();
+			}
+		});
+		fileMenu.add(openMenuItem);
 		JMenuItem saveAsMenuItem = new JMenuItem("Save As...");
 		saveAsMenuItem.setAction(new AbstractAction("Save As...") {
 			@Override
@@ -120,13 +132,6 @@ public class EditorFrame extends JFrame {
 	public void setWorld(ObjectElement obj, ObjectElement meta) {
 		world = WorldInfo.of(obj, meta);
 		
-		//PlanetView.RoomInfo room = world.rooms().get(0);
-		//propertyView.setObject(room.general(), ROOM_GENERAL_SCHEMA);
-		/*
-		ArrayElement roomsArray = obj.getArray("ROOMS");
-		ObjectElement room = roomsArray.getObject(0);
-		ObjectElement general = room.getObject("GENERAL");*/
-		
 		propertyView.setObject(meta, WORLD_META_SCHEMA);
 		planetView.setWorld(world);
 		planetView.setPropertiesConsumer((o, schema) -> {
@@ -138,61 +143,86 @@ public class EditorFrame extends JFrame {
 		});
 	}
 	
+	public void setWorld(WorldInfo world) {
+		propertyView.setObject(world.metaJson(), WORLD_META_SCHEMA);
+		planetView.setWorld(world);
+		planetView.setPropertiesConsumer((o, schema) -> {
+			if (o == null) {
+				propertyView.setObject(world.metaJson(), WORLD_META_SCHEMA);
+			} else {
+				propertyView.setObject(o, schema);
+			}
+		});
+	}
+	
+	public void open() {
+		try {
+			JFileChooser chooser = new JFileChooser();
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("Planets Enigma worlds", "mp_world");
+			chooser.setFileFilter(filter);
+			File basePath = new File(".").getCanonicalFile();
+			int result = chooser.showOpenDialog(this);
+			if (result == JFileChooser.CANCEL_OPTION) {
+				return;
+			}
+			if (result == JFileChooser.ERROR_OPTION) {
+				System.out.println("Error selecting a world file.");
+				return;
+			}
+			if (result != JFileChooser.APPROVE_OPTION) {
+				System.out.println("Unknown result code: "+result);
+				return;
+			}
+			File roomFile = chooser.getSelectedFile();
+			
+			
+			WorldInfo world = WorldInfo.load(roomFile.toPath());
+			this.setWorld(world);
+			this.repaint();
+		} catch (IOException | SyntaxError ex) {
+			ex.printStackTrace();
+		}
+	}
+	
 	public void saveAs() {
 		try {
-			/*
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			OutputStreamWriter writer = new OutputStreamWriter(baos, StandardCharsets.UTF_8);
-			Jankson.writeJson(world.metaJson(), writer, JsonWriterOptions.ONE_LINE);
-			writer.flush();
-			byte[] metaFileBytes = baos.toByteArray();
+			JFileChooser chooser = new JFileChooser();
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("Planets Enigma worlds", "mp_world");
+			chooser.setFileFilter(filter);
+			String defaultFileName = world.metaJson().getPrimitive("name").asString().orElse("untitled").replace(' ', '_') + ".mp_world";
+			File basePath = new File(".").getCanonicalFile();
+			chooser.setSelectedFile(new File(basePath, defaultFileName));
+			int result = chooser.showSaveDialog(this);
+			if (result == JFileChooser.CANCEL_OPTION) {
+				return;
+			}
+			if (result == JFileChooser.ERROR_OPTION) {
+				System.out.println("Error selecting a save file.");
+				return;
+			}
+			if (result != JFileChooser.APPROVE_OPTION) {
+				System.out.println("Unknown result code: "+result);
+				return;
+			}
+			File outputFile = chooser.getSelectedFile();
 			
-			baos.reset();
-			writer = new OutputStream(baos, StandardCharsets.UTF_8);
-			Jankson.writeJson(world.json(), writer, JsonWriterOptions.ONE_LINE);
-			*/
-			world.metaJson().put("description", PrimitiveElement.of("MODIFIED WORLD\\nUSE WITH CARE"));
-			world.metaJson().put("name", PrimitiveElement.of("PSEUDO-EUGENIA"));
-			world.metaJson().put("name_full", PrimitiveElement.of("EUGENIA - DEMO 69420"));
+			// Make last minute edits to be sure this file is marked as externally edited
+			
+			// Grab stats and include in the preview
+			ObjectElement stats = world.metaJson().getObject("stats");
+			int roomCount = stats.getPrimitive("rooms").asInt().orElse(0);
+			int bossCount = stats.getPrimitive("bosses").asInt().orElse(0);
+			int areaCount = stats.getPrimitive("areas").asInt().orElse(0);
+			world.metaJson().put("description", PrimitiveElement.of("MODIFIED WORLD, USE WITH CARE. ROOMS:"+roomCount+" AREAS:"+areaCount+" BOSSES:"+bossCount));
 			ObjectElement toolObj = new ObjectElement();
-			toolObj.put("author", PrimitiveElement.of("FALKREON"));
+			ArrayElement authorsArr = new ArrayElement();
+			authorsArr.add(PrimitiveElement.of("FALKREON"));
+			toolObj.put("authors", authorsArr);
 			toolObj.put("editor_tool", PrimitiveElement.of("planet_inspector"));
+			toolObj.put("tags", new ArrayElement());
 			world.metaJson().put("external_editor", toolObj);
 			
-			
-			FileOutputStream fileOut = new FileOutputStream("out.mp_world"); // TODO: File chooser
-			DeflaterOutputStream deflaterOut = new DeflaterOutputStream(fileOut, new Deflater(), 4096, true);
-			
-			
-			
-			OutputStreamWriter writer = new OutputStreamWriter(deflaterOut, StandardCharsets.UTF_8);
-			Jankson.writeJson(world.metaJson(), writer, JsonWriterOptions.ONE_LINE);
-			writer.flush();
-			deflaterOut.write(0);
-			Jankson.writeJson(world.json(), writer, JsonWriterOptions.ONE_LINE);
-			writer.flush();
-			deflaterOut.write(0);
-			
-			deflaterOut.finish();
-			deflaterOut.flush();
-			deflaterOut.close();
-			
-			// --- diagnostics
-			
-			fileOut = new FileOutputStream("out.mp_world.json");
-			//deflaterOut = new DeflaterOutputStream(fileOut, new Deflater(), 4096, true);
-			writer = new OutputStreamWriter(fileOut, StandardCharsets.UTF_8);
-			Jankson.writeJson(world.json(), writer, JsonWriterOptions.ONE_LINE);
-			writer.flush();
-			writer.close();
-			
-			// write meta
-			
-			fileOut = new FileOutputStream("meta_out.mp_world.json");
-			writer = new OutputStreamWriter(fileOut, StandardCharsets.UTF_8);
-			Jankson.writeJson(world.metaJson(), writer, JsonWriterOptions.ONE_LINE);
-			writer.flush();
-			writer.close();
+			world.save(outputFile.toPath());
 			
 			System.out.println("Saved.");
 		} catch (IOException | SyntaxError ex) {

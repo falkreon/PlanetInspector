@@ -3,6 +3,9 @@ package blue.endless.pi.gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -37,6 +40,21 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 		this.setSize(new Dimension(1024, 768));
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
+		
+		this.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (selectedRoom == -1) return;
+				if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE || e.getKeyCode() == KeyEvent.VK_DELETE) {
+					System.out.println("DELETE ROOM #"+selectedRoom);
+					
+					world.deleteRoom(selectedRoom);
+					PlanetView.this.repaint();
+				}
+			}
+		});
+		
+		this.setFocusable(true);
 	}
 	
 	public static final int CELL_SIZE = 20;
@@ -45,6 +63,12 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 	
 	@Override
 	protected void paintComponent(Graphics g) {
+		
+		if (world == null) {
+			g.setColor(Color.GRAY);
+			g.fillRect(0, 0, this.getWidth(), this.getHeight());
+			return;
+		}
 		
 		//Precalc area colors
 		ArrayList<Color> areaColors = new ArrayList<>();
@@ -67,46 +91,6 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 					Color areaColor = areaColors.get(screen.area()); // TODO: Bounds-check
 					
 					screen.paint(g, x, y, areaColor, ri == selectedRoom, ri == dragRoom);
-					
-					/*
-					if (ri == dragRoom) {
-						g.setColor(Color.GRAY);
-					} else if (ri == selectedRoom) {
-						g.setColor(new Color(64, 128, 255));
-					} else {
-						g.setColor(Color.BLUE);
-					}
-					g.fillRect(x+1, y+1, CELL_SIZE-2, CELL_SIZE-2);
-					
-					
-					if (ri == selectedRoom) {
-						g.setColor(Color.WHITE);
-					} else {
-						g.setColor(Color.LIGHT_GRAY);
-					}
-					g.drawRect(x, y, CELL_SIZE-1, CELL_SIZE-1);
-					
-					for(ObjectElement obj : screen.doors()) {
-						Direction d = Direction.valueOf(obj.getPrimitive("pos").asInt().orElse(0));
-						DoorType doorType = DoorType.of(obj.getPrimitive("type").asInt().orElse(1));
-						g.setColor(doorType.color());
-						switch(d) {
-							case NORTH -> {
-								g.fillRect(x + DOOR_OFFSET , y, DOOR_SIZE, 2);
-							}
-							case EAST -> {
-								g.fillRect(x + CELL_SIZE - 2, y + DOOR_OFFSET, 2, DOOR_SIZE);
-							}
-							case SOUTH -> {
-								g.fillRect(x + DOOR_OFFSET, y + CELL_SIZE - 2, DOOR_SIZE, 2);
-							}
-							case WEST -> {
-								g.fillRect(x, y + DOOR_OFFSET, 2, DOOR_SIZE);
-							}
-							case INVALID -> {}
-						}
-					}*/
-					
 				}
 			}
 		}
@@ -317,6 +301,9 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 						}
 					}
 				}
+				
+				// TODO XXX : Update PROGRESSION_LOG if this room is mentioned
+				// TODO : Disconnect broken doors so they can be quickly validated
 			} else {
 				System.out.println("Can't drag room there: collision!");
 			}
