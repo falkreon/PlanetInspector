@@ -32,4 +32,8 @@ public class ScrollingPlanetView extends JScrollPane {
 	public void setPropertiesConsumer(BiConsumer<ObjectElement, Map<String, SchemaType<?>>> propertiesConsumer) {
 		planetView.setPropertiesConsumer(propertiesConsumer);
 	}
+	
+	public PlanetView getView() {
+		return this.planetView;
+	}
 }

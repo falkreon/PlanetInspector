@@ -126,7 +126,7 @@ public class ScreenInfo {
 		json.put("y", PrimitiveElement.of(y));
 	}
 	
-	public void paint(Graphics g, int x, int y, Color areaColor, boolean selected, boolean dragging) {
+	public void paint(Graphics g, int x, int y, Color areaColor, boolean selected, boolean dragging, boolean valid) {
 		Color bg = areaColor;
 		if (dragging) {
 			bg = Color.GRAY;
@@ -134,16 +134,20 @@ public class ScreenInfo {
 			bg = new Color(64, 128, 255);
 		}
 		
+		Color fg = Color.WHITE;
+		if (selected) fg = Color.LIGHT_GRAY;
+		if (!valid) fg = Color.RED;
+		
 		// TODO: respect map base
 		switch(mapShape()) {
 			case SQUARE -> {
 				g.setColor(bg);
 				g.fillRect(x, y, PlanetView.CELL_SIZE, PlanetView.CELL_SIZE);
 				// TODO: Check all walls and doors
-				paintSouthWall(g, x, y, selected);
-				paintNorthWall(g, x, y, selected);
-				paintWestWall(g, x, y, selected);
-				paintEastWall(g, x, y, selected);
+				paintSouthWall(g, x, y, fg);
+				paintNorthWall(g, x, y, fg);
+				paintWestWall(g, x, y, fg);
+				paintEastWall(g, x, y, fg);
 			}
 			case BLANK -> {
 				g.setColor(new Color(255, 255, 255, 128));
@@ -152,49 +156,33 @@ public class ScreenInfo {
 			case SLOPE_NE -> {
 				g.setColor(bg);
 				g.fillPolygon(new int[] { x, x + PlanetView.CELL_SIZE, x }, new int[] { y, y + PlanetView.CELL_SIZE, y + PlanetView.CELL_SIZE}, 3);
-				paintSouthWall(g, x, y, selected);
-				paintWestWall(g, x, y, selected);
-				if (selected) {
-					g.setColor(Color.WHITE);
-				} else {
-					g.setColor(Color.LIGHT_GRAY);
-				}
+				paintSouthWall(g, x, y, fg);
+				paintWestWall(g, x, y, fg);
+				g.setColor(fg);
 				g.drawLine(x, y, x + PlanetView.CELL_SIZE - 1, y + PlanetView.CELL_SIZE - 1);
 			}
 			case SLOPE_NW -> {
 				g.setColor(bg);
 				g.fillPolygon(new int[] { x, x + PlanetView.CELL_SIZE, x + PlanetView.CELL_SIZE }, new int[] { y + PlanetView.CELL_SIZE, y, y + PlanetView.CELL_SIZE}, 3);
-				paintSouthWall(g, x, y, selected);
-				paintEastWall(g, x, y, selected);
-				if (selected) {
-					g.setColor(Color.WHITE);
-				} else {
-					g.setColor(Color.LIGHT_GRAY);
-				}
+				paintSouthWall(g, x, y, fg);
+				paintEastWall(g, x, y, fg);
+				g.setColor(fg);
 				g.drawLine(x, y + PlanetView.CELL_SIZE - 1, x + PlanetView.CELL_SIZE - 1, y);
 			}
 			case SLOPE_SE -> {
 				g.setColor(bg);
 				g.fillPolygon(new int[] { x, x + PlanetView.CELL_SIZE, x }, new int[] { y, y, y + PlanetView.CELL_SIZE}, 3);
-				paintNorthWall(g, x, y, selected);
-				paintWestWall(g, x, y, selected);
-				if (selected) {
-					g.setColor(Color.WHITE);
-				} else {
-					g.setColor(Color.LIGHT_GRAY);
-				}
+				paintNorthWall(g, x, y, fg);
+				paintWestWall(g, x, y, fg);
+				g.setColor(fg);
 				g.drawLine(x, y + PlanetView.CELL_SIZE - 1, x + PlanetView.CELL_SIZE - 1, y);
 			}
 			case SLOPE_SW -> {
 				g.setColor(bg);
 				g.fillPolygon(new int[] { x, x + PlanetView.CELL_SIZE, x + PlanetView.CELL_SIZE }, new int[] { y, y, y + PlanetView.CELL_SIZE}, 3);
-				paintNorthWall(g, x, y, selected);
-				paintEastWall(g, x, y, selected);
-				if (selected) {
-					g.setColor(Color.WHITE);
-				} else {
-					g.setColor(Color.LIGHT_GRAY);
-				}
+				paintNorthWall(g, x, y, fg);
+				paintEastWall(g, x, y, fg);
+				g.setColor(fg);
 				g.drawLine(x, y, x + PlanetView.CELL_SIZE - 1, y + PlanetView.CELL_SIZE - 1);
 			}
 			case TUBE_H -> {
@@ -203,11 +191,7 @@ public class ScreenInfo {
 				final int TUBE_OFFSET = TUBE_NARROW / 2;
 				g.setColor(bg);
 				g.fillRect(x, y+TUBE_OFFSET, PlanetView.CELL_SIZE, TUBE_SIZE);
-				if (selected) {
-					g.setColor(Color.WHITE);
-				} else {
-					g.setColor(Color.LIGHT_GRAY);
-				}
+				g.setColor(fg);
 				g.fillRect(x, y+TUBE_OFFSET, PlanetView.CELL_SIZE, 1);
 				g.fillRect(x, y+TUBE_OFFSET + TUBE_SIZE - 1, PlanetView.CELL_SIZE, 1);
 			}
@@ -217,11 +201,7 @@ public class ScreenInfo {
 				final int TUBE_OFFSET = TUBE_NARROW / 2;
 				g.setColor(bg);
 				g.fillRect(x+TUBE_OFFSET, y, TUBE_SIZE, PlanetView.CELL_SIZE);
-				if (selected) {
-					g.setColor(Color.WHITE);
-				} else {
-					g.setColor(Color.LIGHT_GRAY);
-				}
+				g.setColor(fg);
 				g.fillRect(x+TUBE_OFFSET, y, 1, PlanetView.CELL_SIZE);
 				g.fillRect(x+TUBE_OFFSET + TUBE_SIZE - 1, y, 1, PlanetView.CELL_SIZE);
 				
@@ -250,7 +230,7 @@ public class ScreenInfo {
 		}*/
 	}
 	
-	private void paintSouthWall(Graphics g, int x, int y, boolean selected) {
+	private void paintSouthWall(Graphics g, int x, int y, Color fg) {
 		int wallKind = json.getObject("MAP").getArray("walls").getPrimitive(Direction.SOUTH.value()).asInt().orElse(0);
 		switch(Wall.valueOf(wallKind)) {
 			case OPEN -> {} // Leave it
@@ -259,11 +239,7 @@ public class ScreenInfo {
 				g.fillRect(x, y + PlanetView.CELL_SIZE - 1, PlanetView.CELL_SIZE, 1);
 			}
 			case DOOR, SOLID -> {
-				if (selected) {
-					g.setColor(Color.WHITE);
-				} else {
-					g.setColor(Color.LIGHT_GRAY);
-				}
+				g.setColor(fg);
 				g.fillRect(x, y + PlanetView.CELL_SIZE - 1, PlanetView.CELL_SIZE, 1);
 			}
 			default -> {}
@@ -279,7 +255,7 @@ public class ScreenInfo {
 		}
 	}
 	
-	private void paintNorthWall(Graphics g, int x, int y, boolean selected) {
+	private void paintNorthWall(Graphics g, int x, int y, Color fg) {
 		int wallKind = json.getObject("MAP").getArray("walls").getPrimitive(Direction.NORTH.value()).asInt().orElse(0);
 		switch(Wall.valueOf(wallKind)) {
 			case OPEN -> {} // Leave it
@@ -288,11 +264,7 @@ public class ScreenInfo {
 				g.fillRect(x, y, PlanetView.CELL_SIZE, 1);
 			}
 			case DOOR, SOLID -> {
-				if (selected) {
-					g.setColor(Color.WHITE);
-				} else {
-					g.setColor(Color.LIGHT_GRAY);
-				}
+				g.setColor(fg);
 				g.fillRect(x, y, PlanetView.CELL_SIZE, 1);
 			}
 			default -> {}
@@ -308,7 +280,7 @@ public class ScreenInfo {
 		}
 	}
 	
-	private void paintWestWall(Graphics g, int x, int y, boolean selected) {
+	private void paintWestWall(Graphics g, int x, int y, Color fg) {
 		int wallKind = json.getObject("MAP").getArray("walls").getPrimitive(Direction.WEST.value()).asInt().orElse(0);
 		switch(Wall.valueOf(wallKind)) {
 			case OPEN -> {} // Leave it
@@ -317,11 +289,7 @@ public class ScreenInfo {
 				g.fillRect(x, y, 1, PlanetView.CELL_SIZE);
 			}
 			case DOOR, SOLID -> {
-				if (selected) {
-					g.setColor(Color.WHITE);
-				} else {
-					g.setColor(Color.LIGHT_GRAY);
-				}
+				g.setColor(fg);
 				g.fillRect(x, y, 1, PlanetView.CELL_SIZE);
 			}
 			default -> {}
@@ -337,7 +305,7 @@ public class ScreenInfo {
 		}
 	}
 	
-	private void paintEastWall(Graphics g, int x, int y, boolean selected) {
+	private void paintEastWall(Graphics g, int x, int y, Color fg) {
 		int wallKind = json.getObject("MAP").getArray("walls").getPrimitive(Direction.EAST.value()).asInt().orElse(0);
 		switch(Wall.valueOf(wallKind)) {
 			case OPEN -> {} // Leave it
@@ -346,11 +314,7 @@ public class ScreenInfo {
 				g.fillRect(x + PlanetView.CELL_SIZE - 1, y, 1, PlanetView.CELL_SIZE);
 			}
 			case DOOR, SOLID -> {
-				if (selected) {
-					g.setColor(Color.WHITE);
-				} else {
-					g.setColor(Color.LIGHT_GRAY);
-				}
+				g.setColor(fg);
 				g.fillRect(x + PlanetView.CELL_SIZE - 1, y, 1, PlanetView.CELL_SIZE);
 			}
 			default -> {}

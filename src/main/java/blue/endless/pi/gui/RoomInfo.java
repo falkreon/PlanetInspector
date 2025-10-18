@@ -41,4 +41,19 @@ public record RoomInfo(ObjectElement json, ObjectElement general, List<ScreenInf
 		
 		return Color.BLACK;
 	}
+	
+	public boolean validate() {
+		for(ScreenInfo screen : screens) {
+			for(ObjectElement door : screen.doors()) {
+				int dest_rm = door.getPrimitive("dest_rm").asInt().orElse(-1);
+				if (dest_rm == -1) {
+					return false;
+				}
+				// Find destination tile for door.
+				
+			}
+		}
+		
+		return true;
+	}
 }

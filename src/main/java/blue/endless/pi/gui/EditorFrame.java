@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -19,14 +21,13 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import blue.endless.jankson.api.Jankson;
 import blue.endless.jankson.api.SyntaxError;
 import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
-import blue.endless.jankson.api.io.json.JsonWriterOptions;
 import blue.endless.pi.SchemaType;
 
 /**
@@ -126,7 +127,13 @@ public class EditorFrame extends JFrame {
 		
 		this.setJMenuBar(menuBar);
 		
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				exit();
+			}
+		});
 	}
 	
 	public void setWorld(ObjectElement obj, ObjectElement meta) {
@@ -155,12 +162,25 @@ public class EditorFrame extends JFrame {
 		});
 	}
 	
+	public void exit() {
+		if (planetView.getView().isDirty()) {
+			int selectedResult = JOptionPane.showConfirmDialog(this, "This world has unsaved data. Are you sure you want to quit?", "Really Quit?", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+			if (selectedResult == JOptionPane.CANCEL_OPTION) {
+				return;
+			}
+		}
+		// TODO: Pop up a close dialog.
+		this.setVisible(false);
+		System.exit(0);
+	}
+	
 	public void open() {
 		try {
 			JFileChooser chooser = new JFileChooser();
 			FileNameExtensionFilter filter = new FileNameExtensionFilter("Planets Enigma worlds", "mp_world");
 			chooser.setFileFilter(filter);
 			File basePath = new File(".").getCanonicalFile();
+			chooser.setSelectedFile(basePath);
 			int result = chooser.showOpenDialog(this);
 			if (result == JFileChooser.CANCEL_OPTION) {
 				return;
@@ -224,6 +244,7 @@ public class EditorFrame extends JFrame {
 			
 			world.save(outputFile.toPath());
 			
+			planetView.getView().setDirty(false);
 			System.out.println("Saved.");
 		} catch (IOException | SyntaxError ex) {
 			ex.printStackTrace();

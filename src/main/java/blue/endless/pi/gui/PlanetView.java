@@ -24,6 +24,7 @@ import blue.endless.pi.SchemaType;
 import blue.endless.pi.datastruct.Vec2;
 
 public class PlanetView extends JPanel implements MouseListener, MouseMotionListener {
+	private static final Color MAP_BACKGROUND = new Color(63, 63, 63);
 	private WorldInfo world;
 	private BiConsumer<ObjectElement, Map<String, SchemaType<?>>> propertiesConsumer = (o, s) -> {};
 	private int selectedRoom = -1;
@@ -32,6 +33,7 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 	private int dragStartY = -1;
 	private int dragCurX = -1;
 	private int dragCurY = -1;
+	private boolean dirty = false;
 	
 	public PlanetView() {
 		this.setMinimumSize(new Dimension(1024, 768));
@@ -48,6 +50,7 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 				if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE || e.getKeyCode() == KeyEvent.VK_DELETE) {
 					System.out.println("DELETE ROOM #"+selectedRoom);
 					
+					dirty = true;
 					world.deleteRoom(selectedRoom);
 					PlanetView.this.repaint();
 				}
@@ -60,6 +63,14 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 	public static final int CELL_SIZE = 20;
 	public static final int DOOR_SIZE = 7;
 	public static final int DOOR_OFFSET = (CELL_SIZE - DOOR_SIZE) / 2;
+	
+	public boolean isDirty() {
+		return dirty;
+	}
+	
+	public void setDirty(boolean dirty) {
+		this.dirty = dirty;
+	}
 	
 	@Override
 	protected void paintComponent(Graphics g) {
@@ -77,20 +88,22 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 		}
 		
 		//if (this.isOpaque()) {
-			g.setColor(Color.GRAY);
-			g.fillRect(0, 0, this.getWidth(), this.getHeight());
+		
+		g.setColor(MAP_BACKGROUND);
+		g.fillRect(0, 0, this.getWidth(), this.getHeight());
 		//}
 		// TODO Auto-generated method stub
 		//super.paintComponent(g);
 		if (world != null && world.rooms().size() > 0) {
 			for(int ri = 0; ri<world.rooms().size(); ri++) {
 				RoomInfo room = world.rooms().get(ri);
+				boolean valid = room.validate();
 				for(ScreenInfo screen : room.screens()) {
 					int x = screen.x() * CELL_SIZE;
 					int y = screen.y() * CELL_SIZE;
 					Color areaColor = areaColors.get(screen.area()); // TODO: Bounds-check
 					
-					screen.paint(g, x, y, areaColor, ri == selectedRoom, ri == dragRoom);
+					screen.paint(g, x, y, areaColor, ri == selectedRoom, ri == dragRoom, valid);
 				}
 			}
 		}
@@ -219,7 +232,7 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 			}
 			
 			
-			System.out.println("Relocating room "+dragRoom+" by "+dx+", "+dy+"...");
+			//System.out.println("Relocating room "+dragRoom+" by "+dx+", "+dy+"...");
 			
 			boolean collision = false;
 			RoomInfo room = world.rooms().get(dragRoom);
@@ -235,8 +248,37 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 			}
 			
 			if (!collision) {
+				dirty = true;
+				
 				for(ScreenInfo s : room.screens()) {
 					s.setPosition(s.x() + dx, s.y() + dy);
+				}
+				
+				// De-stitch doors
+				for(ScreenInfo s : room.screens()) {
+					for(ObjectElement door : s.doors()) {
+						int destRoom = door.getPrimitive("dest_rm").asInt().orElse(-1);
+						int destId = door.getPrimitive("dest_id").asInt().orElse(0);
+						
+						if (destRoom >=0 && destRoom < world.rooms().size()) {
+							RoomInfo reverseRoom = world.rooms().get(destRoom);
+							
+							findLinkedDoor:
+							for (ScreenInfo reverseScreen : reverseRoom.screens()) {
+								for(ObjectElement reverseDoor : reverseScreen.doors()) {
+									int reverseDoorId = reverseDoor.getPrimitive("id").asInt().orElse(-1);
+									if (reverseDoorId == destId) {
+										reverseDoor.put("dest_rm", PrimitiveElement.of(-1));
+										reverseDoor.put("dest_id", PrimitiveElement.of(0));
+										break findLinkedDoor;
+									}
+								}
+							}
+						}
+						
+						door.put("dest_rm", PrimitiveElement.of(-1));
+						door.put("dest_id", PrimitiveElement.of(0));
+					}
 				}
 				
 				//Stitch doors
@@ -278,10 +320,16 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 								}
 								if (!doorFound) {
 									// TODO: If door wasn't found by this point, we're in trouble. Flag room as invalid!
+									System.out.println("Flagging door as invalid");
+									door.put("dest_rm", PrimitiveElement.of(-1));
+									door.put("dest_id", PrimitiveElement.of(0));
 								}
 								
 							} else {
 								//TODO: Flag room as invalid!
+								System.out.println("Flagging door as invalid");
+								door.put("dest_rm", PrimitiveElement.of(-1));
+								door.put("dest_id", PrimitiveElement.of(0));
 							}
 						}
 					}
