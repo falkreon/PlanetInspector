@@ -7,15 +7,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.zip.Deflater;
-import java.util.zip.DeflaterOutputStream;
 
 import javax.swing.AbstractAction;
+import javax.swing.Box;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -124,6 +120,18 @@ public class EditorFrame extends JFrame {
 		mapMenu.add(debugLogItem);
 		menuBar.add(mapMenu);
 		
+		menuBar.add(Box.createHorizontalGlue());
+		
+		JMenu helpMenu = new JMenu("Help");
+		JMenuItem aboutItem = new JMenuItem("About Planet Inspector");
+		aboutItem.setAction(new AbstractAction("About") {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(EditorFrame.this, "Authors: Falkreon (maintainer, code, reverse eng) Reverse Engineering Help: Frio");
+			}
+		});
+		helpMenu.add(aboutItem);
+		menuBar.add(helpMenu);
 		
 		this.setJMenuBar(menuBar);
 		
@@ -151,6 +159,7 @@ public class EditorFrame extends JFrame {
 	}
 	
 	public void setWorld(WorldInfo world) {
+		this.world = world;
 		propertyView.setObject(world.metaJson(), WORLD_META_SCHEMA);
 		planetView.setWorld(world);
 		planetView.setPropertiesConsumer((o, schema) -> {
@@ -233,7 +242,7 @@ public class EditorFrame extends JFrame {
 			int roomCount = stats.getPrimitive("rooms").asInt().orElse(0);
 			int bossCount = stats.getPrimitive("bosses").asInt().orElse(0);
 			int areaCount = stats.getPrimitive("areas").asInt().orElse(0);
-			world.metaJson().put("description", PrimitiveElement.of("MODIFIED WORLD, USE WITH CARE. ROOMS:"+roomCount+" AREAS:"+areaCount+" BOSSES:"+bossCount));
+			world.metaJson().put("description", PrimitiveElement.of("MODIFIED WORLD, USE WITH CARE; ROOMS:"+roomCount+"; AREAS:"+areaCount+"; BOSSES:"+bossCount));
 			ObjectElement toolObj = new ObjectElement();
 			ArrayElement authorsArr = new ArrayElement();
 			authorsArr.add(PrimitiveElement.of("FALKREON"));

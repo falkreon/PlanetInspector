@@ -1,11 +1,8 @@
 package blue.endless.pi.gui;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,7 +25,6 @@ import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.jankson.api.io.json.JsonWriterOptions;
-import blue.endless.pi.world.WorldMeta;
 
 public record WorldInfo(ObjectElement json, ObjectElement metaJson, List<RoomInfo> rooms, List<AreaInfo> areas) {
 	public static WorldInfo of(ObjectElement json, ObjectElement metaJson) {

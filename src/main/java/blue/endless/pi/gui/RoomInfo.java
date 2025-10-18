@@ -3,6 +3,8 @@ package blue.endless.pi.gui;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.OptionalInt;
 
 import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.ObjectElement;
@@ -40,6 +42,34 @@ public record RoomInfo(ObjectElement json, ObjectElement general, List<ScreenInf
 		}
 		
 		return Color.BLACK;
+	}
+	
+	public Optional<ObjectElement> getDoor(int id) {
+		for(ScreenInfo screen : screens) {
+			ArrayElement arr = screen.json().getArray("DOORS");
+			for(ValueElement elem : arr) {
+				if (elem instanceof ObjectElement obj) {
+					OptionalInt curId = obj.getPrimitive("id").asInt();
+					if (curId.isPresent() && curId.getAsInt() == id) return Optional.of(obj); 
+				}
+			}
+		}
+		
+		return Optional.empty();
+	}
+	
+	public Optional<ObjectElement> getElevator(int id) {
+		for(ScreenInfo screen : screens) {
+			ArrayElement arr = screen.json().getArray("ELEVATORS");
+			for(ValueElement elem : arr) {
+				if (elem instanceof ObjectElement obj) {
+					OptionalInt curId = obj.getPrimitive("id").asInt();
+					if (curId.isPresent() && curId.getAsInt() == id) return Optional.of(obj); 
+				}
+			}
+		}
+		
+		return Optional.empty();
 	}
 	
 	public boolean validate() {

@@ -11,6 +11,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 
 import javax.swing.JPanel;
@@ -331,6 +332,39 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 								door.put("dest_rm", PrimitiveElement.of(-1));
 								door.put("dest_id", PrimitiveElement.of(0));
 							}
+						}
+					}
+				}
+				
+				// De-stitch elevators
+				for(ScreenInfo screen : room.screens()) {
+					for(ValueElement val : screen.json().getArray("ELEVATORS")) {
+						if (val instanceof ObjectElement elevator) {
+							int destRm = elevator.getPrimitive("dest_rm").asInt().orElse(-1);
+							int destId = elevator.getPrimitive("dest_id").asInt().orElse(-1);
+							if (destRm > 0 && destRm < world.rooms().size()) {
+								RoomInfo destRoom = world.rooms().get(destRm);
+								Optional<ObjectElement> maybeDest = destRoom.getElevator(destId);
+								maybeDest.ifPresent(it -> {
+									it.put("dest_rm", PrimitiveElement.of(-1));
+									it.put("dest_id", PrimitiveElement.of(0));
+								});
+							}
+							
+							elevator.put("dest_rm", PrimitiveElement.of(-1));
+							elevator.put("dest_id", PrimitiveElement.of(0));
+						}
+					}
+				}
+				// Stitch elevators
+				
+				for(ScreenInfo screen : room.screens()) {
+					for(ValueElement val : screen.json().getArray("ELEVATORS")) {
+						if (val instanceof ObjectElement elevator) {
+							Direction d = Direction.valueOf(elevator.getPrimitive("dir").asInt().orElse(0));
+							if (d == Direction.INVALID) continue; // Don't adjust elevators we don't understand
+							
+							
 						}
 					}
 				}

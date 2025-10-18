@@ -1,52 +1,19 @@
 package blue.endless.pi;
 
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
+
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.zip.DeflaterOutputStream;
-import java.util.zip.InflaterInputStream;
 
-import javax.imageio.ImageIO;
-
-import blue.endless.jankson.api.Jankson;
 import blue.endless.jankson.api.SyntaxError;
 import blue.endless.jankson.api.document.ArrayElement;
-import blue.endless.jankson.api.document.KeyValuePairElement;
 import blue.endless.jankson.api.document.ObjectElement;
-import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.jankson.api.io.StructuredDataReader;
 import blue.endless.jankson.api.io.ValueElementReader;
-import blue.endless.jankson.api.io.json.JsonWriterOptions;
 import blue.endless.jankson.impl.io.objectwriter.RecordDeserializer;
-import blue.endless.pi.datastruct.Vec2;
 import blue.endless.pi.gui.EditorFrame;
 import blue.endless.pi.gui.Tileset;
-import blue.endless.pi.room.Door;
-import blue.endless.pi.room.MinimapCell;
-import blue.endless.pi.room.Room;
-import blue.endless.pi.world.WorldMeta;
 
 public class App {
 	public static final int PALETTE_MASK = 0x1F << 12; // Bits 12-16, with palettes 00-0F being user palettes and 10-1F being system palettes
@@ -201,6 +168,7 @@ public class App {
 		return result;
 	}*/
 	
+	/*
 	public static int[] unpackIntArray(ArrayElement arr) {
 		int[] result = new int[arr.size()];
 		int i = 0;
@@ -251,8 +219,9 @@ public class App {
 		}
 		
 		return 0L;
-	}
+	}*/
 	
+	/*
 	public static Room processRoom(List<byte[]> roomFiles) throws IOException, SyntaxError {
 		if (roomFiles.size() != 1) {
 			throw new IllegalArgumentException("Typically rooms contain only one json file. We don't know how to process more than that.");
@@ -271,8 +240,9 @@ public class App {
 		
 		
 		return room;
-	}
+	}*/
 	
+	/*
 	public static void processWorld(List<byte[]> worldFiles) throws IOException, SyntaxError {
 		if (worldFiles.size() != 2) {
 			throw new IllegalArgumentException("Expected 2 embedded jsons");
@@ -364,13 +334,7 @@ public class App {
 					if (kvp.getValue() instanceof ArrayElement arr) {
 						int roomId = 0;
 						for(ValueElement roomElem : arr) {
-							/*
-							try {
-								Room room = unpackRecord(val, Room.class);
-							} catch (Throwable t) {
-								//System.out.println(val);
-							}*/
-							
+
 							
 							if (roomElem instanceof ObjectElement room) {
 								//System.out.println("Room id: "+roomId);
@@ -486,6 +450,6 @@ public class App {
 		EditorFrame editor = new EditorFrame();
 		editor.setWorld(worldObj, worldMetaObj);
 		editor.setVisible(true); // Launch the app proper!
-	}
+	}*/
 	
 }

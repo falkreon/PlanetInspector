@@ -20,6 +20,10 @@ import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.pi.SchemaType;
+import blue.endless.pi.gui.layout.LinearLayout;
+import blue.endless.pi.gui.layout.LinearLayout.Axis;
+import blue.endless.pi.gui.layout.MultiItemAxisLayout;
+import blue.endless.pi.gui.layout.SingleItemAxisLayout;
 
 public class PropertyEditor extends JPanel {
 	private JLabel title = new JLabel("Properties");
@@ -43,7 +47,11 @@ public class PropertyEditor extends JPanel {
 		this.value = obj;
 		List<String> remainingKeys = new ArrayList<>(obj.keySet());
 		editorPanel = new JPanel();
-		editorPanel.setLayout(new GridLayout(0, 2));
+		LinearLayout layout = new LinearLayout();
+		layout.setAxis(Axis.VERTICAL);
+		layout.setMainAxisLayout(MultiItemAxisLayout.FILL_PROPORTIONAL);
+		layout.setCrossAxisLayout(SingleItemAxisLayout.FILL);
+		editorPanel.setLayout(layout);
 		
 		if (knownKeys != null) {
 			for(Map.Entry<String, SchemaType<?>> entry : knownKeys.entrySet()) {
@@ -58,12 +66,7 @@ public class PropertyEditor extends JPanel {
 			addLine(s, obj.get(s), null);
 		}
 		
-		//editorPanel.add(Box.createVerticalGlue());
-		
 		scrollPane.getViewport().setView(editorPanel);
-		
-		
-		
 	}
 	
 	private String represent(ValueElement value) {
@@ -86,80 +89,6 @@ public class PropertyEditor extends JPanel {
 	}
 	
 	private JComponent createEditorComponent(ValueElement value, SchemaType<?> schema) {
-		// First, booleans.
-		/*
-		if (schema == SchemaType.BOOLEAN) {
-			JCheckBox field = new JCheckBox();
-			if (value instanceof BooleanElementImpl b) {
-				field.setSelected(b.asBoolean().get());
-				return field;
-			} else if (value instanceof DoubleElementImpl d) {
-				field.setSelected(d.asDouble().getAsDouble() != 0);
-				return field;
-			} else if (value instanceof LongElementImpl l) {
-				field.setSelected(l.asLong().getAsLong() != 0);
-				return field;
-			}
-			
-			// TODO: wire in the containing object and the key name so we can update the backing data
-			field.addChangeListener(new ChangeListener() {
-				@Override
-				public void stateChanged(ChangeEvent arg0) {
-					System.out.println("Value changed to "+field.isSelected());
-				}});
-			// Otherwise fall through
-		}
-		
-		if (schema == SchemaType.INT) {
-			if (value instanceof LongElementImpl l) {
-				JTextField field = new JTextField();
-				field.setText(represent(value));
-				return field;
-			} else if (value instanceof DoubleElementImpl d) {
-				JTextField field = new JTextField();
-				field.setText(Long.toString((long) d.asDouble().getAsDouble()));
-				return field;
-			}
-		}
-		
-		if (schema == SchemaType.DOUBLE) {
-			if (value instanceof PrimitiveElement prim) {
-				OptionalDouble opt = prim.asDouble();
-				if (opt.isPresent()) {
-					JTextField field = new JTextField();
-					field.setText(Double.toString(opt.getAsDouble()));
-					return field;
-				}
-			}
-		}*/
-		
-		/*
-		if (schema == SchemaType.STRING) {
-			if (value instanceof StringElementImpl s) {
-				JTextField field = new JTextField();
-				field.setText(represent(value));
-				return field;
-			}
-		}*/
-		/*
-		if (schema == SchemaType.OBJECT) {
-			if (value instanceof ObjectElement) {
-				// Report good but not-editable
-				JTextField field = new JTextField();
-				field.setText(represent(value));
-				field.setFont(field.getFont().deriveFont(Font.BOLD));
-				field.setEnabled(false);
-				return field;
-			}
-		} else if (schema == SchemaType.ARRAY) {
-			if (value instanceof ArrayElement) {
-				JTextField field = new JTextField();
-				field.setText(represent(value));
-				field.setFont(field.getFont().deriveFont(Font.BOLD));
-				field.setEnabled(false);
-				return field;
-			}
-		}*/
 		
 		// Misc values that have *no* schemaType
 		
@@ -181,8 +110,14 @@ public class PropertyEditor extends JPanel {
 	}
 	
 	private void addLine(String key, ValueElement value, SchemaType<?> schema) {
+		JPanel panel = new JPanel();
+		LinearLayout layout = new LinearLayout();
+		layout.setAxis(Axis.HORIZONTAL);
+		layout.setMainAxisLayout(MultiItemAxisLayout.FILL_UNIFORM);
+		layout.setCrossAxisLayout(SingleItemAxisLayout.FILL);
+		panel.setLayout(layout);
 		JLabel label = new JLabel(key);
-		editorPanel.add(label);
+		panel.add(label);
 		
 		JComponent editorComponent;
 		if (schema != null) {
@@ -190,6 +125,7 @@ public class PropertyEditor extends JPanel {
 		} else {
 			editorComponent = createEditorComponent(value, schema);
 		}
-		editorPanel.add(editorComponent);
+		panel.add(editorComponent);
+		editorPanel.add(panel);
 	}
 }
