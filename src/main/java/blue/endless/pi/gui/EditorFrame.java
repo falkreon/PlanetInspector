@@ -9,7 +9,6 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Random;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
@@ -264,6 +263,7 @@ public class EditorFrame extends JFrame {
 			
 			// Make last minute edits to be sure this file is marked as externally edited
 			
+			// Clear the generator debug log; it's useless now
 			world.json().put("GENERATION_DEBUG_LOG", new ObjectElement());
 			
 			// Grab stats and include in the preview
@@ -271,14 +271,17 @@ public class EditorFrame extends JFrame {
 			int roomCount = stats.getPrimitive("rooms").asInt().orElse(0);
 			int bossCount = stats.getPrimitive("bosses").asInt().orElse(0);
 			int areaCount = stats.getPrimitive("areas").asInt().orElse(0);
-			world.metaJson().put("description", PrimitiveElement.of("MODIFIED WORLD, USE WITH CARE; ROOMS:"+roomCount+"; AREAS:"+areaCount+"; BOSSES:"+bossCount));
-			ObjectElement toolObj = new ObjectElement();
-			ArrayElement authorsArr = new ArrayElement();
-			authorsArr.add(PrimitiveElement.of("FALKREON"));
-			toolObj.put("authors", authorsArr);
+			world.metaJson().put("description", PrimitiveElement.of("MODIFIED WORLD, USE WITH CARE; ROOMS: "+roomCount+"; AREAS: "+areaCount+"; BOSSES: "+bossCount));
+			
+			// Make sure the editor_tool key is there to mark this world as edited
+			ObjectElement toolObj = world.metaJson().getObject("external_editor");
+			if (toolObj.isEmpty()) {
+				// If it's empty or fake, make sure it exists now as part of the meta json
+				world.metaJson().put("external_editor", toolObj);
+			}
+			toolObj.computeIfAbsent("authors", (it) -> new ArrayElement());
+			toolObj.computeIfAbsent("tags", (it) -> new ArrayElement());
 			toolObj.put("editor_tool", PrimitiveElement.of("planet_inspector"));
-			toolObj.put("tags", new ArrayElement());
-			world.metaJson().put("external_editor", toolObj);
 			
 			world.save(outputFile.toPath());
 			
