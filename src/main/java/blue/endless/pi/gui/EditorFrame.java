@@ -9,6 +9,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Random;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
@@ -31,35 +32,35 @@ import blue.endless.pi.SchemaType;
  */
 public class EditorFrame extends JFrame {
 	static Map<String, SchemaType<?>> ROOM_SCHEMA = Map.of(
-			"META", SchemaType.NON_EDITABLE,
-			"GENERAL", SchemaType.NON_EDITABLE,
-			"EVENTS", SchemaType.NON_EDITABLE,
-			"PATHING", SchemaType.NON_EDITABLE,
-			"HAZARD", SchemaType.NON_EDITABLE,
-			"PALETTES", SchemaType.NON_EDITABLE,
-			"SCREENS", SchemaType.NON_EDITABLE
+			"META", SchemaType.IMMUTABLE,
+			"GENERAL", SchemaType.IMMUTABLE,
+			"EVENTS", SchemaType.IMMUTABLE,
+			"PATHING", SchemaType.IMMUTABLE,
+			"HAZARD", SchemaType.IMMUTABLE,
+			"PALETTES", SchemaType.IMMUTABLE,
+			"SCREENS", SchemaType.IMMUTABLE
 			);
 	
 	static Map<String, SchemaType<?>> SCREEN_SCHEMA = Map.of(
 			"x", SchemaType.INT,
 			"y", SchemaType.INT,
-			"boss", SchemaType.NON_EDITABLE // boolean
+			"boss", SchemaType.IMMUTABLE // boolean
 			);
 	
 	static Map<String, SchemaType<?>> ROOM_GENERAL_SCHEMA = Map.ofEntries(
 			Map.entry("name", SchemaType.STRING),
 			Map.entry("designer", SchemaType.STRING),
 			Map.entry("bg_color", SchemaType.INT),
-			Map.entry("powered", SchemaType.NON_EDITABLE), // boolean
-			Map.entry("no_floor", SchemaType.NON_EDITABLE), // boolean
+			Map.entry("powered", SchemaType.IMMUTABLE), // boolean
+			Map.entry("no_floor", SchemaType.IMMUTABLE), // boolean
 			Map.entry("area", SchemaType.INT),
 			Map.entry("sector", SchemaType.INT),
 			Map.entry("bgm", SchemaType.STRING),
 			Map.entry("gravity_multiplier", SchemaType.DOUBLE),
-			Map.entry("focus", SchemaType.NON_EDITABLE),
-			Map.entry("areas", SchemaType.NON_EDITABLE),
-			Map.entry("magnet", SchemaType.NON_EDITABLE),
-			Map.entry("tags", SchemaType.NON_EDITABLE)
+			Map.entry("focus", SchemaType.IMMUTABLE),
+			Map.entry("areas", SchemaType.IMMUTABLE),
+			Map.entry("magnet", SchemaType.IMMUTABLE),
+			Map.entry("tags", SchemaType.IMMUTABLE)
 			);
 	
 	private static Map<String, SchemaType<?>> WORLD_META_SCHEMA = Map.of(
@@ -108,17 +109,29 @@ public class EditorFrame extends JFrame {
 		fileMenu.add(saveAsMenuItem);
 		menuBar.add(fileMenu);
 		
-		JMenu mapMenu = new JMenu("Map");
+		JMenu worldMenu = new JMenu("World");
 		JMenuItem debugLogItem = new JMenuItem("Debug Log");
 		debugLogItem.setAction(new AbstractAction("Debug Log") {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if (world == null) return;
 				DebugLogFrame logFrame = new DebugLogFrame(world);
 				logFrame.setVisible(true);
 			}
 		});
-		mapMenu.add(debugLogItem);
-		menuBar.add(mapMenu);
+		worldMenu.add(debugLogItem);
+		JMenuItem makeUniqueItem = new JMenuItem("Make Unique");
+		makeUniqueItem.setAction(new AbstractAction("Make Unique") {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (world == null) return;
+				long newId = (long) (Math.random() * Integer.MAX_VALUE);
+				world.metaJson().put("id", PrimitiveElement.of(newId));
+				setWorldProperties();
+			}
+		});
+		worldMenu.add(makeUniqueItem);
+		menuBar.add(worldMenu);
 		
 		menuBar.add(Box.createHorizontalGlue());
 		
@@ -144,14 +157,26 @@ public class EditorFrame extends JFrame {
 		});
 	}
 	
+	public void setWorldProperties() {
+		propertyView.setObject(null, null);
+		if (world == null) return;
+		propertyView.addExternalLine("Short Name", world.metaJson(), "name", SchemaType.STRING);
+		propertyView.addExternalLine("Full Name", world.metaJson(), "name_full", SchemaType.STRING);
+		propertyView.addExternalLine("Authors", world.metaJson().getObject("external_editor"), "authors", SchemaType.STRING_LIST);
+		propertyView.addExternalLine("Tags", world.metaJson().getObject("external_editor"), "tags", SchemaType.STRING_LIST);
+		propertyView.addExternalLine("Id", world.metaJson(), "id", SchemaType.IMMUTABLE_INT);
+	}
+	
 	public void setWorld(ObjectElement obj, ObjectElement meta) {
 		world = WorldInfo.of(obj, meta);
 		
-		propertyView.setObject(meta, WORLD_META_SCHEMA);
+		setWorldProperties();
+		//propertyView.setObject(meta, WORLD_META_SCHEMA);
 		planetView.setWorld(world);
 		planetView.setPropertiesConsumer((o, schema) -> {
 			if (o == null) {
-				propertyView.setObject(meta, WORLD_META_SCHEMA);
+				setWorldProperties();
+				//propertyView.setObject(meta, WORLD_META_SCHEMA);
 			} else {
 				propertyView.setObject(o, schema);
 			}
@@ -160,11 +185,13 @@ public class EditorFrame extends JFrame {
 	
 	public void setWorld(WorldInfo world) {
 		this.world = world;
-		propertyView.setObject(world.metaJson(), WORLD_META_SCHEMA);
+		setWorldProperties();
+		//propertyView.setObject(world.metaJson(), WORLD_META_SCHEMA);
 		planetView.setWorld(world);
 		planetView.setPropertiesConsumer((o, schema) -> {
 			if (o == null) {
-				propertyView.setObject(world.metaJson(), WORLD_META_SCHEMA);
+				setWorldProperties();
+				//propertyView.setObject(world.metaJson(), WORLD_META_SCHEMA);
 			} else {
 				propertyView.setObject(o, schema);
 			}
@@ -236,6 +263,8 @@ public class EditorFrame extends JFrame {
 			File outputFile = chooser.getSelectedFile();
 			
 			// Make last minute edits to be sure this file is marked as externally edited
+			
+			world.json().put("GENERATION_DEBUG_LOG", new ObjectElement());
 			
 			// Grab stats and include in the preview
 			ObjectElement stats = world.metaJson().getObject("stats");

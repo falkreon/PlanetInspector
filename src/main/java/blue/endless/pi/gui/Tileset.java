@@ -67,7 +67,7 @@ public class Tileset {
 			}
 		}
 		
-		
+		/*
 		try {
 			ImageIO.write(tilesetImage, "png", new File("stitched.png"));
 			for(int i=0; i<3; i++) {
@@ -76,7 +76,7 @@ public class Tileset {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 		
 	}
 	

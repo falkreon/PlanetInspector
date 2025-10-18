@@ -30,12 +30,18 @@ public class DebugLogFrame extends JFrame implements ListSelectionListener {
 		this.world = world;
 		this.debug = world.json().getObject("GENERATION_DEBUG_LOG");
 		ArrayList<String> items = new ArrayList<>();
-		items.add("starting_items");
-		items.add("major_pool");
-		for(int i=0; i<debug.getArray("minor_pools").size(); i++) {
-			items.add("minor_pools."+i);
+		if (debug.isEmpty()) {
+			items.add("Empty Log");
+			
+		} else {
+			
+			items.add("starting_items");
+			items.add("major_pool");
+			for(int i=0; i<debug.getArray("minor_pools").size(); i++) {
+				items.add("minor_pools."+i);
+			}
+			items.add("placed_items");
 		}
-		items.add("placed_items");
 		left = new JList<String>(items.toArray(new String[items.size()]));
 		left.setMinimumSize(new Dimension(200, 150));
 		left.setPreferredSize(new Dimension(200, 150));

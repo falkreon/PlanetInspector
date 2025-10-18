@@ -44,14 +44,22 @@ public class PropertyEditor extends JPanel {
 	}
 	
 	public void setObject(ObjectElement obj, Map<String, SchemaType<?>> knownKeys) {
+		
 		this.value = obj;
-		List<String> remainingKeys = new ArrayList<>(obj.keySet());
 		editorPanel = new JPanel();
 		LinearLayout layout = new LinearLayout();
 		layout.setAxis(Axis.VERTICAL);
 		layout.setMainAxisLayout(MultiItemAxisLayout.FILL_PROPORTIONAL);
 		layout.setCrossAxisLayout(SingleItemAxisLayout.FILL);
 		editorPanel.setLayout(layout);
+		
+		if (obj == null) {
+			scrollPane.getViewport().setView(editorPanel);
+			return;
+		}
+		
+		List<String> remainingKeys = new ArrayList<>(obj.keySet());
+		
 		
 		if (knownKeys != null) {
 			for(Map.Entry<String, SchemaType<?>> entry : knownKeys.entrySet()) {
@@ -110,6 +118,14 @@ public class PropertyEditor extends JPanel {
 	}
 	
 	private void addLine(String key, ValueElement value, SchemaType<?> schema) {
+		JComponent editorComponent = (schema != null) ?
+			schema.createEditor(this.value, key) :
+			createEditorComponent(value, schema);
+		
+		addLine(key, editorComponent);
+	}
+	
+	public void addLine(String key, JComponent editor) {
 		JPanel panel = new JPanel();
 		LinearLayout layout = new LinearLayout();
 		layout.setAxis(Axis.HORIZONTAL);
@@ -118,14 +134,23 @@ public class PropertyEditor extends JPanel {
 		panel.setLayout(layout);
 		JLabel label = new JLabel(key);
 		panel.add(label);
-		
-		JComponent editorComponent;
-		if (schema != null) {
-			editorComponent = schema.createEditor(this.value, key);
-		} else {
-			editorComponent = createEditorComponent(value, schema);
-		}
-		panel.add(editorComponent);
+		panel.add(editor);
 		editorPanel.add(panel);
+	}
+	
+	public void addExternalLine(String label, ObjectElement sourceObject, String sourceKey, SchemaType<?> schema) {
+		JComponent editor = (schema != null) ?
+				schema.createEditor(sourceObject, sourceKey) :
+				SchemaType.IMMUTABLE.createEditor(sourceObject, sourceKey);
+		addLine(label, editor);
+		editorPanel.validate();
+	}
+	
+	public void addExternalLine(String label, ArrayElement sourceArray, int sourceIndex, SchemaType<?> schema) {
+		JComponent editor = (schema != null) ?
+				schema.createEditor(sourceArray, sourceIndex) :
+				SchemaType.IMMUTABLE.createEditor(sourceArray, sourceIndex);
+		addLine(label, editor);
+		editorPanel.validate();
 	}
 }

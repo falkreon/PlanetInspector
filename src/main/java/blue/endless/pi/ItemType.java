@@ -104,6 +104,11 @@ public class ItemType {
 	public int[] palette() { return this.palette; }
 	public ObjectElement defaultParams() { return this.defaultParams; }
 	
+	@Override
+	public String toString() {
+		return this.name;
+	}
+	
 	public static @Nullable ItemType of(int id) {
 		return values.getOrDefault(id, null);
 	}

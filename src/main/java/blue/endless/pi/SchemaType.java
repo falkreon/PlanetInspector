@@ -3,9 +3,10 @@ package blue.endless.pi;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import javax.swing.JComponent;
 import javax.swing.JTextField;
@@ -16,15 +17,18 @@ import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
+import blue.endless.jankson.impl.document.DoubleElementImpl;
 import blue.endless.jankson.impl.document.NullElementImpl;
 
 public sealed interface SchemaType<T> permits SchemaType.Editable, SchemaType.NonEditable {
 	// Editable
-	public static final SchemaType<String> NON_EDITABLE = new NonEditable();
+	public static final SchemaType<String> IMMUTABLE = new NonEditableGeneral();
+	public static final SchemaType<Long> IMMUTABLE_INT = new NonEditableInt();
 	
 	public static final SchemaType<String> STRING = new EditableString();
 	public static final SchemaType<Double> DOUBLE = new EditableDouble();
 	public static final SchemaType<Integer> INT = new EditableInt();
+	public static final SchemaType<List<String>> STRING_LIST = new EditableStringList();
 	//public static final SchemaType<Boolean> BOOLEAN = new SchemaType<>();
 	
 	// Not editable, limited display
@@ -41,6 +45,10 @@ public sealed interface SchemaType<T> permits SchemaType.Editable, SchemaType.No
 	
 	T deserialize(ValueElement v);
 	
+	default String express(T value) {
+		return value.toString();
+	}
+	
 	default JComponent createEditor(ObjectElement parent, String key) {
 		JTextField result = new JTextField();
 		result.setBackground(Color.WHITE);
@@ -48,7 +56,7 @@ public sealed interface SchemaType<T> permits SchemaType.Editable, SchemaType.No
 		if (value == null) {
 			result.setText("null");
 		} else {
-			result.setText(value.toString());
+			result.setText(express(value));
 		}
 		if (this instanceof Editable<T> editable) {
 			result.getDocument().addDocumentListener(new DocumentListener() {
@@ -79,6 +87,7 @@ public sealed interface SchemaType<T> permits SchemaType.Editable, SchemaType.No
 			
 		} else {
 			result.setEditable(false);
+			result.setEnabled(false);
 			result.setFont(result.getFont().deriveFont(Font.BOLD));
 		}
 		return result;
@@ -126,17 +135,23 @@ public sealed interface SchemaType<T> permits SchemaType.Editable, SchemaType.No
 		return result;
 	}
 	
-	public static final class NonEditable implements SchemaType<String> {
+	public static non-sealed interface NonEditable<T> extends SchemaType<T> {
 		
+	}
+	
+	public static class NonEditableGeneral implements NonEditable<String> {
+		
+		@Override
 		public String get(ObjectElement parent, String key) {
 			return express(parent.get(key));
 		}
 		
+		@Override
 		public String get(ArrayElement parent, int index) {
 			return express(parent.get(index));
 		}
 		
-		private String express(ValueElement val) {
+		public String express(ValueElement val) {
 			return switch(val) {
 				case NullElementImpl n -> "null";
 				case PrimitiveElement prim -> prim.asString().orElse("");
@@ -151,6 +166,22 @@ public sealed interface SchemaType<T> permits SchemaType.Editable, SchemaType.No
 			return switch(v) {
 				case PrimitiveElement prim -> prim.asString().orElse("");
 				default -> "";
+			};
+		}
+	}
+	
+	public static class NonEditableInt implements NonEditable<Long> {
+		@Override
+		public String express(Long value) {
+			return Long.toString(value);
+		}
+
+		@Override
+		public Long deserialize(ValueElement v) {
+			return switch(v) {
+				case DoubleElementImpl d -> (long) d.asDouble().getAsDouble();
+				case PrimitiveElement prim -> prim.asLong().orElse(0L);
+				default -> 0L;
 			};
 		}
 	}
@@ -239,6 +270,67 @@ public sealed interface SchemaType<T> permits SchemaType.Editable, SchemaType.No
 			return Optional.of(value);
 		}
 		
+	}
+	
+	public static class EditableStringList implements Editable<List<String>> {
+		@Override
+		public List<String> deserialize(ValueElement value) {
+			return switch(value) {
+				case PrimitiveElement prim -> {
+					Optional<String> str = prim.asString();
+					if (str.isPresent()) {
+						yield List.of(str.get());
+					} else {
+						yield List.of();
+					}
+				}
+				
+				case ArrayElement arr -> {
+					ArrayList<String> result = new ArrayList<>();
+					for(ValueElement val : arr) {
+						if (val instanceof PrimitiveElement prim) {
+							Optional<String> str = prim.asString();
+							if (str.isPresent()) result.add(str.get());
+						}
+					}
+					yield result;
+				}
+				
+				case null -> List.of();
+				
+				default -> List.of();
+			};
+		}
+		
+		@Override
+		public Optional<List<String>> convert(String value) {
+			String[] parts = value.split(Pattern.quote(","));
+			ArrayList<String> result = new ArrayList<>();
+			for(String s : parts) {
+				String clean = s.trim();
+				if (!clean.isBlank()) result.add(clean);
+			}
+			return (result.size() > 0) ? Optional.of(result) : Optional.empty();
+		}
+		
+		@Override
+		public ValueElement serialize(List<String> value) {
+			ArrayElement result = new ArrayElement();
+			for(String s : value) {
+				result.add(PrimitiveElement.of(s));
+			}
+			return result;
+		}
+		
+		public String express(List<String> value) {
+			StringBuilder result = new StringBuilder();
+			for(int i=0; i<value.size(); i++) {
+				if (i != 0) result.append(", ");
+				result.append(value.get(i));
+			}
+			
+			return result.toString();
+		}
 	}
 	
 }
