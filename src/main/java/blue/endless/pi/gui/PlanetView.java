@@ -20,6 +20,7 @@ import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.pi.Direction;
+import blue.endless.pi.PlacedScreen;
 import blue.endless.pi.SchemaType;
 import blue.endless.pi.datastruct.Vec2;
 
@@ -339,18 +340,15 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 				for(ScreenInfo screen : room.screens()) {
 					for(ValueElement val : screen.json().getArray("ELEVATORS")) {
 						if (val instanceof ObjectElement elevator) {
-							int destRm = elevator.getPrimitive("dest_rm").asInt().orElse(-1);
-							int destId = elevator.getPrimitive("dest_id").asInt().orElse(-1);
+							int destRm = elevator.getPrimitive("dest_rm").asInt().orElse(-2);
+							int destId = elevator.getPrimitive("dest_id").asInt().orElse(0);
 							if (destRm > 0 && destRm < world.rooms().size()) {
 								RoomInfo destRoom = world.rooms().get(destRm);
-								Optional<ObjectElement> maybeDest = destRoom.getElevator(destId);
-								maybeDest.ifPresent(it -> {
-									it.put("dest_rm", PrimitiveElement.of(-1));
-									it.put("dest_id", PrimitiveElement.of(0));
-								});
+								Optional<ElevatorInfo> maybeDest = destRoom.getElevator(destId);
+								maybeDest.ifPresent(ElevatorInfo::clearDestination);
 							}
-							
-							elevator.put("dest_rm", PrimitiveElement.of(-1));
+							// De-stitch the source elevator
+							elevator.put("dest_rm", PrimitiveElement.of(-2));
 							elevator.put("dest_id", PrimitiveElement.of(0));
 						}
 					}
@@ -359,10 +357,65 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 				
 				for(ScreenInfo screen : room.screens()) {
 					for(ValueElement val : screen.json().getArray("ELEVATORS")) {
-						if (val instanceof ObjectElement elevator) {
-							Direction d = Direction.valueOf(elevator.getPrimitive("dir").asInt().orElse(0));
-							if (d == Direction.INVALID) continue; // Don't adjust elevators we don't understand
+						if (val instanceof ObjectElement elevatorObj) {
+							ElevatorInfo sourceElevator = new ElevatorInfo(room, screen, elevatorObj);
 							
+							System.out.println("Attempting to stitch "+sourceElevator.json()+" in room "+dragRoom);
+							
+							switch(sourceElevator.direction()) {
+								case WEST, EAST -> {} // For now, don't touch these!
+								case NORTH -> {
+									int xi = screen.x();
+									for(int yi = screen.y() - 1; yi >= 0; yi--) {
+										//System.out.println("Searching "+xi+", "+yi);
+										Optional<PlacedScreen> maybeScreen = world.screenAt(xi, yi);
+										if (maybeScreen.isPresent()) {
+											if (maybeScreen.get().room().equals(room)) continue; // Don't link to ourselves
+											//int foundRoomId = world.indexOf(maybeScreen.get().room());
+											//int foundScreenN = maybeScreen.get().room().indexOf(maybeScreen.get().screen());
+											//System.out.println("Found room "+foundRoomId+" screen "+foundScreenN);
+											if (maybeScreen.get().screen().hasElevators()) {
+												//System.out.println("Elevator(s) found");
+												// We need to either bail (because we've hit an elevator that won't
+												// connect) or stitch to a matched elevator
+												Optional<ElevatorInfo> match = maybeScreen.get().getElevator(Direction.SOUTH);
+												if (match.isPresent()) {
+													world.linkElevators(sourceElevator, match.get());
+													System.out.println("Linked elevators!");
+													break;
+												}
+											}
+										}
+									}
+								}
+								
+								case SOUTH -> {
+									int xi = screen.x();
+									for(int yi = screen.y() + 1; yi<=70; yi++) {
+										//System.out.println("Searching "+xi+", "+yi);
+										Optional<PlacedScreen> maybeScreen = world.screenAt(xi, yi);
+										if (maybeScreen.isPresent()) {
+											if (maybeScreen.get().room().equals(room)) continue; // Don't link to ourselves
+											//int foundRoomId = world.indexOf(maybeScreen.get().room());
+											//int foundScreenN = maybeScreen.get().room().indexOf(maybeScreen.get().screen());
+											//System.out.println("Found room "+foundRoomId+" screen "+foundScreenN);
+											if (maybeScreen.get().screen().hasElevators()) {
+												//System.out.println("Elevator(s) found");
+												// We need to either bail (because we've hit an elevator that won't
+												// connect) or stitch to a matched elevator
+												Optional<ElevatorInfo> match = maybeScreen.get().getElevator(Direction.NORTH);
+												if (match.isPresent()) {
+													world.linkElevators(sourceElevator, match.get());
+													System.out.println("Linked elevators!");
+													break;
+												}
+											}
+										}
+									}
+									
+								}
+								default -> {}
+							}
 							
 						}
 					}
@@ -383,10 +436,19 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 					}
 				}
 				
-				// TODO XXX : Update PROGRESSION_LOG if this room is mentioned
-				// TODO : Disconnect broken doors so they can be quickly validated
-			} else {
-				System.out.println("Can't drag room there: collision!");
+				
+				for(ValueElement val : world.json().getArray("PROGRESSION_LOG")) {
+					if (val instanceof ObjectElement entry) {
+						int entryRoomId = entry.getPrimitive("room_id").asInt().orElse(-1);
+						if (entryRoomId == dragRoom) {
+							int oldX = entry.getPrimitive("x").asInt().orElse(0);
+							int oldY = entry.getPrimitive("y").asInt().orElse(0);
+							entry.put("x", PrimitiveElement.of(oldX + dx));
+							entry.put("y", PrimitiveElement.of(oldY + dy));
+						}
+					}
+				}
+				
 			}
 			
 			dragRoom = -1;
@@ -394,10 +456,6 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 			dragStartY = -1;
 			dragCurX = -1;
 			dragCurY = -1;
-			
-			//System.out.println("Release: "+cellX+", "+cellY);
-			
-			
 			
 			this.repaint();
 		}

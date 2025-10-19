@@ -276,14 +276,7 @@ public sealed interface SchemaType<T> permits SchemaType.Editable, SchemaType.No
 		@Override
 		public List<String> deserialize(ValueElement value) {
 			return switch(value) {
-				case PrimitiveElement prim -> {
-					Optional<String> str = prim.asString();
-					if (str.isPresent()) {
-						yield List.of(str.get());
-					} else {
-						yield List.of();
-					}
-				}
+				case PrimitiveElement prim ->  prim.asString().map(List::of).orElseGet(List::of);
 				
 				case ArrayElement arr -> {
 					ArrayList<String> result = new ArrayList<>();
@@ -296,9 +289,7 @@ public sealed interface SchemaType<T> permits SchemaType.Editable, SchemaType.No
 					yield result;
 				}
 				
-				case null -> List.of();
-				
-				default -> List.of();
+				case null, default -> List.of();
 			};
 		}
 		

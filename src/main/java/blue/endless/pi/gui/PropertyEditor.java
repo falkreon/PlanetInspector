@@ -14,6 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 
 import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.ObjectElement;
@@ -47,6 +48,7 @@ public class PropertyEditor extends JPanel {
 		
 		this.value = obj;
 		editorPanel = new JPanel();
+		editorPanel.setBorder(new EmptyBorder(8, 8, 8, 8));
 		LinearLayout layout = new LinearLayout();
 		layout.setAxis(Axis.VERTICAL);
 		layout.setMainAxisLayout(MultiItemAxisLayout.FILL_PROPORTIONAL);

@@ -14,6 +14,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
@@ -25,6 +26,7 @@ import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.jankson.api.io.json.JsonWriterOptions;
+import blue.endless.pi.PlacedScreen;
 
 public record WorldInfo(ObjectElement json, ObjectElement metaJson, List<RoomInfo> rooms, List<AreaInfo> areas) {
 	public static final double CURRENT_ENIGMA_VERSION = 0.775;
@@ -47,6 +49,38 @@ public record WorldInfo(ObjectElement json, ObjectElement metaJson, List<RoomInf
 		}
 		
 		return new WorldInfo(json, metaJson, rooms, areas);
+	}
+	
+	/**
+	 * Gets the room_id of the specified room
+	 * @param room The room to look up
+	 * @return the id for this room, or -1 if the room is orphaned from this world.
+	 */
+	public int indexOf(RoomInfo room) {
+		return rooms.indexOf(room);
+	}
+	
+	public Optional<RoomInfo> roomAt(int x, int y) {
+		for(RoomInfo room : rooms) {
+			for(ScreenInfo screen : room.screens()) {
+				if (screen.x() == x && screen.y() == y) return Optional.of(room);
+			}
+		}
+		return Optional.empty();
+	}
+	
+	public Optional<PlacedScreen> screenAt(int x, int y) {
+		for(RoomInfo room : rooms) {
+			for(ScreenInfo screen : room.screens()) {
+				if (screen.x() == x && screen.y() == y) return Optional.of(new PlacedScreen(room, screen));
+			}
+		}
+		return Optional.empty();
+	}
+	
+	public void linkElevators(ElevatorInfo a, ElevatorInfo b) {
+		a.setDestination(indexOf(b.room()), b.id());
+		b.setDestination(indexOf(a.room()), a.id());
 	}
 	
 	public void deleteRoom(int room) {
@@ -275,4 +309,5 @@ public record WorldInfo(ObjectElement json, ObjectElement metaJson, List<RoomInf
 			deflaterOut.close();
 		}
 	}
+	
 }

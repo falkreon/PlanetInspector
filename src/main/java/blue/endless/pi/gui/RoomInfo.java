@@ -70,13 +70,24 @@ public record RoomInfo(ObjectElement json, ObjectElement general, List<ScreenInf
 		return Optional.empty();
 	}
 	
-	public Optional<ObjectElement> getElevator(int id) {
+	/**
+	 * Returns the screen_n for the screen within this room, or -1 if the screen doesn't exist within this room
+	 * @param screen The screen to lookup the index for
+	 * @return The index of the specified screen, or -1 if it's not in this room.
+	 */
+	public int indexOf(ScreenInfo screen) {
+		return screens.indexOf(screen);
+	}
+	
+	public Optional<ElevatorInfo> getElevator(int id) {
 		for(ScreenInfo screen : screens) {
 			ArrayElement arr = screen.json().getArray("ELEVATORS");
 			for(ValueElement elem : arr) {
 				if (elem instanceof ObjectElement obj) {
 					OptionalInt curId = obj.getPrimitive("id").asInt();
-					if (curId.isPresent() && curId.getAsInt() == id) return Optional.of(obj); 
+					if (curId.isPresent() && curId.getAsInt() == id) {
+						return Optional.of(new ElevatorInfo(this, screen, obj));
+					}
 				}
 			}
 		}
@@ -105,8 +116,8 @@ public record RoomInfo(ObjectElement json, ObjectElement general, List<ScreenInf
 			ArrayElement arr = screen.json().getArray("ELEVATORS");
 			for(ValueElement elem : arr) {
 				if (elem instanceof ObjectElement obj) {
-					int dest_rm = obj.getPrimitive("dest_rm").asInt().orElse(-1);
-					if (dest_rm == -1) {
+					int dest_rm = obj.getPrimitive("dest_rm").asInt().orElse(-2);
+					if (dest_rm == -2) {
 						return false;
 					}
 				}

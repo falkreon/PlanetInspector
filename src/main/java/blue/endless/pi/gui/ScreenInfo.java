@@ -13,10 +13,8 @@ import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.jankson.impl.document.DoubleElementImpl;
 import blue.endless.jankson.impl.document.LongElementImpl;
-import blue.endless.pi.Assets;
 import blue.endless.pi.Direction;
 import blue.endless.pi.DoorType;
-import blue.endless.pi.ItemType;
 import blue.endless.pi.Wall;
 
 public class ScreenInfo {
@@ -84,6 +82,21 @@ public class ScreenInfo {
 	
 	public ObjectElement object(int i) {
 		return json.getArray("OBJECTS").getObject(i);
+	}
+	
+	public boolean hasElevators() {
+		return !json().getArray("ELEVATORS").isEmpty();
+	}
+	
+	public Optional<ObjectElement> getElevator(Direction dir) {
+		for(ValueElement val : json().getArray("ELEVATORS")) {
+			if (val instanceof ObjectElement elevator) {
+				Direction d = Direction.valueOf(elevator.getPrimitive("dir").asInt().orElse(0));
+				if (d == dir) return Optional.of(elevator);
+			}
+		}
+		
+		return Optional.empty();
 	}
 	
 	private static int tileAt(ArrayElement plane, int x, int y) {
@@ -211,27 +224,6 @@ public class ScreenInfo {
 				
 			}
 		}
-		/*
-		for(ObjectElement obj : doors()) {
-			Direction d = Direction.valueOf(obj.getPrimitive("pos").asInt().orElse(0));
-			DoorType doorType = DoorType.of(obj.getPrimitive("type").asInt().orElse(1));
-			g.setColor(doorType.color());
-			switch(d) {
-				case NORTH -> {
-					//g.fillRect(x + PlanetView.DOOR_OFFSET , y, PlanetView.DOOR_SIZE, 2);
-				}
-				case EAST -> {
-					//g.fillRect(x + PlanetView.CELL_SIZE - 2, y + PlanetView.DOOR_OFFSET, 2, PlanetView.DOOR_SIZE);
-				}
-				case SOUTH -> {
-					//g.fillRect(x + PlanetView.DOOR_OFFSET, y + PlanetView.CELL_SIZE - 2, PlanetView.DOOR_SIZE, 2);
-				}
-				case WEST -> {
-					//g.fillRect(x, y + PlanetView.DOOR_OFFSET, 2, PlanetView.DOOR_SIZE);
-				}
-				case INVALID -> {}
-			}
-		}*/
 	}
 	
 	private void paintSouthWall(Graphics g, int x, int y, Color fg) {
