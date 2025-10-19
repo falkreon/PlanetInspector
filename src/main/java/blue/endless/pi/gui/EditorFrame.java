@@ -178,6 +178,7 @@ public class EditorFrame extends JFrame {
 		if (world == null) return;
 		propertyView.addExternalLine("Short Name", world.metaJson(), "name", SchemaType.STRING);
 		propertyView.addExternalLine("Full Name", world.metaJson(), "name_full", SchemaType.STRING);
+		propertyView.addExternalLine("Version", world.metaJson(), "world_version", SchemaType.INT);
 		propertyView.addExternalLine("Authors", world.metaJson().getObject("external_editor"), "authors", SchemaType.STRING_LIST);
 		propertyView.addExternalLine("Tags", world.metaJson().getObject("external_editor"), "tags", SchemaType.STRING_LIST);
 		propertyView.addExternalLine("Id", world.metaJson(), "id", SchemaType.IMMUTABLE_INT);

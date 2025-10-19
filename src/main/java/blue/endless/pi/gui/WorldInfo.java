@@ -27,6 +27,8 @@ import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.jankson.api.io.json.JsonWriterOptions;
 
 public record WorldInfo(ObjectElement json, ObjectElement metaJson, List<RoomInfo> rooms, List<AreaInfo> areas) {
+	public static final double CURRENT_ENIGMA_VERSION = 0.775;
+	
 	public static WorldInfo of(ObjectElement json, ObjectElement metaJson) {
 		ArrayList<RoomInfo> rooms = new ArrayList<>();
 		ArrayElement roomsArray = json.getArray("ROOMS");
@@ -242,11 +244,10 @@ public record WorldInfo(ObjectElement json, ObjectElement metaJson, List<RoomInf
 			ObjectElement worldMetaObj = Jankson.readJsonObject(new ByteArrayInputStream(files.get(0)));
 			
 			// Check world version
-			double planetsVersion = worldMetaObj.getPrimitive("version").asDouble().orElse(-1.0);
-			double planetsWorldVersion = worldMetaObj.getPrimitive("worldVersion").asDouble().orElse(-1.0);
+			double enigmaVersion = worldMetaObj.getPrimitive("version").asDouble().orElse(-1.0);
 			
-			if ((planetsVersion - 0.775) > 0.0001 | (planetsWorldVersion - 0.0) > 0.0001) {
-				throw new SyntaxError("Cannot open this world version (version: "+planetsVersion+", worldVersion: "+planetsWorldVersion);
+			if ((enigmaVersion - CURRENT_ENIGMA_VERSION) > 0.0001) {
+				throw new SyntaxError("Cannot open this world version (version: "+enigmaVersion+")");
 			}
 			
 			ObjectElement worldObj = Jankson.readJsonObject(new ByteArrayInputStream(files.get(1)));
