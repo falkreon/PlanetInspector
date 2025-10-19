@@ -20,6 +20,7 @@ import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.pi.Direction;
+import blue.endless.pi.DoorType;
 import blue.endless.pi.PlacedScreen;
 import blue.endless.pi.SchemaType;
 import blue.endless.pi.datastruct.Vec2;
@@ -159,6 +160,7 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 		
 		if (e.getClickCount() == 2) {
 			// Let's go!
+			if (clickedRoom < 0) return;
 			System.out.println("Opening configurator for room " + clickedRoom);
 			RoomConfiguratorFrame configurator = new RoomConfiguratorFrame(world, clickedRoom);
 			configurator.setVisible(true);
@@ -271,6 +273,8 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 									if (reverseDoorId == destId) {
 										reverseDoor.put("dest_rm", PrimitiveElement.of(-1));
 										reverseDoor.put("dest_id", PrimitiveElement.of(0));
+										DoorType existingType = reverseDoor.getPrimitive("type").mapAsInt(DoorType::of).orElse(DoorType.BLUE);
+										if (existingType != DoorType.COMBAT) reverseDoor.put("type", PrimitiveElement.of(DoorType.BLUE.value()));
 										break findLinkedDoor;
 									}
 								}
@@ -279,6 +283,8 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 						
 						door.put("dest_rm", PrimitiveElement.of(-1));
 						door.put("dest_id", PrimitiveElement.of(0));
+						DoorType existingType = door.getPrimitive("type").mapAsInt(DoorType::of).orElse(DoorType.BLUE);
+						if (existingType != DoorType.COMBAT) door.put("type", PrimitiveElement.of(DoorType.BLUE.value()));
 					}
 				}
 				
@@ -313,6 +319,24 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 												destDoor.put("dest_rm", PrimitiveElement.of(dragRoom));
 												destDoor.put("dest_id", door.getPrimitive("id"));
 												
+												// Fix door types
+												boolean sourceBoss = room.isBossRoom();
+												boolean destBoss = destRoomObj.isBossRoom();
+												DoorType sourceDoorType = door.getPrimitive("type").mapAsInt(DoorType::of).orElse(DoorType.BLUE);
+												boolean adjustSourceDoor = (sourceDoorType != DoorType.COMBAT);
+												DoorType destDoorType = destDoor.getPrimitive("type").mapAsInt(DoorType::of).orElse(DoorType.BLUE);
+												boolean adjustDestDoor = (destDoorType != DoorType.COMBAT);
+												
+												if (sourceBoss && destBoss) {
+													if (adjustSourceDoor) door.put("type", PrimitiveElement.of(DoorType.COMBAT.value()));
+													if (adjustDestDoor) destDoor.put("type", PrimitiveElement.of(DoorType.COMBAT.value()));
+												} else if (sourceBoss) {
+													if (adjustSourceDoor) door.put("type", PrimitiveElement.of(DoorType.COMBAT.value()));
+													if (adjustDestDoor) destDoor.put("type", PrimitiveElement.of(DoorType.BOSS.value()));
+												} else if (destBoss) {
+													if (adjustSourceDoor) door.put("type", PrimitiveElement.of(DoorType.BOSS.value()));
+													if (adjustDestDoor) destDoor.put("type", PrimitiveElement.of(DoorType.COMBAT.value()));
+												}
 												
 												break findDoor;
 											}
@@ -360,7 +384,7 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 						if (val instanceof ObjectElement elevatorObj) {
 							ElevatorInfo sourceElevator = new ElevatorInfo(room, screen, elevatorObj);
 							
-							System.out.println("Attempting to stitch "+sourceElevator.json()+" in room "+dragRoom);
+							//System.out.println("Attempting to stitch "+sourceElevator.json()+" in room "+dragRoom);
 							
 							switch(sourceElevator.direction()) {
 								case WEST, EAST -> {} // For now, don't touch these!
@@ -381,7 +405,7 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 												Optional<ElevatorInfo> match = maybeScreen.get().getElevator(Direction.SOUTH);
 												if (match.isPresent()) {
 													world.linkElevators(sourceElevator, match.get());
-													System.out.println("Linked elevators!");
+													//System.out.println("Linked elevators!");
 													break;
 												}
 											}
@@ -406,7 +430,7 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 												Optional<ElevatorInfo> match = maybeScreen.get().getElevator(Direction.NORTH);
 												if (match.isPresent()) {
 													world.linkElevators(sourceElevator, match.get());
-													System.out.println("Linked elevators!");
+													//System.out.println("Linked elevators!");
 													break;
 												}
 											}

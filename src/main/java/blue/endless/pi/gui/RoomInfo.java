@@ -99,6 +99,10 @@ public record RoomInfo(ObjectElement json, ObjectElement general, List<ScreenInf
 		return json().getObject("GENERAL").getPrimitive("area").asInt().orElse(0);
 	}
 	
+	public boolean isBossRoom() {
+		return json().getObject("META").getPrimitive("boss_room").asInt().orElse(0) != 0;
+	}
+	
 	public void setArea(int area) {
 		this.json().getObject("GENERAL").put("area", PrimitiveElement.of(area));
 		for(ScreenInfo screen : screens) screen.setArea(area);
