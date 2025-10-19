@@ -140,7 +140,8 @@ public class EditorFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (world == null) return;
-				long newId = (long) (Math.random() * Integer.MAX_VALUE);
+				long seconds = System.currentTimeMillis() / 1_000L; // Seconds since midnight, january 1, 1970
+				long newId = seconds * 1000L + (long) (Math.random() * 999);
 				world.metaJson().put("id", PrimitiveElement.of(newId));
 				setWorldProperties();
 			}
@@ -364,7 +365,7 @@ public class EditorFrame extends JFrame {
 			room.setArea(selected);
 			
 			// TODO: Update boss count?
-			// TODO: Add spawn points?
+			
 			eachScreen:
 			for(int i=0; i<room.screens().size(); i++) {
 				ScreenInfo screen = room.screens().get(i);
