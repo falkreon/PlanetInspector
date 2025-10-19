@@ -8,7 +8,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
@@ -24,6 +28,7 @@ import blue.endless.jankson.api.SyntaxError;
 import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
+import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.pi.SchemaType;
 
 /**
@@ -106,6 +111,17 @@ public class EditorFrame extends JFrame {
 			}
 		});
 		fileMenu.add(saveAsMenuItem);
+		fileMenu.addSeparator();
+		
+		JMenuItem importRoomItem = new JMenuItem("Import Room...");
+		importRoomItem.setAction(new AbstractAction("Import Room...") {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				importRoom();
+			}
+		});
+		fileMenu.add(importRoomItem);
+		
 		menuBar.add(fileMenu);
 		
 		JMenu worldMenu = new JMenu("World");
@@ -228,10 +244,10 @@ public class EditorFrame extends JFrame {
 				System.out.println("Unknown result code: "+result);
 				return;
 			}
-			File roomFile = chooser.getSelectedFile();
+			File worldFile = chooser.getSelectedFile();
 			
 			
-			WorldInfo world = WorldInfo.load(roomFile.toPath());
+			WorldInfo world = WorldInfo.load(worldFile.toPath());
 			this.setWorld(world);
 			this.repaint();
 		} catch (IOException | SyntaxError ex) {
@@ -240,6 +256,8 @@ public class EditorFrame extends JFrame {
 	}
 	
 	public void saveAs() {
+		if (world == null) return;
+		
 		try {
 			JFileChooser chooser = new JFileChooser();
 			FileNameExtensionFilter filter = new FileNameExtensionFilter("Planets Enigma worlds", "mp_world");
@@ -287,6 +305,98 @@ public class EditorFrame extends JFrame {
 			
 			planetView.getView().setDirty(false);
 			System.out.println("Saved.");
+		} catch (IOException | SyntaxError ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	public void importRoom() {
+		if (world == null) return;
+		
+		try {
+			JFileChooser chooser = new JFileChooser();
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("Planets Enigma rooms", "mp_room");
+			chooser.setFileFilter(filter);
+			File basePath = new File(".").getCanonicalFile();
+			chooser.setSelectedFile(basePath);
+			int result = chooser.showOpenDialog(this);
+			if (result == JFileChooser.CANCEL_OPTION) {
+				return;
+			}
+			if (result == JFileChooser.ERROR_OPTION) {
+				System.out.println("Error selecting a room file.");
+				return;
+			}
+			if (result != JFileChooser.APPROVE_OPTION) {
+				System.out.println("Unknown result code: "+result);
+				return;
+			}
+			File roomFile = chooser.getSelectedFile();
+		
+			RoomInfo room = RoomInfo.load(roomFile.toPath());
+			world.rooms().add(room);
+			world.json().getArray("ROOMS").add(room.json());
+			
+			int roomId = world.rooms().size() - 1; // The new last element's index is the room Id of the imported room
+			ArrayElement areasArr = room.json().getObject("GENERAL").getArray("areas");
+			List<String> validRoomAreas = new ArrayList<>();
+			for(ValueElement val : areasArr) {
+				if (val instanceof PrimitiveElement prim) {
+					Optional<String> opt = prim.asString();
+					if (opt.isPresent()) validRoomAreas.add(opt.get().toUpperCase(Locale.ROOT));
+				}
+			}
+			
+			
+			int selected = -1;
+			for(int i=0; i<world.areas().size(); i++) {
+				AreaInfo worldArea = world.areas().get(i);
+				String id = worldArea.name().toUpperCase(Locale.ROOT);
+				if (validRoomAreas.contains(id)) {
+					selected = i;
+					break;
+				}
+				
+			}
+			
+			if (selected == -1) selected = 1;
+			
+			room.setArea(selected);
+			
+			// TODO: Update boss count?
+			// TODO: Add spawn points?
+			eachScreen:
+			for(int i=0; i<room.screens().size(); i++) {
+				ScreenInfo screen = room.screens().get(i);
+			
+			//for(ScreenInfo screen : room.screens()) {
+				ArrayElement arr = screen.json().getArray("OBJECTS");
+				for(ValueElement val : arr) {
+					if (val instanceof ObjectElement obj) {
+						
+						int objType = obj.getPrimitive("type").asInt().orElse(0);
+						if (objType == 1) { // GUNSHIP
+							System.out.println("Adding spawn and respawn for gunship...");
+							int objX = obj.getPrimitive("x").asInt().orElse(0);
+							int objY = obj.getPrimitive("y").asInt().orElse(0);
+							world.addGunshipSpawn(roomId, i, room, screen, objX, objY);
+							continue eachScreen;
+						}
+					}
+				}
+				
+				ArrayElement elevators = screen.json().getArray("ELEVATORS");
+				if (!elevators.isEmpty()) {
+					if (elevators.get(0) instanceof ObjectElement obj) {
+						int objX = obj.getPrimitive("x").asInt().orElse(0);
+						int objY = obj.getPrimitive("y").asInt().orElse(0);
+						world.addElevatorRespawn(roomId, i, room, screen, objX, objY - 15);
+					}
+				}
+			}
+			
+			planetView.getView().setDirty(true);
+			repaint();
 		} catch (IOException | SyntaxError ex) {
 			ex.printStackTrace();
 		}

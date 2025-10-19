@@ -126,6 +126,10 @@ public class ScreenInfo {
 		json.put("y", PrimitiveElement.of(y));
 	}
 	
+	public void setArea(int area) {
+		json.getObject("MAP").put("area", PrimitiveElement.of(area));
+	}
+	
 	public void paint(Graphics g, int x, int y, Color areaColor, boolean selected, boolean dragging, boolean valid) {
 		Color bg = areaColor;
 		if (dragging) {

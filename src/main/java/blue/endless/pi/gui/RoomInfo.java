@@ -1,13 +1,25 @@
 package blue.endless.pi.gui;
 
 import java.awt.Color;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.zip.InflaterInputStream;
 
+import blue.endless.jankson.api.Jankson;
+import blue.endless.jankson.api.SyntaxError;
 import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.ObjectElement;
+import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.pi.Palette;
 
@@ -72,6 +84,15 @@ public record RoomInfo(ObjectElement json, ObjectElement general, List<ScreenInf
 		return Optional.empty();
 	}
 	
+	public int area() {
+		return json().getObject("GENERAL").getPrimitive("area").asInt().orElse(0);
+	}
+	
+	public void setArea(int area) {
+		this.json().getObject("GENERAL").put("area", PrimitiveElement.of(area));
+		for(ScreenInfo screen : screens) screen.setArea(area);
+	}
+	
 	public boolean validate() {
 		for(ScreenInfo screen : screens) {
 			for(ObjectElement door : screen.doors()) {
@@ -79,11 +100,53 @@ public record RoomInfo(ObjectElement json, ObjectElement general, List<ScreenInf
 				if (dest_rm == -1) {
 					return false;
 				}
-				// Find destination tile for door.
-				
+			}
+			
+			ArrayElement arr = screen.json().getArray("ELEVATORS");
+			for(ValueElement elem : arr) {
+				if (elem instanceof ObjectElement obj) {
+					int dest_rm = obj.getPrimitive("dest_rm").asInt().orElse(-1);
+					if (dest_rm == -1) {
+						return false;
+					}
+				}
 			}
 		}
 		
 		return true;
 	}
+	
+	public static RoomInfo load(Path roomFile) throws IOException, SyntaxError {
+		ArrayList<byte[]> files = new ArrayList<>();
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		try(InputStream in = Files.newInputStream(roomFile, StandardOpenOption.READ)) {
+			InflaterInputStream zin = new InflaterInputStream(new BufferedInputStream(in));
+			int data = 0;
+			while(data != -1) {
+				data = zin.read();
+				if (data == 0) {
+					if (bytes.size() > 0) {
+						files.add(bytes.toByteArray());
+						bytes.reset();
+					}
+				} else if (data == -1) {
+					break;
+				} else {
+					bytes.write(data);
+				}
+			}
+		}
+		
+		if (bytes.size() > 0) {
+			files.add(bytes.toByteArray());
+		}
+		
+		if (files.size() != 1) throw new IOException("Expected a single encoded json, found "+files.size());
+		
+		ObjectElement roomObj = Jankson.readJsonObject(new ByteArrayInputStream(files.get(0)));
+		return RoomInfo.of(roomObj);
+	}
+
+	
+	
 }

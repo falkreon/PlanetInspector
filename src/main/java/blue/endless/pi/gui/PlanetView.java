@@ -48,10 +48,10 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 			public void keyPressed(KeyEvent e) {
 				if (selectedRoom == -1) return;
 				if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE || e.getKeyCode() == KeyEvent.VK_DELETE) {
-					System.out.println("DELETE ROOM #"+selectedRoom);
 					
 					dirty = true;
 					world.deleteRoom(selectedRoom);
+					selectedRoom = -1;
 					PlanetView.this.repaint();
 				}
 			}

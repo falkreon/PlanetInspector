@@ -158,6 +158,53 @@ public record WorldInfo(ObjectElement json, ObjectElement metaJson, List<RoomInf
 		}
 	}
 	
+	public void addGunshipSpawn(int roomId, int screenId, RoomInfo room, ScreenInfo screen, int x, int y) {
+		ArrayElement arr = json().getArray("SPAWN_POINTS");
+		
+		ObjectElement respawnPoint = new ObjectElement();
+		respawnPoint.put("name", PrimitiveElement.of("GUNSHIP"));
+		respawnPoint.put("area", PrimitiveElement.of(room.area()));
+		respawnPoint.put("type", PrimitiveElement.of(2)); // Respawn Point
+		respawnPoint.put("room_id", PrimitiveElement.of(roomId));
+		respawnPoint.put("screen_n", PrimitiveElement.of(screenId));
+		respawnPoint.put("world_x", PrimitiveElement.of(screen.x()));
+		respawnPoint.put("world_y", PrimitiveElement.of(screen.y()));
+		respawnPoint.put("x", PrimitiveElement.of(x));
+		respawnPoint.put("y", PrimitiveElement.of(y-35));
+		arr.add(0, respawnPoint);
+		
+		ObjectElement spawn = new ObjectElement();
+		spawn.put("name", PrimitiveElement.of("GUNSHIP"));
+		spawn.put("area", PrimitiveElement.of(room.area()));
+		spawn.put("type", PrimitiveElement.of(1)); // Initial spawn point
+		spawn.put("room_id", PrimitiveElement.of(roomId));
+		spawn.put("screen_n", PrimitiveElement.of(screenId));
+		spawn.put("world_x", PrimitiveElement.of(screen.x()));
+		spawn.put("world_y", PrimitiveElement.of(screen.y()));
+		spawn.put("x", PrimitiveElement.of(x));
+		spawn.put("y", PrimitiveElement.of(y));
+		arr.add(0, spawn);
+		
+		
+		
+	}
+	
+	public void addElevatorRespawn(int roomId, int screenId, RoomInfo room, ScreenInfo screen, int x, int y) {
+		ArrayElement arr = json().getArray("SPAWN_POINTS");
+		
+		ObjectElement spawn = new ObjectElement();
+		spawn.put("name", PrimitiveElement.of(areas.get(room.area()).name()));
+		spawn.put("area", PrimitiveElement.of(room.area()));
+		spawn.put("type", PrimitiveElement.of(1)); // Respawn Point
+		spawn.put("room_id", PrimitiveElement.of(roomId));
+		spawn.put("screen_n", PrimitiveElement.of(screenId));
+		spawn.put("world_x", PrimitiveElement.of(screen.x()));
+		spawn.put("world_y", PrimitiveElement.of(screen.y()));
+		spawn.put("x", PrimitiveElement.of(x));
+		spawn.put("y", PrimitiveElement.of(-6));
+		arr.add(spawn);
+	}
+	
 	
 	public static WorldInfo load(Path worldFile) throws IOException, SyntaxError {
 		ArrayList<byte[]> files = new ArrayList<>();
