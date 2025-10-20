@@ -36,7 +36,9 @@ public sealed interface SchemaType<T> permits SchemaType.Editable, SchemaType.No
 	//public static final SchemaType<ObjectElement> OBJECT = new SchemaType<>();
 	
 	default T get(ObjectElement parent, String key) {
-		return deserialize(parent.get(key));
+		ValueElement v = parent.get(key);
+		if (v == null) v = PrimitiveElement.ofNull();
+		return deserialize(v);
 	}
 	
 	default T get(ArrayElement parent, int index) {
@@ -53,6 +55,7 @@ public sealed interface SchemaType<T> permits SchemaType.Editable, SchemaType.No
 		JTextField result = new JTextField();
 		result.setBackground(Color.WHITE);
 		T value = get(parent, key);
+		
 		if (value == null) {
 			result.setText("null");
 		} else {
@@ -157,6 +160,7 @@ public sealed interface SchemaType<T> permits SchemaType.Editable, SchemaType.No
 				case PrimitiveElement prim -> prim.asString().orElse("");
 				case ObjectElement obj -> "{ }";
 				case ArrayElement arr -> "[ ]";
+				case null -> "null";
 				default -> val.toString();
 			};
 		}

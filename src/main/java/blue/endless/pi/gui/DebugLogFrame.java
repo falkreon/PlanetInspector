@@ -15,7 +15,9 @@ import javax.swing.event.ListSelectionListener;
 
 import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.ObjectElement;
-import blue.endless.pi.ItemType;
+import blue.endless.pi.enigma.ItemType;
+import blue.endless.pi.enigma.wrapper.RoomInfo;
+import blue.endless.pi.enigma.wrapper.WorldInfo;
 
 public class DebugLogFrame extends JFrame implements ListSelectionListener {
 	private final WorldInfo world;

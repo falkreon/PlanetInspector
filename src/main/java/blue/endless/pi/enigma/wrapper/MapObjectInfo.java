@@ -1,8 +1,9 @@
-package blue.endless.pi.gui;
+package blue.endless.pi.enigma.wrapper;
 
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
-import blue.endless.pi.ItemType;
+import blue.endless.pi.enigma.ItemType;
+import blue.endless.pi.gui.ObjectType;
 
 public class MapObjectInfo {
 	protected final ScreenInfo screen;

@@ -9,6 +9,7 @@ import javax.swing.JScrollPane;
 
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.pi.SchemaType;
+import blue.endless.pi.enigma.wrapper.WorldInfo;
 
 /**
  * Zoomable and scrollable view

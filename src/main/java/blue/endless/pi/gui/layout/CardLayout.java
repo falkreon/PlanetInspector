@@ -17,13 +17,13 @@ public class CardLayout implements LayoutManager {
 	/** Space between "lines" in the layout */
 	private int interLineSpacing = 4;
 	
-	LinearLayout.Axis mainLineAxis = LinearLayout.Axis.HORIZONTAL;
-	LinearLayout.Axis crossLineAxis = LinearLayout.Axis.VERTICAL;
+	Axis mainLineAxis = Axis.HORIZONTAL;
+	Axis crossLineAxis = Axis.VERTICAL;
 	private MultiItemAxisLayout mainAxisLineLayout  = MultiItemAxisLayout.FILL_PROPORTIONAL;
 	private SingleItemAxisLayout crossAxisLineLayout = SingleItemAxisLayout.FILL;
 	
 	
-	public void setLineAxis(LinearLayout.Axis axis) {
+	public void setLineAxis(Axis axis) {
 		mainLineAxis = axis;
 		crossLineAxis = axis.opposite();
 	}

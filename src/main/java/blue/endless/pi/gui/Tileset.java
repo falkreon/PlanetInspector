@@ -15,6 +15,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 
 import blue.endless.pi.Assets;
+import blue.endless.pi.enigma.wrapper.RoomInfo;
 
 public class Tileset {
 	private static BufferedImage tilesetImage;

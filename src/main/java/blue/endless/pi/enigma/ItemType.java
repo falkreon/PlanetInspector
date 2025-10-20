@@ -1,4 +1,4 @@
-package blue.endless.pi;
+package blue.endless.pi.enigma;
 
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.KeyValuePairElement;
 import blue.endless.jankson.api.document.ObjectElement;
+import blue.endless.pi.Assets;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 public class ItemType {

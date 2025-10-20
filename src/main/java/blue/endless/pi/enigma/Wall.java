@@ -1,4 +1,4 @@
-package blue.endless.pi;
+package blue.endless.pi.enigma;
 
 public enum Wall {
 	OPEN(0),

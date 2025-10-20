@@ -1,4 +1,4 @@
-package blue.endless.pi;
+package blue.endless.pi.enigma;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;

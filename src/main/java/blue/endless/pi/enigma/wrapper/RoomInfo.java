@@ -1,4 +1,4 @@
-package blue.endless.pi.gui;
+package blue.endless.pi.enigma.wrapper;
 
 import java.awt.Color;
 import java.io.BufferedInputStream;
@@ -21,7 +21,7 @@ import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
-import blue.endless.pi.Palette;
+import blue.endless.pi.enigma.Palette;
 
 public record RoomInfo(ObjectElement json, ObjectElement general, List<ScreenInfo> screens) {
 	public static RoomInfo of(ObjectElement roomJson) {
@@ -101,6 +101,10 @@ public record RoomInfo(ObjectElement json, ObjectElement general, List<ScreenInf
 	
 	public boolean isBossRoom() {
 		return json().getObject("META").getPrimitive("boss_room").asInt().orElse(0) != 0;
+	}
+	
+	public int bossId() {
+		return json().getObject("META").getPrimitive("boss").asInt().orElse(-1);
 	}
 	
 	public void setArea(int area) {

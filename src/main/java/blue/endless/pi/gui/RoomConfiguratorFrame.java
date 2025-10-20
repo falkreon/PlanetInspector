@@ -15,9 +15,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
 import blue.endless.jankson.api.document.ObjectElement;
-import blue.endless.pi.ItemCategory;
-import blue.endless.pi.ItemType;
 import blue.endless.pi.datastruct.Rect;
+import blue.endless.pi.enigma.ItemCategory;
+import blue.endless.pi.enigma.ItemType;
+import blue.endless.pi.enigma.wrapper.RoomInfo;
+import blue.endless.pi.enigma.wrapper.WorldInfo;
 import blue.endless.pi.gui.layout.CardLayout;
 import blue.endless.pi.gui.layout.LinearLayout;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;

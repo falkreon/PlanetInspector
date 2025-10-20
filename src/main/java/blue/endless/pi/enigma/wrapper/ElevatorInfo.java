@@ -1,8 +1,8 @@
-package blue.endless.pi.gui;
+package blue.endless.pi.enigma.wrapper;
 
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
-import blue.endless.pi.Direction;
+import blue.endless.pi.enigma.Direction;
 
 public record ElevatorInfo(RoomInfo room, ScreenInfo screen, ObjectElement json) {
 	public int id() {

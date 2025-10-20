@@ -1,4 +1,4 @@
-package blue.endless.pi.gui;
+package blue.endless.pi.enigma.wrapper;
 
 import java.awt.Color;
 

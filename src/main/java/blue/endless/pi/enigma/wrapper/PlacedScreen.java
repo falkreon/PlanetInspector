@@ -1,9 +1,7 @@
-package blue.endless.pi;
+package blue.endless.pi.enigma.wrapper;
 import java.util.Optional;
 
-import blue.endless.pi.gui.ElevatorInfo;
-import blue.endless.pi.gui.RoomInfo;
-import blue.endless.pi.gui.ScreenInfo;
+import blue.endless.pi.enigma.Direction;
 
 public record PlacedScreen(RoomInfo room, ScreenInfo screen) {
 	public Optional<ElevatorInfo> getElevator(Direction d) {

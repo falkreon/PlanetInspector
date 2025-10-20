@@ -30,6 +30,10 @@ import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.pi.SchemaType;
+import blue.endless.pi.enigma.wrapper.AreaInfo;
+import blue.endless.pi.enigma.wrapper.RoomInfo;
+import blue.endless.pi.enigma.wrapper.ScreenInfo;
+import blue.endless.pi.enigma.wrapper.WorldInfo;
 
 /**
  * This is the main application window - but not a lot of real behavior lives here. It's mainly in the individual panels this frame hosts.
@@ -135,6 +139,7 @@ public class EditorFrame extends JFrame {
 			}
 		});
 		worldMenu.add(debugLogItem);
+		
 		JMenuItem makeUniqueItem = new JMenuItem("Make Unique");
 		makeUniqueItem.setAction(new AbstractAction("Make Unique") {
 			@Override
@@ -143,10 +148,26 @@ public class EditorFrame extends JFrame {
 				long seconds = System.currentTimeMillis() / 1_000L; // Seconds since midnight, january 1, 1970
 				long newId = seconds * 1000L + (long) (Math.random() * 999);
 				world.metaJson().put("id", PrimitiveElement.of(newId));
+				planetView.getView().setDirty(true);
 				setWorldProperties();
 			}
 		});
 		worldMenu.add(makeUniqueItem);
+		
+		JMenuItem cleanItem = new JMenuItem("Clean");
+		cleanItem.setAction(new AbstractAction("Clean") {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for(RoomInfo room : world.rooms()) {
+					for(ScreenInfo screen : room.screens()) {
+						screen.clean();
+					}
+				}
+				planetView.getView().setDirty(true);
+			}
+		});
+		worldMenu.add(cleanItem);
+		
 		menuBar.add(worldMenu);
 		
 		menuBar.add(Box.createHorizontalGlue());
@@ -303,6 +324,27 @@ public class EditorFrame extends JFrame {
 			toolObj.computeIfAbsent("tags", (it) -> new ArrayElement());
 			toolObj.put("editor_tool", PrimitiveElement.of("planet_inspector"));
 			
+			// Tidy up the sector
+			int maxX = 0;
+			int maxY = 0;
+			for(RoomInfo room : world.rooms()) {
+				for(ScreenInfo screen : room.screens()) {
+					maxX = Math.max(maxX, screen.x());
+					maxY = Math.max(maxY, screen.y());
+				}
+			}
+			ObjectElement sector = world.json().getArray("SECTORS").getObject(0); // We can count on this
+			sector.put("x", PrimitiveElement.of(0));
+			sector.put("y", PrimitiveElement.of(0));
+			sector.put("width", PrimitiveElement.of(maxX + 1));
+			sector.put("height", PrimitiveElement.of(maxY + 1));
+			sector.put("name", PrimitiveElement.of(""));
+			sector.put("elevator_screens", new ArrayElement()); // TODO: Regenerate elevator tracks
+			ArrayElement connections = new ArrayElement();
+			connections.add(PrimitiveElement.of("1"));
+			sector.put("connections", connections);
+			
+			
 			world.save(outputFile.toPath());
 			
 			planetView.getView().setDirty(false);
@@ -365,13 +407,22 @@ public class EditorFrame extends JFrame {
 			
 			room.setArea(selected);
 			
-			// TODO: Update boss count?
+			// Update gate bosses - boss count will be fixed up in post
+			if (room.isBossRoom()) {
+				boolean addBoss = true;
+				for(ValueElement val : world.json().getObject("GENERAL").getArray("gate_bosses")) {
+					if (val instanceof PrimitiveElement prim && prim.asInt().orElse(-1) == room.bossId()) {
+						addBoss = false;
+					}
+				}
+				
+				if (addBoss) world.json().getObject("GENERAL").getArray("gate_bosses").add(PrimitiveElement.of(room.bossId()));
+			}
 			
 			eachScreen:
 			for(int i=0; i<room.screens().size(); i++) {
 				ScreenInfo screen = room.screens().get(i);
-			
-			//for(ScreenInfo screen : room.screens()) {
+				
 				ArrayElement arr = screen.json().getArray("OBJECTS");
 				for(ValueElement val : arr) {
 					if (val instanceof ObjectElement obj) {

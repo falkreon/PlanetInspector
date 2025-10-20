@@ -21,8 +21,8 @@ import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.pi.SchemaType;
+import blue.endless.pi.gui.layout.Axis;
 import blue.endless.pi.gui.layout.LinearLayout;
-import blue.endless.pi.gui.layout.LinearLayout.Axis;
 import blue.endless.pi.gui.layout.MultiItemAxisLayout;
 import blue.endless.pi.gui.layout.SingleItemAxisLayout;
 

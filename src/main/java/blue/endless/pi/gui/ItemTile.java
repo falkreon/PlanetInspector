@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JButton;
 
-import blue.endless.pi.ItemType;
+import blue.endless.pi.enigma.ItemType;
 
 public class ItemTile extends JButton {
 	private int scale = 3;

@@ -1,7 +1,7 @@
-package blue.endless.pi;
+package blue.endless.pi.enigma;
 
-public enum MonsterType {
-	ZOOMER(0, "spr_Enemy_zoomer_NEW_0"),
+public class MonsterType {
+	//ZOOMER(0, "spr_Enemy_zoomer_NEW_0"),
 	/*
 	nova 1
 	zeela 2
@@ -58,7 +58,7 @@ public enum MonsterType {
 	private final int value;
 	private final String spriteResource;
 	
-	MonsterType(int value, String spriteResource) {
+	public MonsterType(int value, String spriteResource) {
 		this.value = value;
 		this.spriteResource = spriteResource;
 	}

@@ -1,10 +1,11 @@
-package blue.endless.pi;
+package blue.endless.pi.gui;
 
 import java.awt.Color;
 import java.awt.Graphics;
 
 import org.jetbrains.annotations.Nullable;
 
+// TODO: Replace with Asset sprites & re-incorporate
 public enum Icon {
 	ITEM(1, 0xFFFFFF, new int[] {
 		0b00000,

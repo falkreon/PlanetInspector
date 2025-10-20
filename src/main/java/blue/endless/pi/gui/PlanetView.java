@@ -19,11 +19,16 @@ import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
-import blue.endless.pi.Direction;
-import blue.endless.pi.DoorType;
-import blue.endless.pi.PlacedScreen;
 import blue.endless.pi.SchemaType;
 import blue.endless.pi.datastruct.Vec2;
+import blue.endless.pi.enigma.Direction;
+import blue.endless.pi.enigma.DoorType;
+import blue.endless.pi.enigma.wrapper.AreaInfo;
+import blue.endless.pi.enigma.wrapper.ElevatorInfo;
+import blue.endless.pi.enigma.wrapper.PlacedScreen;
+import blue.endless.pi.enigma.wrapper.RoomInfo;
+import blue.endless.pi.enigma.wrapper.ScreenInfo;
+import blue.endless.pi.enigma.wrapper.WorldInfo;
 
 public class PlanetView extends JPanel implements MouseListener, MouseMotionListener {
 	private static final Color MAP_BACKGROUND = new Color(63, 63, 63);
@@ -274,6 +279,11 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 										reverseDoor.put("dest_rm", PrimitiveElement.of(-1));
 										reverseDoor.put("dest_id", PrimitiveElement.of(0));
 										DoorType existingType = reverseDoor.getPrimitive("type").mapAsInt(DoorType::of).orElse(DoorType.BLUE);
+										switch(existingType) {
+											case BLUE, MISSILE, BOSS ->
+												reverseDoor.put("type", PrimitiveElement.of(DoorType.BLUE.value()));
+											default -> {}
+										}
 										if (existingType != DoorType.COMBAT) reverseDoor.put("type", PrimitiveElement.of(DoorType.BLUE.value()));
 										break findLinkedDoor;
 									}

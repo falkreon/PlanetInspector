@@ -1,4 +1,4 @@
-package blue.endless.pi.gui;
+package blue.endless.pi.enigma.wrapper;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -26,10 +26,10 @@ import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.jankson.api.io.json.JsonWriterOptions;
-import blue.endless.pi.PlacedScreen;
+import blue.endless.pi.enigma.EnigmaFormat;
+import blue.endless.pi.gui.MinimapBaseShape;
 
 public record WorldInfo(ObjectElement json, ObjectElement metaJson, List<RoomInfo> rooms, List<AreaInfo> areas) {
-	public static final double CURRENT_ENIGMA_VERSION = 0.775;
 	
 	public static WorldInfo of(ObjectElement json, ObjectElement metaJson) {
 		ArrayList<RoomInfo> rooms = new ArrayList<>();
@@ -108,8 +108,8 @@ public record WorldInfo(ObjectElement json, ObjectElement metaJson, List<RoomInf
 			stats.put("rooms", PrimitiveElement.of(rooms));
 			
 			// Did we remove a boss room? What was the boss's id? (boss Id will probably be set to -1 for non-boss rooms)
-			boolean bossRoom = ((long) orphan.json().getObject("META").getPrimitive("boss_room").asDouble().orElse(0)) != 0;
-			int bossId = (int) orphan.json().getObject("META").getPrimitive("boss").asDouble().orElse(-1);
+			boolean bossRoom = orphan.isBossRoom();
+			int bossId = orphan.bossId();
 			if (bossRoom) {
 				// Reduce the boss count in metaJson `stats.bosses` field
 				int bossCount = stats.getPrimitive("bosses").asInt().orElse(0);
@@ -280,7 +280,7 @@ public record WorldInfo(ObjectElement json, ObjectElement metaJson, List<RoomInf
 			// Check world version
 			double enigmaVersion = worldMetaObj.getPrimitive("version").asDouble().orElse(-1.0);
 			
-			if ((enigmaVersion - CURRENT_ENIGMA_VERSION) > 0.0001) {
+			if ((enigmaVersion - EnigmaFormat.CURRENT_VERSION) > 0.0001) {
 				throw new SyntaxError("Cannot open this world version (version: "+enigmaVersion+")");
 			}
 			

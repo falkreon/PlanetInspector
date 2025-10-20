@@ -1,4 +1,4 @@
-package blue.endless.pi.gui;
+package blue.endless.pi.enigma.wrapper;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -13,9 +13,12 @@ import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.jankson.impl.document.DoubleElementImpl;
 import blue.endless.jankson.impl.document.LongElementImpl;
-import blue.endless.pi.Direction;
-import blue.endless.pi.DoorType;
-import blue.endless.pi.Wall;
+import blue.endless.pi.enigma.Direction;
+import blue.endless.pi.enigma.DoorType;
+import blue.endless.pi.enigma.Wall;
+import blue.endless.pi.gui.MinimapBaseShape;
+import blue.endless.pi.gui.PlanetView;
+import blue.endless.pi.gui.Tileset;
 
 public class ScreenInfo {
 	private ObjectElement json;
@@ -66,6 +69,31 @@ public class ScreenInfo {
 	public int liquidTileAt(int x, int y) {
 		ArrayElement tiles = json.getArray("LIQUIDS");
 		return tileAt(tiles, x, y);
+	}
+	
+	public void clean() {
+		for(ValueElement arr : json.getArray("TILES")) {
+			if (arr instanceof ArrayElement arr2) {
+				cleanIntArray2D(arr2);
+			}
+		}
+		
+		cleanIntArray2D(json.getArray("LIQUIDS"));
+	}
+	
+	private void cleanIntArray2D(ArrayElement array) {
+		if (array.isEmpty()) return;
+		for(int i=0; i<array.size(); i++) {
+			cleanIntArray(array.getArray(i));
+		}
+	}
+	
+	private void cleanIntArray(ArrayElement array) {
+		if (array.isEmpty()) return;
+		for(int i=0; i<array.size(); i++) {
+			PrimitiveElement p = array.getPrimitive(i);
+			array.set(i, PrimitiveElement.of(p.asInt().orElse(0)));
+		}
 	}
 	
 	public int enemyCount() {

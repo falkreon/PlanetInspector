@@ -14,8 +14,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import blue.endless.pi.ItemCategory;
-import blue.endless.pi.ItemType;
+import blue.endless.pi.enigma.ItemCategory;
+import blue.endless.pi.enigma.ItemType;
+import blue.endless.pi.enigma.wrapper.MapObjectInfo;
+import blue.endless.pi.gui.layout.Axis;
 import blue.endless.pi.gui.layout.CardLayout;
 import blue.endless.pi.gui.layout.LinearLayout;
 
@@ -41,10 +43,10 @@ public class ItemSelectorPanel extends JPanel {
 		for(int i=0; i<1000; i++) {
 			ItemType item = ItemType.values.get(i);
 			if (item == null) continue;
-			if (item.isReleased()) {
+			//if (item.isReleased()) {
 				List<ItemType> releasedOfThisCategory = releasedItems.computeIfAbsent(item.category(), (it) -> new ArrayList<>());
 				releasedOfThisCategory.add(item);
-			}
+			//}
 		}
 		
 		List<ItemCategory> selectableCategories = new ArrayList<>();
@@ -67,7 +69,7 @@ public class ItemSelectorPanel extends JPanel {
 		selectedItemView.setBackground(Color.BLACK);
 		LinearLayout selectedItemLayout = new LinearLayout();
 		selectedItemLayout.setSpacing(16);
-		selectedItemLayout.setAxis(LinearLayout.Axis.HORIZONTAL);
+		selectedItemLayout.setAxis(Axis.HORIZONTAL);
 		selectedItemView.setLayout(selectedItemLayout);
 		selectedItemView.setPreferredSize(new Dimension(-1, 64));
 		this.add(selectedItemView);
