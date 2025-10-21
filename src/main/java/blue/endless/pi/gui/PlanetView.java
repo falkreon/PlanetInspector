@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import javax.swing.JPanel;
 
@@ -37,9 +38,10 @@ import blue.endless.pi.enigma.wrapper.ScreenInfo;
 import blue.endless.pi.enigma.wrapper.WorldInfo;
 
 public class PlanetView extends JPanel implements MouseListener, MouseMotionListener {
-	private static final Color MAP_BACKGROUND = new Color(63, 63, 63);
+	private static final Color MAP_BACKGROUND = new Color(42, 42, 42);
 	private WorldInfo world;
 	private BiConsumer<ObjectElement, Map<String, SchemaType<?>>> propertiesConsumer = (o, s) -> {};
+	private Consumer<RoomInfo> roomSelectionCallback = (it) -> {};
 	private int selectedRoom = -1;
 	private int dragRoom = -1;
 	private int dragStartX = -1;
@@ -65,6 +67,7 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 					dirty = true;
 					world.deleteRoom(selectedRoom);
 					selectedRoom = -1;
+					roomSelectionCallback.accept(null);
 					PlanetView.this.repaint();
 				}
 			}
@@ -151,8 +154,16 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 						g.drawImage(icons, x, y, x+CELL_SIZE, y+CELL_SIZE, iconAtlasX, iconAtlasY, iconAtlasX+14, iconAtlasY+14, null);
 					}
 					
+					ArrayElement doorsArray = screen.json().getObject("MAP").getArray("doors");
+					for(int dir=0; dir<=4; dir++) {
+						int door = doorsArray.getPrimitive(dir).asInt().orElse(-1);
+						int doorAtlasX = door * 14;
+						int doorAtlasY = dir * 14;
+						g.drawImage(doors, x, y, x+CELL_SIZE, y+CELL_SIZE, doorAtlasX, doorAtlasY, doorAtlasX+14, doorAtlasY+14, null);
+					}
+					
 					if (ri == selectedRoom) {
-						g.setColor(new Color(255, 255, 255, 64));
+						g.setColor(new Color(255, 255, 255, 80));
 						g.fillRect(x,  y, CELL_SIZE, CELL_SIZE);
 					}
 					
@@ -214,11 +225,14 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 			if (selectedRoom != -1) {
 				selectedRoom = -1;
 				propertiesConsumer.accept(null, null);
+				roomSelectionCallback.accept(null);
 				this.repaint();
 			}
 		} else {
 			selectedRoom = clickedRoom;
-			propertiesConsumer.accept(world.rooms().get(clickedRoom).general(), EditorFrame.ROOM_GENERAL_SCHEMA);
+			RoomInfo room = world.rooms().get(clickedRoom);
+			propertiesConsumer.accept(room.general(), EditorFrame.ROOM_GENERAL_SCHEMA);
+			roomSelectionCallback.accept(room);
 			this.repaint();
 		}
 		
@@ -260,12 +274,20 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 			int dx = dragCurX - dragStartX;
 			int dy = dragCurY - dragStartY;
 			if (dx == 0 && dy == 0) {
+				// Transfer from drag into select
+				selectedRoom = dragRoom;
+				roomSelectionCallback.accept(world.rooms().get(selectedRoom));
+				
 				// We didn't actually drag. Kill the operation
 				dragRoom = -1;
 				dragStartX = -1;
 				dragStartY = -1;
 				dragCurX = -1;
 				dragCurY = -1;
+				
+				selectedRoom = dragRoom;
+				
+				this.repaint();
 				return;
 			}
 			
@@ -556,5 +578,10 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 	public RoomInfo getSelectedRoom() {
 		if (selectedRoom < 0 || selectedRoom >= world.rooms().size()) return null;
 		return world.rooms().get(selectedRoom);
+	}
+
+	public void setRoomSelectionCallback(Consumer<RoomInfo> callback) {
+		this.roomSelectionCallback = callback;
+		
 	}
 }

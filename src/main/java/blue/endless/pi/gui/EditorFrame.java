@@ -216,6 +216,8 @@ public class EditorFrame extends JFrame {
 		
 		this.setJMenuBar(menuBar);
 		
+		planetView.getView().setRoomSelectionCallback(this::roomSelected);
+		
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {
 			@Override
@@ -453,5 +455,13 @@ public class EditorFrame extends JFrame {
 		
 		planetView.getView().setDirty(true);
 		repaint();
+	}
+	
+	public void roomSelected(RoomInfo room) {
+		if (room != null) {
+			roomMenu.setEnabled(true);
+		} else {
+			roomMenu.setEnabled(false);
+		}
 	}
 }

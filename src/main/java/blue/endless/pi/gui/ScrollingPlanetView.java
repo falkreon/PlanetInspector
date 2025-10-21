@@ -1,7 +1,5 @@
 package blue.endless.pi.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
@@ -9,7 +7,6 @@ import javax.swing.JScrollPane;
 
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.pi.SchemaType;
-import blue.endless.pi.enigma.wrapper.RoomInfo;
 import blue.endless.pi.enigma.wrapper.WorldInfo;
 
 /**

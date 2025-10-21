@@ -43,10 +43,10 @@ public class ItemSelectorPanel extends JPanel {
 		for(int i=0; i<1000; i++) {
 			ItemType item = ItemType.values.get(i);
 			if (item == null) continue;
-			//if (item.isReleased()) {
+			if (item.isReleased()) {
 				List<ItemType> releasedOfThisCategory = releasedItems.computeIfAbsent(item.category(), (it) -> new ArrayList<>());
 				releasedOfThisCategory.add(item);
-			//}
+			}
 		}
 		
 		List<ItemCategory> selectableCategories = new ArrayList<>();
