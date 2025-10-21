@@ -79,14 +79,14 @@ public record RoomInfo(ObjectElement json, ObjectElement general, List<ScreenInf
 		return screens.indexOf(screen);
 	}
 	
-	public Optional<ElevatorInfo> getElevator(int id) {
+	public Optional<ElevatorInfo> getElevator(WorldInfo world, int id) {
 		for(ScreenInfo screen : screens) {
 			ArrayElement arr = screen.json().getArray("ELEVATORS");
 			for(ValueElement elem : arr) {
 				if (elem instanceof ObjectElement obj) {
 					OptionalInt curId = obj.getPrimitive("id").asInt();
 					if (curId.isPresent() && curId.getAsInt() == id) {
-						return Optional.of(new ElevatorInfo(this, screen, obj));
+						return Optional.of(new ElevatorInfo(world, this, screen, obj));
 					}
 				}
 			}

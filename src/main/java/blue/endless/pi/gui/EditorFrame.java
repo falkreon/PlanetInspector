@@ -30,6 +30,7 @@ import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.pi.SchemaType;
+import blue.endless.pi.enigma.EnigmaFormat;
 import blue.endless.pi.enigma.wrapper.AreaInfo;
 import blue.endless.pi.enigma.wrapper.RoomInfo;
 import blue.endless.pi.enigma.wrapper.ScreenInfo;
@@ -87,6 +88,10 @@ public class EditorFrame extends JFrame {
 	
 	private WorldInfo world;
 	
+	private JMenu fileMenu = new JMenu("File");
+	private JMenu worldMenu = new JMenu("World");
+	private JMenu roomMenu = new JMenu("Room");
+	
 	public EditorFrame() {
 		this.setTitle("Planet Inspector");
 		
@@ -98,7 +103,6 @@ public class EditorFrame extends JFrame {
 		this.setMinimumSize(new Dimension(800, 600));
 		
 		JMenuBar menuBar = new JMenuBar();
-		JMenu fileMenu = new JMenu("File");
 		JMenuItem openMenuItem = new JMenuItem("Open...");
 		openMenuItem.setAction(new AbstractAction("Open...") {
 			@Override
@@ -117,6 +121,18 @@ public class EditorFrame extends JFrame {
 		fileMenu.add(saveAsMenuItem);
 		fileMenu.addSeparator();
 		
+		JMenuItem exitItem = new JMenuItem("Exit");
+		exitItem.setAction(new AbstractAction("Exit") {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				exit();
+			}
+		});
+		fileMenu.add(exitItem);
+		
+		menuBar.add(fileMenu);
+		
+		
 		JMenuItem importRoomItem = new JMenuItem("Import Room...");
 		importRoomItem.setAction(new AbstractAction("Import Room...") {
 			@Override
@@ -124,21 +140,7 @@ public class EditorFrame extends JFrame {
 				importRoom();
 			}
 		});
-		fileMenu.add(importRoomItem);
-		
-		menuBar.add(fileMenu);
-		
-		JMenu worldMenu = new JMenu("World");
-		JMenuItem debugLogItem = new JMenuItem("Debug Log");
-		debugLogItem.setAction(new AbstractAction("Debug Log") {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (world == null) return;
-				DebugLogFrame logFrame = new DebugLogFrame(world);
-				logFrame.setVisible(true);
-			}
-		});
-		worldMenu.add(debugLogItem);
+		worldMenu.add(importRoomItem);
 		
 		JMenuItem makeUniqueItem = new JMenuItem("Make Unique");
 		makeUniqueItem.setAction(new AbstractAction("Make Unique") {
@@ -154,6 +156,19 @@ public class EditorFrame extends JFrame {
 		});
 		worldMenu.add(makeUniqueItem);
 		
+		JMenuItem debugLogItem = new JMenuItem("Debug Log");
+		debugLogItem.setAction(new AbstractAction("Debug Log") {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (world == null) return;
+				DebugLogFrame logFrame = new DebugLogFrame(world);
+				logFrame.setVisible(true);
+			}
+		});
+		worldMenu.add(debugLogItem);
+		
+		
+		
 		JMenuItem cleanItem = new JMenuItem("Clean");
 		cleanItem.setAction(new AbstractAction("Clean") {
 			@Override
@@ -167,8 +182,24 @@ public class EditorFrame extends JFrame {
 			}
 		});
 		worldMenu.add(cleanItem);
-		
+		worldMenu.setEnabled(false);
 		menuBar.add(worldMenu);
+		
+		JMenuItem duplicateRoomItem = new JMenuItem("Duplicate Room");
+		duplicateRoomItem.setAction(new AbstractAction("Duplicate Room") {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				RoomInfo selectedRoom = EditorFrame.this.planetView.getView().getSelectedRoom();
+				if (selectedRoom == null) return;
+				
+				ObjectElement copyObj = selectedRoom.json().clone();
+				RoomInfo copy = RoomInfo.of(copyObj);
+				addRoom(copy);
+			}
+		});
+		roomMenu.add(duplicateRoomItem);
+		roomMenu.setEnabled(false);
+		menuBar.add(roomMenu);
 		
 		menuBar.add(Box.createHorizontalGlue());
 		
@@ -238,12 +269,13 @@ public class EditorFrame extends JFrame {
 	
 	public void exit() {
 		if (planetView.getView().isDirty()) {
+			// TODO: Fix this confirmation dialog because it's kind of confusing as is
+			
 			int selectedResult = JOptionPane.showConfirmDialog(this, "This world has unsaved data. Are you sure you want to quit?", "Really Quit?", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 			if (selectedResult == JOptionPane.CANCEL_OPTION) {
 				return;
 			}
 		}
-		// TODO: Pop up a close dialog.
 		this.setVisible(false);
 		System.exit(0);
 	}
@@ -272,6 +304,7 @@ public class EditorFrame extends JFrame {
 			
 			WorldInfo world = WorldInfo.load(worldFile.toPath());
 			this.setWorld(world);
+			worldMenu.setEnabled(true);
 			this.repaint();
 		} catch (IOException | SyntaxError ex) {
 			ex.printStackTrace();
@@ -303,46 +336,8 @@ public class EditorFrame extends JFrame {
 			File outputFile = chooser.getSelectedFile();
 			
 			// Make last minute edits to be sure this file is marked as externally edited
+			EnigmaFormat.prepareForSave(world);
 			
-			// Clear the generator debug log; it's useless now
-			world.json().put("GENERATION_DEBUG_LOG", new ObjectElement());
-			
-			// Grab stats and include in the preview
-			ObjectElement stats = world.metaJson().getObject("stats");
-			int roomCount = stats.getPrimitive("rooms").asInt().orElse(0);
-			int bossCount = stats.getPrimitive("bosses").asInt().orElse(0);
-			int areaCount = stats.getPrimitive("areas").asInt().orElse(0);
-			world.metaJson().put("description", PrimitiveElement.of("MODIFIED WORLD, USE WITH CARE; ROOMS: "+roomCount+"; AREAS: "+areaCount+"; BOSSES: "+bossCount));
-			
-			// Make sure the editor_tool key is there to mark this world as edited
-			ObjectElement toolObj = world.metaJson().getObject("external_editor");
-			if (toolObj.isEmpty()) {
-				// If it's empty or fake, make sure it exists now as part of the meta json
-				world.metaJson().put("external_editor", toolObj);
-			}
-			toolObj.computeIfAbsent("authors", (it) -> new ArrayElement());
-			toolObj.computeIfAbsent("tags", (it) -> new ArrayElement());
-			toolObj.put("editor_tool", PrimitiveElement.of("planet_inspector"));
-			
-			// Tidy up the sector
-			int maxX = 0;
-			int maxY = 0;
-			for(RoomInfo room : world.rooms()) {
-				for(ScreenInfo screen : room.screens()) {
-					maxX = Math.max(maxX, screen.x());
-					maxY = Math.max(maxY, screen.y());
-				}
-			}
-			ObjectElement sector = world.json().getArray("SECTORS").getObject(0); // We can count on this
-			sector.put("x", PrimitiveElement.of(0));
-			sector.put("y", PrimitiveElement.of(0));
-			sector.put("width", PrimitiveElement.of(maxX + 1));
-			sector.put("height", PrimitiveElement.of(maxY + 1));
-			sector.put("name", PrimitiveElement.of(""));
-			sector.put("elevator_screens", new ArrayElement()); // TODO: Regenerate elevator tracks
-			ArrayElement connections = new ArrayElement();
-			connections.add(PrimitiveElement.of("1"));
-			sector.put("connections", connections);
 			
 			
 			world.save(outputFile.toPath());
@@ -378,80 +373,85 @@ public class EditorFrame extends JFrame {
 			File roomFile = chooser.getSelectedFile();
 		
 			RoomInfo room = RoomInfo.load(roomFile.toPath());
-			world.rooms().add(room);
-			world.json().getArray("ROOMS").add(room.json());
 			
-			int roomId = world.rooms().size() - 1; // The new last element's index is the room Id of the imported room
-			ArrayElement areasArr = room.json().getObject("GENERAL").getArray("areas");
-			List<String> validRoomAreas = new ArrayList<>();
-			for(ValueElement val : areasArr) {
-				if (val instanceof PrimitiveElement prim) {
-					Optional<String> opt = prim.asString();
-					if (opt.isPresent()) validRoomAreas.add(opt.get().toUpperCase(Locale.ROOT));
-				}
-			}
-			
-			
-			int selected = -1;
-			for(int i=0; i<world.areas().size(); i++) {
-				AreaInfo worldArea = world.areas().get(i);
-				String id = worldArea.name().toUpperCase(Locale.ROOT);
-				if (validRoomAreas.contains(id)) {
-					selected = i;
-					break;
-				}
-				
-			}
-			
-			if (selected == -1) selected = 1;
-			
-			room.setArea(selected);
-			
-			// Update gate bosses - boss count will be fixed up in post
-			if (room.isBossRoom()) {
-				boolean addBoss = true;
-				for(ValueElement val : world.json().getObject("GENERAL").getArray("gate_bosses")) {
-					if (val instanceof PrimitiveElement prim && prim.asInt().orElse(-1) == room.bossId()) {
-						addBoss = false;
-					}
-				}
-				
-				if (addBoss) world.json().getObject("GENERAL").getArray("gate_bosses").add(PrimitiveElement.of(room.bossId()));
-			}
-			
-			eachScreen:
-			for(int i=0; i<room.screens().size(); i++) {
-				ScreenInfo screen = room.screens().get(i);
-				
-				ArrayElement arr = screen.json().getArray("OBJECTS");
-				for(ValueElement val : arr) {
-					if (val instanceof ObjectElement obj) {
-						
-						int objType = obj.getPrimitive("type").asInt().orElse(0);
-						if (objType == 1) { // GUNSHIP
-							System.out.println("Adding spawn and respawn for gunship...");
-							int objX = obj.getPrimitive("x").asInt().orElse(0);
-							int objY = obj.getPrimitive("y").asInt().orElse(0);
-							world.addGunshipSpawn(roomId, i, room, screen, objX, objY);
-							continue eachScreen;
-						}
-					}
-				}
-				
-				ArrayElement elevators = screen.json().getArray("ELEVATORS");
-				if (!elevators.isEmpty()) {
-					if (elevators.get(0) instanceof ObjectElement obj) {
-						int objX = obj.getPrimitive("x").asInt().orElse(0);
-						int objY = obj.getPrimitive("y").asInt().orElse(0);
-						world.addElevatorRespawn(roomId, i, room, screen, objX, objY - 15);
-					}
-				}
-			}
-			
-			planetView.getView().setDirty(true);
-			repaint();
+			addRoom(room);
 		} catch (IOException | SyntaxError ex) {
 			ex.printStackTrace();
 		}
+	}
+	
+	public void addRoom(RoomInfo room) {
+		world.rooms().add(room);
+		world.json().getArray("ROOMS").add(room.json());
+		
+		int roomId = world.rooms().size() - 1; // The new last element's index is the room Id of the imported room
+		ArrayElement areasArr = room.json().getObject("GENERAL").getArray("areas");
+		List<String> validRoomAreas = new ArrayList<>();
+		for(ValueElement val : areasArr) {
+			if (val instanceof PrimitiveElement prim) {
+				Optional<String> opt = prim.asString();
+				if (opt.isPresent()) validRoomAreas.add(opt.get().toUpperCase(Locale.ROOT));
+			}
+		}
+		
+		
+		int selected = -1;
+		for(int i=0; i<world.areas().size(); i++) {
+			AreaInfo worldArea = world.areas().get(i);
+			String id = worldArea.name().toUpperCase(Locale.ROOT);
+			if (validRoomAreas.contains(id)) {
+				selected = i;
+				break;
+			}
+			
+		}
+		
+		if (selected == -1) selected = 1;
+		
+		room.setArea(selected);
+		
+		// Update gate bosses - boss count will be fixed up in post
+		if (room.isBossRoom()) {
+			boolean addBoss = true;
+			for(ValueElement val : world.json().getObject("GENERAL").getArray("gate_bosses")) {
+				if (val instanceof PrimitiveElement prim && prim.asInt().orElse(-1) == room.bossId()) {
+					addBoss = false;
+				}
+			}
+			
+			if (addBoss) world.json().getObject("GENERAL").getArray("gate_bosses").add(PrimitiveElement.of(room.bossId()));
+		}
+		
+		eachScreen:
+		for(int i=0; i<room.screens().size(); i++) {
+			ScreenInfo screen = room.screens().get(i);
+			
+			ArrayElement arr = screen.json().getArray("OBJECTS");
+			for(ValueElement val : arr) {
+				if (val instanceof ObjectElement obj) {
+					
+					int objType = obj.getPrimitive("type").asInt().orElse(0);
+					if (objType == 1) { // GUNSHIP
+						System.out.println("Adding spawn and respawn for gunship...");
+						int objX = obj.getPrimitive("x").asInt().orElse(0);
+						int objY = obj.getPrimitive("y").asInt().orElse(0);
+						world.addGunshipSpawn(roomId, i, room, screen, objX, objY);
+						continue eachScreen;
+					}
+				}
+			}
+			
+			ArrayElement elevators = screen.json().getArray("ELEVATORS");
+			if (!elevators.isEmpty()) {
+				if (elevators.get(0) instanceof ObjectElement obj) {
+					int objX = obj.getPrimitive("x").asInt().orElse(0);
+					int objY = obj.getPrimitive("y").asInt().orElse(0);
+					world.addElevatorRespawn(roomId, i, room, screen, objX, objY - 15);
+				}
+			}
+		}
+		
+		planetView.getView().setDirty(true);
+		repaint();
 	}
 }

@@ -1,8 +1,13 @@
 package blue.endless.pi.enigma;
 
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.util.Optional;
 
 import org.jetbrains.annotations.Nullable;
+
+import blue.endless.pi.Assets;
 
 public enum DoorType {
 	ZERO         (0, new Color(  0, 0xC0, 0xFF)),
@@ -30,6 +35,20 @@ public enum DoorType {
 	
 	public Color color() {
 		return this.color;
+	}
+	
+	public void paint(Graphics g, int x, int y, Direction direction) {
+		paint(g, x, y, direction, this);
+	}
+	
+	public static void paint(Graphics g, int x, int y, Direction direction, DoorType doorType) {
+		Optional<BufferedImage> maybeDoorAtlas = Assets.getCachedImage("minimap/doors.png");
+		if (maybeDoorAtlas.isEmpty()) return;
+		BufferedImage doorAtlas = maybeDoorAtlas.get();
+		
+		int atlasX = doorType.value() * 14;
+		int atlasY = direction.value() * 14;
+		g.drawImage(doorAtlas, x, y, x+14, y+14, atlasX, atlasY, atlasX+14, atlasY+14, null);
 	}
 	
 	@Nullable

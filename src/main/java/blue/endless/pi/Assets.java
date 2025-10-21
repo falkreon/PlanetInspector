@@ -1,4 +1,6 @@
 package blue.endless.pi;
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +18,7 @@ import blue.endless.pi.enigma.Palette;
 import blue.endless.pi.gui.Tileset;
 
 public class Assets {
+	private static final BufferedImage MISSING = new BufferedImage(8, 8, BufferedImage.TYPE_INT_ARGB);
 	private static Map<String, BufferedImage> imageCache = new HashMap<>();
 	private record PalettedImageKey(String resId, int low, int mid, int high) {
 		PalettedImageKey(String resId, int[] palette) {
@@ -24,6 +27,22 @@ public class Assets {
 		
 	}
 	private static Map<PalettedImageKey, BufferedImage> palettedImageCache = new HashMap<>();
+	
+	static {
+		Graphics g = MISSING.createGraphics();
+		{
+			g.setColor(new Color(255, 0, 255)); // Magic pink / 0xFF00FF
+			g.fillRect(0, 0, 8, 8);
+			g.setColor(new Color(64, 64, 64));
+			g.fillRect(0, 0, 4, 4);
+			g.fillRect(4, 4, 4, 4);
+		}
+		g.dispose();
+	}
+	
+	public static BufferedImage missingImage() {
+		return MISSING;
+	}
 	
 	/**
 	 * Loads an image resource in from the assets folder in the jar and returns it. Each call produces a new copy of the
@@ -58,6 +77,8 @@ public class Assets {
 		Optional<BufferedImage> opt = readImage(id);
 		if (opt.isPresent()) {
 			imageCache.put(id, opt.get());
+		} else {
+			System.out.println("Can't read image "+id);
 		}
 		return opt;
 	}

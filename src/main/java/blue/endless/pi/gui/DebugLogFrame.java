@@ -3,6 +3,9 @@ package blue.endless.pi.gui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
@@ -14,17 +17,23 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import blue.endless.jankson.api.document.ArrayElement;
+import blue.endless.jankson.api.document.KeyValuePairElement;
 import blue.endless.jankson.api.document.ObjectElement;
+import blue.endless.jankson.api.document.PrimitiveElement;
+import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.pi.enigma.ItemType;
-import blue.endless.pi.enigma.wrapper.RoomInfo;
 import blue.endless.pi.enigma.wrapper.WorldInfo;
 
 public class DebugLogFrame extends JFrame implements ListSelectionListener {
 	private final WorldInfo world;
 	private final ObjectElement debug;
-	private final JList<String> left;
-	private final JList<String> right;
+	private JList<String> left = new JList<>();
+	private JList<String> right = new JList<>();
+	private final JScrollPane leftScroll = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+	private final JScrollPane rightScroll = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 	
+	private List<String> simpleInfo = new ArrayList<>();
+	private Map<String, List<String>> information = new HashMap<>(); // Ugh... do I want to add guava?
 	
 	public DebugLogFrame(WorldInfo world) {
 		super("Debug Log");
@@ -32,6 +41,23 @@ public class DebugLogFrame extends JFrame implements ListSelectionListener {
 		this.world = world;
 		this.debug = world.json().getObject("GENERATION_DEBUG_LOG");
 		ArrayList<String> items = new ArrayList<>();
+		for (KeyValuePairElement kvp : debug) {
+			switch(kvp.getValue()) {
+				case PrimitiveElement prim -> {
+					items.add(kvp.getKey()+": "+kvp.getValue().toString());
+				}
+				case ObjectElement obj -> {
+					addItemsEntry(kvp.getKey(), obj);
+				}
+				case ArrayElement arr -> {
+					for(int i=0; i<arr.size(); i++) {
+						addItemsEntry(kvp.getKey()+"["+i+"]", arr.get(i));
+					}
+				}
+				default -> throw new IllegalArgumentException("Unexpected value: " + kvp.getValue());
+			}
+		}
+		/*
 		if (debug.isEmpty()) {
 			items.add("Empty Log");
 			
@@ -44,22 +70,62 @@ public class DebugLogFrame extends JFrame implements ListSelectionListener {
 			}
 			items.add("placed_items");
 		}
+		*/
+		items.addAll(simpleInfo);
+		items.addAll(information.keySet());
+		
 		left = new JList<String>(items.toArray(new String[items.size()]));
 		left.setMinimumSize(new Dimension(200, 150));
 		left.setPreferredSize(new Dimension(200, 150));
 		left.setMaximumSize(new Dimension(200, -1));
 		left.addListSelectionListener(this);
+		leftScroll.setViewportView(left);
+		leftScroll.revalidate();
 		
 		//Split the log into a left and right side
 		this.getContentPane().setLayout(new BorderLayout());
-		this.getContentPane().add(new JScrollPane(left, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.WEST);
+		this.getContentPane().add(leftScroll, BorderLayout.WEST);
 		
-		right = new JList<String>();
-		this.getContentPane().add(new JScrollPane(right, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+		rightScroll.setViewportView(right);
+		this.getContentPane().add(rightScroll, BorderLayout.CENTER);
 		
 		this.setMinimumSize(new Dimension(640, 480));
 		this.setPreferredSize(new Dimension(640,480));
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+	}
+	
+	private void addItemsEntry(String key, ValueElement value) {
+		switch(value) {
+			case PrimitiveElement prim -> simpleInfo.add(key + ": "+ value.toString());
+			case ObjectElement obj -> {
+				List<String> rightItems = new ArrayList<>();
+				for(KeyValuePairElement kvp : obj) {
+					rightItems.add(kvp.getKey() + ": " + represent(kvp.getValue()));
+				}
+				information.put(key, rightItems);
+			}
+			case ArrayElement arr -> {
+				List<String> rightItems = new ArrayList<>();
+				for(int i=0; i<arr.size(); i++) {
+					rightItems.add(i+": "+represent(arr.get(i)));
+				}
+				information.put(key, rightItems);
+			}
+			default -> simpleInfo.add(key + ": unknown ("+value.getClass().getSimpleName()+")");
+		}
+		
+		
+		
+	}
+	
+	/** Create a short, simple representation that hides complex information and fits on a line */
+	private String represent(ValueElement value) {
+		return switch(value) {
+			case PrimitiveElement prim -> prim.toString();
+			case ObjectElement o -> "{ }";
+			case ArrayElement a -> "[ ]";
+			default -> "unknown ("+value.getClass().getSimpleName()+")";
+		};
 	}
 
 
@@ -67,14 +133,27 @@ public class DebugLogFrame extends JFrame implements ListSelectionListener {
 	public void valueChanged(ListSelectionEvent e) {
 		for(int i=e.getFirstIndex(); i<=e.getLastIndex(); i++) {
 			if (left.isSelectedIndex(i)) {
-				select(left.getModel().getElementAt(i));
+				//Try to find right panel info
+				List<String> rightItems = information.get(left.getModel().getElementAt(i));
+				if (rightItems != null) {
+					right = new JList<String>(rightItems.toArray(new String[rightItems.size()]));
+					rightScroll.setViewportView(right);
+					//DefaultListModel<String> model = new DefaultListModel<>();
+					//model.addAll(rightItems);
+					//right.setModel(model);
+					//validate();
+				} else {
+					break;
+				}
+				
+				//select(left.getModel().getElementAt(i));
 				return;
 			}
 		}
 		// TODO: Clear right panel if we get here, since nothing is selected
 		right.setModel(new ItemArrayListModel(new ArrayElement()));
 	}
-	
+	/*
 	private void select(String elem) {
 		if (elem.equals("starting_items")) {
 			right.setModel(new ItemArrayListModel(debug.getArray("starting_items")));
@@ -112,7 +191,7 @@ public class DebugLogFrame extends JFrame implements ListSelectionListener {
 		} else {
 			right.setModel(new ItemArrayListModel(new ArrayElement()));
 		}
-	}
+	}*/
 	
 	private static class ItemArrayListModel implements ListModel<String> {
 		private final ArrayElement items;

@@ -2,7 +2,7 @@
     "zoomer": {
         "id": 0,
         "name": "Zoomer",
-        "sprite": "spr_Enemy_zoomer_NEW_0"
+        "sprite": "spr_Enemy_Zoomer_NEW_0"
     },
     "nova": {
         "id": 1,
@@ -62,7 +62,7 @@
     "ripper_2": {
         "id": 12,
         "name": "Ripper II",
-        "sprite": "s[r_Enemy_Ripper_II_NEW_0]"
+        "sprite": "spr_Enemy_Ripper_II_NEW_0"
     },
     "dragon": {
         "id": 13,
@@ -77,12 +77,12 @@
     "side_hopper": {
         "id": 15,
         "name": "Side Hopper",
-        "sprite": "spr_Enemy_Side_Hopper_NEW_0"
+        "sprite": "spr_Enemy_SideHopper_NEW_0"
     },
     "dessgeega": {
         "id": 16,
         "name": "Dessgeega",
-        "sprite": "spr_Enemy_Desgeega_NEW_0"
+        "sprite": "spr_Enemy_Dessgeega_NEW_0"
     },
     "holtz": {
         "id": 17,

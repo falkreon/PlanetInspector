@@ -69,4 +69,26 @@ public final class Palette {
 			}
 		}
 	}
+	
+	public static final BufferedImage getColorizedCopy(BufferedImage image, Color tint) {
+		float[] tintComponents = new float[3];
+		tintComponents = tint.getRGBColorComponents(tintComponents);
+		
+		float[] colorBuffer = new float[4];
+		BufferedImage result = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		for(int y=0; y<image.getHeight(); y++) {
+			for(int x=0; x<image.getWidth(); x++) {
+				int srcRGB = image.getRGB(x, y);
+				if (srcRGB == 0) continue;
+				new Color(srcRGB).getRGBColorComponents(colorBuffer); // I'm being lazy right now
+				int destRGB = new Color(
+						tintComponents[0] * colorBuffer[0],
+						tintComponents[1] * colorBuffer[1],
+						tintComponents[2] * colorBuffer[2]).getRGB();
+				result.setRGB(x, y, destRGB);
+			}
+		}
+		
+		return result;
+	}
 }

@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
@@ -15,14 +16,19 @@ import java.util.function.BiConsumer;
 
 import javax.swing.JPanel;
 
+import org.jetbrains.annotations.Nullable;
+
 import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
+import blue.endless.pi.Assets;
 import blue.endless.pi.SchemaType;
 import blue.endless.pi.datastruct.Vec2;
 import blue.endless.pi.enigma.Direction;
 import blue.endless.pi.enigma.DoorType;
+import blue.endless.pi.enigma.EnemyType;
+import blue.endless.pi.enigma.Palette;
 import blue.endless.pi.enigma.wrapper.AreaInfo;
 import blue.endless.pi.enigma.wrapper.ElevatorInfo;
 import blue.endless.pi.enigma.wrapper.PlacedScreen;
@@ -67,7 +73,7 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 		this.setFocusable(true);
 	}
 	
-	public static final int CELL_SIZE = 20;
+	public static final int CELL_SIZE = 14 * 3;
 	public static final int DOOR_SIZE = 7;
 	public static final int DOOR_OFFSET = (CELL_SIZE - DOOR_SIZE) / 2;
 	
@@ -89,9 +95,15 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 		}
 		
 		//Precalc area colors
+		BufferedImage bases = Assets.getCachedImage("minimap/bases.png").orElseGet(Assets::missingImage);
+		BufferedImage walls = Assets.getCachedImage("minimap/walls.png").orElseGet(Assets::missingImage);
+		BufferedImage doors = Assets.getCachedImage("minimap/doors.png").orElseGet(Assets::missingImage);
+		BufferedImage icons = Assets.getCachedImage("minimap/icons_big.png").orElseGet(Assets::missingImage);
 		ArrayList<Color> areaColors = new ArrayList<>();
+		ArrayList<BufferedImage> areaBases = new ArrayList<>();
 		for(AreaInfo area : world.areas()) {
 			areaColors.add(area.color());
+			areaBases.add(Palette.getColorizedCopy(bases, area.color()));
 		}
 		
 		//if (this.isOpaque()) {
@@ -106,11 +118,49 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 				RoomInfo room = world.rooms().get(ri);
 				boolean valid = room.validate();
 				for(ScreenInfo screen : room.screens()) {
+					
 					int x = screen.x() * CELL_SIZE;
 					int y = screen.y() * CELL_SIZE;
-					Color areaColor = areaColors.get(screen.area()); // TODO: Bounds-check
 					
-					screen.paint(g, x, y, areaColor, ri == selectedRoom, ri == dragRoom, valid);
+					//Color areaColor = areaColors.get(screen.area()); // TODO: Bounds-check
+					//screen.paint(g, x, y, areaColor, ri == selectedRoom, ri == dragRoom, valid);
+					
+					
+					int base = screen.json().getObject("MAP").getPrimitive("base").asInt().orElse(0) - 1;
+					int area = screen.area();
+					BufferedImage areaBase = (area >= 0 && area < areaBases.size()) ? areaBases.get(screen.area()) : areaBases.get(0);
+					int baseAtlasX = base * 14;
+					int baseAtlasY = 0;
+					g.drawImage(areaBase, x, y, x+CELL_SIZE, y+CELL_SIZE, baseAtlasX, baseAtlasY, baseAtlasX+14, baseAtlasY+14, null);
+					
+					ArrayElement wallsArray = screen.json().getObject("MAP").getArray("walls");
+					for(int dir=0; dir<=4; dir++) {
+						// Draw walls
+						int wall = wallsArray.getPrimitive(dir).asInt().orElse(0);
+						int wallAtlasX = wall * 14;
+						int wallAtlasY = dir * 14;
+						g.drawImage(walls, x, y, x+CELL_SIZE, y+CELL_SIZE, wallAtlasX, wallAtlasY, wallAtlasX+14, wallAtlasY+14, null);
+					}
+					
+					// Draw icons
+					ArrayElement iconsArray = screen.json().getObject("MAP").getArray("icons");
+					if (!iconsArray.isEmpty()) {
+						int icon = iconsArray.getPrimitive(0).asInt().orElse(-1) - 1;
+						int iconAtlasX = icon * 14;
+						int iconAtlasY = 0;
+						g.drawImage(icons, x, y, x+CELL_SIZE, y+CELL_SIZE, iconAtlasX, iconAtlasY, iconAtlasX+14, iconAtlasY+14, null);
+					}
+					
+					if (ri == selectedRoom) {
+						g.setColor(new Color(255, 255, 255, 64));
+						g.fillRect(x,  y, CELL_SIZE, CELL_SIZE);
+					}
+					
+					if (!valid) {
+						g.setColor(new Color(255, 0, 0, 128));
+						g.fillRect(x,  y, CELL_SIZE, CELL_SIZE);
+					}
+					
 				}
 			}
 		}
@@ -145,7 +195,16 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 	public void setWorld(WorldInfo world) {
 		this.world = world;
 		
-		//TODO: extract information
+		int maxX = 1;
+		int maxY = 1;
+		for(RoomInfo room : world.rooms()) {
+			for(ScreenInfo screen : room.screens()) {
+				maxX = Math.max(maxX, screen.x());
+				maxY = Math.max(maxY, screen.y());
+			}
+		}
+		Dimension sz = new Dimension((maxX + 2) * CELL_SIZE, (maxY + 2) * CELL_SIZE);
+		this.setPreferredSize(sz);
 	}
 
 	@Override
@@ -170,46 +229,17 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 			RoomConfiguratorFrame configurator = new RoomConfiguratorFrame(world, clickedRoom);
 			configurator.setVisible(true);
 		}
-		/*
-		if (world != null && world.rooms().size() > 0) {
-			int x = e.getX() / CELL_SIZE;
-			int y = e.getY() / CELL_SIZE;
-			for(int ri = 0; ri<world.rooms().size(); ri++) {
-				RoomInfo room = world.rooms().get(ri);
-				for(ScreenInfo screen : room.screens()) {
-					if (screen.x() == x && screen.y() == y) {
-						selectedRoom = ri;
-						// TODO: Select room general in properties panel
-						this.repaint();
-						propertiesConsumer.accept(room.general(), EditorFrame.ROOM_GENERAL_SCHEMA);
-						return;
-					}
-				}
-			}
-		}*/
-		
-		//selectedRoom = -1;
-		//propertiesConsumer.accept(null, null);
-		//this.repaint();
-		// TODO: Select world meta in properties panel
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mouseEntered(MouseEvent arg0) {}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 		dragStartX = e.getX() / CELL_SIZE;
 		dragStartY = e.getY() / CELL_SIZE;
 		
@@ -348,20 +378,37 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 													if (adjustDestDoor) destDoor.put("type", PrimitiveElement.of(DoorType.COMBAT.value()));
 												}
 												
+												
+												boolean sourceMB = sourceBoss && (room.bossId() == EnemyType.MOTHER_BRAIN_ID);
+												boolean destMB = destBoss && (destRoomObj.bossId() == EnemyType.MOTHER_BRAIN_ID);
+												if (sourceMB && destMB) {
+													// We don't need to add a yellow door or an impassable door. 
+												} else if (sourceMB) {
+													if (sourceDoorType == DoorType.BLUE) {
+														destDoor.put("type", PrimitiveElement.of(DoorType.MOTHER_BRAIN.value())); // Yellow door going into a Mother Brain regular door
+													} else if (sourceDoorType == DoorType.COMBAT) {
+														destDoor.put("type", PrimitiveElement.of(DoorType.IMPASSABLE.value())); // Impassable door going into MB exits
+													}
+												} else if (destMB) {
+													if (destDoorType == DoorType.BLUE) {
+														door.put("type", PrimitiveElement.of(DoorType.MOTHER_BRAIN.value())); // Yellow door going into a Mother Brain regular door
+													} else if (destDoorType == DoorType.COMBAT) {
+														door.put("type", PrimitiveElement.of(DoorType.IMPASSABLE.value())); // Impassable door going into MB exits
+													}
+												}
+												
 												break findDoor;
 											}
 										}
 									}
 								}
 								if (!doorFound) {
-									// TODO: If door wasn't found by this point, we're in trouble. Flag room as invalid!
 									System.out.println("Flagging door as invalid");
 									door.put("dest_rm", PrimitiveElement.of(-1));
 									door.put("dest_id", PrimitiveElement.of(0));
 								}
 								
 							} else {
-								//TODO: Flag room as invalid!
 								System.out.println("Flagging door as invalid");
 								door.put("dest_rm", PrimitiveElement.of(-1));
 								door.put("dest_id", PrimitiveElement.of(0));
@@ -378,7 +425,7 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 							int destId = elevator.getPrimitive("dest_id").asInt().orElse(0);
 							if (destRm > 0 && destRm < world.rooms().size()) {
 								RoomInfo destRoom = world.rooms().get(destRm);
-								Optional<ElevatorInfo> maybeDest = destRoom.getElevator(destId);
+								Optional<ElevatorInfo> maybeDest = destRoom.getElevator(world, destId);
 								maybeDest.ifPresent(ElevatorInfo::clearDestination);
 							}
 							// De-stitch the source elevator
@@ -392,9 +439,7 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 				for(ScreenInfo screen : room.screens()) {
 					for(ValueElement val : screen.json().getArray("ELEVATORS")) {
 						if (val instanceof ObjectElement elevatorObj) {
-							ElevatorInfo sourceElevator = new ElevatorInfo(room, screen, elevatorObj);
-							
-							//System.out.println("Attempting to stitch "+sourceElevator.json()+" in room "+dragRoom);
+							ElevatorInfo sourceElevator = new ElevatorInfo(world, room, screen, elevatorObj);
 							
 							switch(sourceElevator.direction()) {
 								case WEST, EAST -> {} // For now, don't touch these!
@@ -405,17 +450,12 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 										Optional<PlacedScreen> maybeScreen = world.screenAt(xi, yi);
 										if (maybeScreen.isPresent()) {
 											if (maybeScreen.get().room().equals(room)) continue; // Don't link to ourselves
-											//int foundRoomId = world.indexOf(maybeScreen.get().room());
-											//int foundScreenN = maybeScreen.get().room().indexOf(maybeScreen.get().screen());
-											//System.out.println("Found room "+foundRoomId+" screen "+foundScreenN);
 											if (maybeScreen.get().screen().hasElevators()) {
-												//System.out.println("Elevator(s) found");
 												// We need to either bail (because we've hit an elevator that won't
 												// connect) or stitch to a matched elevator
 												Optional<ElevatorInfo> match = maybeScreen.get().getElevator(Direction.SOUTH);
 												if (match.isPresent()) {
 													world.linkElevators(sourceElevator, match.get());
-													//System.out.println("Linked elevators!");
 													break;
 												}
 											}
@@ -426,21 +466,15 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 								case SOUTH -> {
 									int xi = screen.x();
 									for(int yi = screen.y() + 1; yi<=70; yi++) {
-										//System.out.println("Searching "+xi+", "+yi);
 										Optional<PlacedScreen> maybeScreen = world.screenAt(xi, yi);
 										if (maybeScreen.isPresent()) {
 											if (maybeScreen.get().room().equals(room)) continue; // Don't link to ourselves
-											//int foundRoomId = world.indexOf(maybeScreen.get().room());
-											//int foundScreenN = maybeScreen.get().room().indexOf(maybeScreen.get().screen());
-											//System.out.println("Found room "+foundRoomId+" screen "+foundScreenN);
 											if (maybeScreen.get().screen().hasElevators()) {
-												//System.out.println("Elevator(s) found");
 												// We need to either bail (because we've hit an elevator that won't
 												// connect) or stitch to a matched elevator
 												Optional<ElevatorInfo> match = maybeScreen.get().getElevator(Direction.NORTH);
 												if (match.isPresent()) {
 													world.linkElevators(sourceElevator, match.get());
-													//System.out.println("Linked elevators!");
 													break;
 												}
 											}
@@ -516,5 +550,11 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 	public void mouseMoved(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Nullable
+	public RoomInfo getSelectedRoom() {
+		if (selectedRoom < 0 || selectedRoom >= world.rooms().size()) return null;
+		return world.rooms().get(selectedRoom);
 	}
 }

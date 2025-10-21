@@ -187,7 +187,7 @@ public class ScreenInfo {
 		switch(mapShape()) {
 			case SQUARE -> {
 				g.setColor(bg);
-				g.fillRect(x, y, PlanetView.CELL_SIZE, PlanetView.CELL_SIZE);
+				//g.fillRect(x, y, PlanetView.CELL_SIZE, PlanetView.CELL_SIZE);
 				// TODO: Check all walls and doors
 				paintSouthWall(g, x, y, fg);
 				paintNorthWall(g, x, y, fg);
@@ -200,7 +200,7 @@ public class ScreenInfo {
 			}
 			case SLOPE_NE -> {
 				g.setColor(bg);
-				g.fillPolygon(new int[] { x, x + PlanetView.CELL_SIZE, x }, new int[] { y, y + PlanetView.CELL_SIZE, y + PlanetView.CELL_SIZE}, 3);
+				//g.fillPolygon(new int[] { x, x + PlanetView.CELL_SIZE, x }, new int[] { y, y + PlanetView.CELL_SIZE, y + PlanetView.CELL_SIZE}, 3);
 				paintSouthWall(g, x, y, fg);
 				paintWestWall(g, x, y, fg);
 				g.setColor(fg);
@@ -208,7 +208,7 @@ public class ScreenInfo {
 			}
 			case SLOPE_NW -> {
 				g.setColor(bg);
-				g.fillPolygon(new int[] { x, x + PlanetView.CELL_SIZE, x + PlanetView.CELL_SIZE }, new int[] { y + PlanetView.CELL_SIZE, y, y + PlanetView.CELL_SIZE}, 3);
+				//g.fillPolygon(new int[] { x, x + PlanetView.CELL_SIZE, x + PlanetView.CELL_SIZE }, new int[] { y + PlanetView.CELL_SIZE, y, y + PlanetView.CELL_SIZE}, 3);
 				paintSouthWall(g, x, y, fg);
 				paintEastWall(g, x, y, fg);
 				g.setColor(fg);
@@ -216,7 +216,7 @@ public class ScreenInfo {
 			}
 			case SLOPE_SE -> {
 				g.setColor(bg);
-				g.fillPolygon(new int[] { x, x + PlanetView.CELL_SIZE, x }, new int[] { y, y, y + PlanetView.CELL_SIZE}, 3);
+				//g.fillPolygon(new int[] { x, x + PlanetView.CELL_SIZE, x }, new int[] { y, y, y + PlanetView.CELL_SIZE}, 3);
 				paintNorthWall(g, x, y, fg);
 				paintWestWall(g, x, y, fg);
 				g.setColor(fg);
@@ -224,7 +224,7 @@ public class ScreenInfo {
 			}
 			case SLOPE_SW -> {
 				g.setColor(bg);
-				g.fillPolygon(new int[] { x, x + PlanetView.CELL_SIZE, x + PlanetView.CELL_SIZE }, new int[] { y, y, y + PlanetView.CELL_SIZE}, 3);
+				//g.fillPolygon(new int[] { x, x + PlanetView.CELL_SIZE, x + PlanetView.CELL_SIZE }, new int[] { y, y, y + PlanetView.CELL_SIZE}, 3);
 				paintNorthWall(g, x, y, fg);
 				paintEastWall(g, x, y, fg);
 				g.setColor(fg);
@@ -235,7 +235,7 @@ public class ScreenInfo {
 				final int TUBE_SIZE = PlanetView.CELL_SIZE - TUBE_NARROW;
 				final int TUBE_OFFSET = TUBE_NARROW / 2;
 				g.setColor(bg);
-				g.fillRect(x, y+TUBE_OFFSET, PlanetView.CELL_SIZE, TUBE_SIZE);
+				//g.fillRect(x, y+TUBE_OFFSET, PlanetView.CELL_SIZE, TUBE_SIZE);
 				g.setColor(fg);
 				g.fillRect(x, y+TUBE_OFFSET, PlanetView.CELL_SIZE, 1);
 				g.fillRect(x, y+TUBE_OFFSET + TUBE_SIZE - 1, PlanetView.CELL_SIZE, 1);
@@ -245,7 +245,7 @@ public class ScreenInfo {
 				final int TUBE_SIZE = PlanetView.CELL_SIZE - TUBE_NARROW;
 				final int TUBE_OFFSET = TUBE_NARROW / 2;
 				g.setColor(bg);
-				g.fillRect(x+TUBE_OFFSET, y, TUBE_SIZE, PlanetView.CELL_SIZE);
+				//g.fillRect(x+TUBE_OFFSET, y, TUBE_SIZE, PlanetView.CELL_SIZE);
 				g.setColor(fg);
 				g.fillRect(x+TUBE_OFFSET, y, 1, PlanetView.CELL_SIZE);
 				g.fillRect(x+TUBE_OFFSET + TUBE_SIZE - 1, y, 1, PlanetView.CELL_SIZE);
@@ -377,14 +377,14 @@ public class ScreenInfo {
 				}
 			}
 		}
-		
+		/*
 		for(int i=0; i<enemyCount(); i++) {
 			ObjectElement enemyObj = enemy(i);
 			int x = enemyObj.getPrimitive("x").asInt().orElse(0);
 			int y = enemyObj.getPrimitive("y").asInt().orElse(0);
 			g.setColor(Color.RED);
 			g.fillRect(x-2, y-2, 5, 5);
-		}
+		}*/
 		
 		
 		for(int i=0; i<objectCount(); i++) {

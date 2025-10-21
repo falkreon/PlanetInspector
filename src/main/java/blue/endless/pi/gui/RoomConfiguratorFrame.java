@@ -1,29 +1,15 @@
 package blue.endless.pi.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Map;
 
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
-import blue.endless.jankson.api.document.ObjectElement;
-import blue.endless.pi.datastruct.Rect;
-import blue.endless.pi.enigma.ItemCategory;
-import blue.endless.pi.enigma.ItemType;
 import blue.endless.pi.enigma.wrapper.RoomInfo;
 import blue.endless.pi.enigma.wrapper.WorldInfo;
-import blue.endless.pi.gui.layout.CardLayout;
-import blue.endless.pi.gui.layout.LinearLayout;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 public class RoomConfiguratorFrame extends JFrame {
 	private final WorldInfo world;
@@ -35,7 +21,7 @@ public class RoomConfiguratorFrame extends JFrame {
 	JSplitPane splitPane;
 	private ItemSelectorPanel itemSelector = new ItemSelectorPanel();
 	//private final PropertyEditor properties;
-	private Object2IntMap<Rect> selectableItems = new Object2IntOpenHashMap<Rect>();
+	//private Object2IntMap<Rect> selectableItems = new Object2IntOpenHashMap<Rect>();
 	
 	public RoomConfiguratorFrame(WorldInfo world, int roomId) {
 		super("Configuring "+world.rooms().get(roomId).name());

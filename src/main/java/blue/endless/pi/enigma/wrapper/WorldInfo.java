@@ -72,7 +72,7 @@ public record WorldInfo(ObjectElement json, ObjectElement metaJson, List<RoomInf
 	public Optional<PlacedScreen> screenAt(int x, int y) {
 		for(RoomInfo room : rooms) {
 			for(ScreenInfo screen : room.screens()) {
-				if (screen.x() == x && screen.y() == y) return Optional.of(new PlacedScreen(room, screen));
+				if (screen.x() == x && screen.y() == y) return Optional.of(new PlacedScreen(this, room, screen));
 			}
 		}
 		return Optional.empty();
