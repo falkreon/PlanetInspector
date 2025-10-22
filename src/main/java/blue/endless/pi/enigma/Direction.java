@@ -48,7 +48,7 @@ public enum Direction {
 		};
 	}
 	
-	public static Direction valueOf(int value) {
+	public static Direction of(int value) {
 		return switch(value) {
 			case 1 -> EAST;
 			case 2 -> NORTH;

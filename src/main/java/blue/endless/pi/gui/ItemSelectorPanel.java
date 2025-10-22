@@ -52,9 +52,11 @@ public class ItemSelectorPanel extends JPanel {
 		List<ItemCategory> selectableCategories = new ArrayList<>();
 		selectableCategories.add(ItemCategory.ALL);
 		for(ItemCategory category : ItemCategory.values()) {
-			List<ItemType> released = releasedItems.get(category);
+			//List<ItemType> released = releasedItems.get(category);
 			if (releasedItems.get(category) != null) selectableCategories.add(category);
 		}
+		
+		
 		
 		categoriesBox = new JComboBox<ItemCategory>(selectableCategories.toArray(new ItemCategory[selectableCategories.size()]));
 		categoriesBox.addActionListener(new ActionListener() {
@@ -88,6 +90,7 @@ public class ItemSelectorPanel extends JPanel {
 		itemsPanel.setBackground(Color.BLACK);
 		this.add(itemsPanel);
 		
+		selectCategory(ItemCategory.ALL);
 		this.selectItem(null);
 	}
 	

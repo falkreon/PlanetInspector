@@ -8,7 +8,6 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 import javax.swing.JPanel;
@@ -34,7 +33,7 @@ public class RoomDisplayPanel extends JPanel {
 	private final ArrayList<MapObjectInfo.EnemyInfo> enemies = new ArrayList<>();
 	private final ArrayList<MapObjectInfo> objects = new ArrayList<>();
 	
-	private float scale = 1.0f;
+	private int scale = 2;
 	
 	private Consumer<MapObjectInfo.ItemInfo> itemSelectCallback = (it) -> {};
 	private Consumer<MapObjectInfo.EnemyInfo> enemySelectCallback = (it) -> {};
@@ -80,7 +79,7 @@ public class RoomDisplayPanel extends JPanel {
 		int dx = maxX - minX + 1;
 		int dy = maxY - minY + 1;
 		
-		Dimension mapSize = new Dimension(dx * 20 * 16, dy * 15 * 16);
+		Dimension mapSize = new Dimension(dx * 20 * 16 * scale, dy * 15 * 16 * scale);
 		this.setMinimumSize(mapSize);
 		this.setPreferredSize(mapSize);
 		this.setMaximumSize(mapSize);
@@ -118,7 +117,9 @@ public class RoomDisplayPanel extends JPanel {
 			}
 			
 			if (tileImage != null) {
-				g.drawImage(tileImage, ScreenInfo.PIXEL_WIDTH * (pos.x() - offset.x()), ScreenInfo.PIXEL_HEIGHT * (pos.y() - offset.y()), null);
+				int screenX = ScreenInfo.PIXEL_WIDTH * (pos.x() - offset.x()); screenX *= scale;
+				int screenY = ScreenInfo.PIXEL_HEIGHT * (pos.y() - offset.y()); screenY *= scale;
+				g.drawImage(tileImage, screenX, screenY, ScreenInfo.PIXEL_WIDTH * scale, ScreenInfo.PIXEL_HEIGHT * scale, null);
 			}
 		}
 		
@@ -132,7 +133,7 @@ public class RoomDisplayPanel extends JPanel {
 				int halfHeight = image.getHeight() / 2;
 				int baseX = object.roomX() - (offset.x() * ScreenInfo.PIXEL_WIDTH);
 				int baseY = object.roomY() - (offset.y() * ScreenInfo.PIXEL_HEIGHT);
-				g.drawImage(image, baseX - halfWidth, baseY - halfHeight, null);
+				g.drawImage(image, (baseX - halfWidth) * scale, (baseY - halfHeight) * scale, image.getWidth() * scale, image.getHeight() * scale, null);
 			}
 		}
 		
@@ -147,11 +148,11 @@ public class RoomDisplayPanel extends JPanel {
 				int halfHeight = image.getHeight() / 2;
 				int baseX = item.roomX() - (offset.x() * ScreenInfo.PIXEL_WIDTH);
 				int baseY = item.roomY() - (offset.y() * ScreenInfo.PIXEL_HEIGHT);
-				g.drawImage(image, baseX - halfWidth, baseY - halfHeight, null);
+				g.drawImage(image, (baseX - halfWidth) * scale, (baseY - halfHeight) * scale, image.getWidth() * scale, image.getHeight() * scale, null);
 				
 				// Draw a selection box around it
 				g.setColor(Color.WHITE);
-				g.drawRect(baseX - halfWidth - 1, baseY - halfHeight - 1, image.getWidth() + 2, image.getHeight() + 2);
+				g.drawRect((baseX - halfWidth - 1) * scale, (baseY - halfHeight - 1) * scale, (image.getWidth() + 2) * scale, (image.getHeight() + 2) * scale);
 			//}
 		}
 		
@@ -161,7 +162,7 @@ public class RoomDisplayPanel extends JPanel {
 			int halfHeight = image.getHeight() / 2;
 			int baseX = enemy.roomX() - (offset.x() * ScreenInfo.PIXEL_WIDTH);
 			int baseY = enemy.roomY() - (offset.y() * ScreenInfo.PIXEL_HEIGHT);
-			g.drawImage(image, baseX - halfWidth, baseY - halfHeight, null);
+			g.drawImage(image, (baseX - halfWidth) * scale, (baseY - halfHeight) * scale, null);
 		}
 	}
 

@@ -119,7 +119,7 @@ public class ScreenInfo {
 	public Optional<ObjectElement> getElevator(Direction dir) {
 		for(ValueElement val : json().getArray("ELEVATORS")) {
 			if (val instanceof ObjectElement elevator) {
-				Direction d = Direction.valueOf(elevator.getPrimitive("dir").asInt().orElse(0));
+				Direction d = Direction.of(elevator.getPrimitive("dir").asInt().orElse(0));
 				if (d == dir) return Optional.of(elevator);
 			}
 		}
@@ -270,7 +270,7 @@ public class ScreenInfo {
 		}
 		
 		for(ObjectElement obj : doors()) {
-			Direction d = Direction.valueOf(obj.getPrimitive("pos").asInt().orElse(0));
+			Direction d = Direction.of(obj.getPrimitive("pos").asInt().orElse(0));
 			if (d == Direction.SOUTH) {
 				DoorType doorType = DoorType.of(obj.getPrimitive("type").asInt().orElse(1));
 				g.setColor(doorType.color());
@@ -295,7 +295,7 @@ public class ScreenInfo {
 		}
 		
 		for(ObjectElement obj : doors()) {
-			Direction d = Direction.valueOf(obj.getPrimitive("pos").asInt().orElse(0));
+			Direction d = Direction.of(obj.getPrimitive("pos").asInt().orElse(0));
 			if (d == Direction.NORTH) {
 				DoorType doorType = DoorType.of(obj.getPrimitive("type").asInt().orElse(1));
 				g.setColor(doorType.color());
@@ -320,7 +320,7 @@ public class ScreenInfo {
 		}
 		
 		for(ObjectElement obj : doors()) {
-			Direction d = Direction.valueOf(obj.getPrimitive("pos").asInt().orElse(0));
+			Direction d = Direction.of(obj.getPrimitive("pos").asInt().orElse(0));
 			if (d == Direction.WEST) {
 				DoorType doorType = DoorType.of(obj.getPrimitive("type").asInt().orElse(1));
 				g.setColor(doorType.color());
@@ -345,7 +345,7 @@ public class ScreenInfo {
 		}
 		
 		for(ObjectElement obj : doors()) {
-			Direction d = Direction.valueOf(obj.getPrimitive("pos").asInt().orElse(0));
+			Direction d = Direction.of(obj.getPrimitive("pos").asInt().orElse(0));
 			if (d == Direction.EAST) {
 				DoorType doorType = DoorType.of(obj.getPrimitive("type").asInt().orElse(1));
 				g.setColor(doorType.color());

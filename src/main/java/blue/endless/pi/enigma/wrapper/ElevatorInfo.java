@@ -10,7 +10,7 @@ public record ElevatorInfo(WorldInfo world, RoomInfo room, ScreenInfo screen, Ob
 	}
 	
 	public Direction direction() {
-		return Direction.valueOf(json.getPrimitive("dir").asInt().orElse(0));
+		return Direction.of(json.getPrimitive("dir").asInt().orElse(0));
 	}
 	
 	public int destRoomId() {

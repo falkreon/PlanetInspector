@@ -27,10 +27,12 @@ import blue.endless.pi.Assets;
 import blue.endless.pi.SchemaType;
 import blue.endless.pi.datastruct.Vec2;
 import blue.endless.pi.enigma.Direction;
+import blue.endless.pi.enigma.DoorConnectionLogic;
 import blue.endless.pi.enigma.DoorType;
 import blue.endless.pi.enigma.EnemyType;
 import blue.endless.pi.enigma.Palette;
 import blue.endless.pi.enigma.wrapper.AreaInfo;
+import blue.endless.pi.enigma.wrapper.DoorInfo;
 import blue.endless.pi.enigma.wrapper.ElevatorInfo;
 import blue.endless.pi.enigma.wrapper.PlacedScreen;
 import blue.endless.pi.enigma.wrapper.RoomInfo;
@@ -315,6 +317,8 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 				}
 				
 				// De-stitch doors
+				DoorConnectionLogic.unstitchAll(world, room);
+				/*
 				for(ScreenInfo s : room.screens()) {
 					for(ObjectElement door : s.doors()) {
 						int destRoom = door.getPrimitive("dest_rm").asInt().orElse(-1);
@@ -348,12 +352,38 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 						DoorType existingType = door.getPrimitive("type").mapAsInt(DoorType::of).orElse(DoorType.BLUE);
 						if (existingType != DoorType.COMBAT) door.put("type", PrimitiveElement.of(DoorType.BLUE.value()));
 					}
-				}
+				}*/
 				
 				//Stitch doors
+				
+				for(ScreenInfo s : room.screens()) {
+					for(ObjectElement door : s.doors()) { // TODO: Better way to do this
+						DoorInfo reified = new DoorInfo(world, room, s, door);
+						Vec2 dest = new Vec2(s.x(), s.y()).add(reified.direction().offset());
+						
+						int destRoomId = roomAt(dest.x(), dest.y());
+						if (destRoomId != -1) {
+							RoomInfo destRoom = world.rooms().get(destRoomId);
+							
+							findOppositeDoor:
+							for(ScreenInfo destScreen : destRoom.screens()) {
+								if (destScreen.x() == dest.x() && destScreen.y() == dest.y()) {
+									for(ObjectElement destDoor : destScreen.doors()) {
+										DoorInfo reifiedDest = new DoorInfo(world, destRoom, destScreen, destDoor);
+										if (reifiedDest.direction() == reified.direction().opposite()) {
+											DoorConnectionLogic.stitch(reified, reifiedDest);
+											break findOppositeDoor;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				/*
 				for(ScreenInfo s : room.screens()) {
 					for(ObjectElement door : s.doors()) {
-						Direction d = Direction.valueOf(door.getPrimitive("pos").asInt().orElse(0));
+						Direction d = Direction.of(door.getPrimitive("pos").asInt().orElse(0));
 						int doorDestRoom = door.getPrimitive("dest_rm").asInt().orElse(0);
 						
 						Vec2 dest = new Vec2(s.x(), s.y()).add(d.offset());
@@ -367,7 +397,7 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 								for(ScreenInfo destScreen : destRoomObj.screens()) {
 									if (destScreen.x() == dest.x() && destScreen.y() == dest.y()) {
 										for(ObjectElement destDoor : destScreen.doors()) {
-											Direction destDirection = Direction.valueOf(destDoor.getPrimitive("pos").asInt().orElse(0));
+											Direction destDirection = Direction.of(destDoor.getPrimitive("pos").asInt().orElse(0));
 											if (d == destDirection.opposite()) {
 												//Found it!
 												doorFound = true;
@@ -437,7 +467,7 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 							}
 						}
 					}
-				}
+				}*/
 				
 				// De-stitch elevators
 				for(ScreenInfo screen : room.screens()) {
