@@ -64,6 +64,8 @@ public class RoomConfiguratorFrame extends JFrame {
 		});
 		this.getContentPane().setLayout(new BorderLayout());
 		JScrollPane roomScroll = new JScrollPane(roomDisplay, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		roomScroll.getHorizontalScrollBar().setUnitIncrement(16);
+		roomScroll.getVerticalScrollBar().setUnitIncrement(16);
 		roomScroll.setMinimumSize(new Dimension(400,400));
 		
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, roomScroll, emptyPanel);
