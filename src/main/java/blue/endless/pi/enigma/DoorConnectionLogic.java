@@ -14,7 +14,7 @@ public class DoorConnectionLogic {
 	public static void unstitchAll(WorldInfo world, RoomInfo room) {
 		for(ScreenInfo screen : room.screens()) {
 			ArrayElement doors = screen.json().getArray("DOORS");
-			System.out.println("Unstitching "+doors.size()+" doors for this screen");
+			//System.out.println("Unstitching "+doors.size()+" doors for this screen");
 			for(int i=0; i<doors.size(); i++) {
 				ObjectElement obj = doors.getObject(i);
 				DoorInfo door = new DoorInfo(world, room, screen, obj);
@@ -22,7 +22,7 @@ public class DoorConnectionLogic {
 				if (pair.isPresent()) {
 					unstitch(door, pair.get());
 				} else {
-					System.out.println("Pair is not present.");
+					//System.out.println("Pair is not present.");
 				}
 			}
 		}
@@ -45,7 +45,7 @@ public class DoorConnectionLogic {
 	 * @param oppositeDoor the destination door from toDowngrade
 	 */
 	public static void downgradeDoorType(DoorInfo toDowngrade, DoorInfo oppositeDoor) {
-		System.out.println("Downgrading door at "+toDowngrade.screen().x()+","+toDowngrade.screen().y()+" dir: "+toDowngrade.direction()+" from "+toDowngrade.type());
+		//System.out.println("Downgrading door at "+toDowngrade.screen().x()+","+toDowngrade.screen().y()+" dir: "+toDowngrade.direction()+" from "+toDowngrade.type());
 		switch(toDowngrade.type()) {
 			case BLUE   -> toDowngrade.fixMapType();
 			case COMBAT -> toDowngrade.fixMapType();
