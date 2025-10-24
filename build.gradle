@@ -28,6 +28,7 @@ application {
 }
 
 dependencies {
+	implementation "com.github.weisj:darklaf-core:3.1.1";
 	implementation "blue.endless:jankson:2.0.0-SNAPSHOT-37";
 	implementation "it.unimi.dsi:fastutil:8.5.18";
 	compileOnly "org.jetbrains:annotations:26.0.2";

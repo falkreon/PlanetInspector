@@ -1,4 +1,4 @@
-# PLanet Inspector
+# Planet Inspector
 
 This program edits "Planets Enigma Worlds". If that doesn't mean anything to you, please move along.
 
