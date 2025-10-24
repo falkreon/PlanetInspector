@@ -8,6 +8,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -29,6 +30,8 @@ import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
+import blue.endless.pi.Assets;
+import blue.endless.pi.Preferences;
 import blue.endless.pi.SchemaType;
 import blue.endless.pi.enigma.EnigmaFormat;
 import blue.endless.pi.enigma.wrapper.AreaInfo;
@@ -94,6 +97,7 @@ public class EditorFrame extends JFrame {
 	
 	public EditorFrame() {
 		this.setTitle("Planet Inspector");
+		this.setIconImage(Assets.getCachedImage("icon.png").orElseGet(Assets::missingImage));
 		
 		Container container = this.getContentPane();
 		container.setLayout(new BorderLayout());
@@ -287,8 +291,7 @@ public class EditorFrame extends JFrame {
 			JFileChooser chooser = new JFileChooser();
 			FileNameExtensionFilter filter = new FileNameExtensionFilter("Planets Enigma worlds", "mp_world");
 			chooser.setFileFilter(filter);
-			File basePath = new File(".").getCanonicalFile();
-			chooser.setSelectedFile(basePath);
+			chooser.setCurrentDirectory(Preferences.defaultWorldsDir.toFile());
 			int result = chooser.showOpenDialog(this);
 			if (result == JFileChooser.CANCEL_OPTION) {
 				return;
