@@ -334,8 +334,9 @@ public class EditorFrame extends JFrame {
 			FileNameExtensionFilter filter = new FileNameExtensionFilter("Planets Enigma worlds", "mp_world");
 			chooser.setFileFilter(filter);
 			String defaultFileName = world.metaJson().getPrimitive("name").asString().orElse("untitled").replace(' ', '_') + ".mp_world";
-			File basePath = new File(".").getCanonicalFile();
-			chooser.setSelectedFile(new File(basePath, defaultFileName));
+			
+			chooser.setCurrentDirectory(curWorldsDir);
+			chooser.setSelectedFile(new File(curWorldsDir, defaultFileName));
 			int result = chooser.showSaveDialog(this);
 			if (result == JFileChooser.CANCEL_OPTION) {
 				return;
@@ -349,6 +350,9 @@ public class EditorFrame extends JFrame {
 				return;
 			}
 			File outputFile = chooser.getSelectedFile();
+			
+			File selectedFolder = outputFile.getParentFile();
+			if (selectedFolder != null) curWorldsDir = selectedFolder;
 			
 			// Make last minute edits to be sure this file is marked as externally edited
 			EnigmaFormat.prepareForSave(world);
