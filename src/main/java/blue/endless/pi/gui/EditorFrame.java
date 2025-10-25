@@ -95,6 +95,10 @@ public class EditorFrame extends JFrame {
 	private JMenu worldMenu = new JMenu("World");
 	private JMenu roomMenu = new JMenu("Room");
 	
+	private File curWorldsDir;
+	private File curRoomsDir;
+	
+	
 	public EditorFrame() {
 		this.setTitle("Planet Inspector");
 		this.setIconImage(Assets.getCachedImage("icon.png").orElseGet(Assets::missingImage));
@@ -229,6 +233,9 @@ public class EditorFrame extends JFrame {
 				exit();
 			}
 		});
+		
+		this.curWorldsDir = Preferences.defaultWorldsDir.toFile();
+		this.curRoomsDir = Preferences.defaultRoomsDir.toFile();
 	}
 	
 	public void setWorldProperties() {
@@ -291,7 +298,7 @@ public class EditorFrame extends JFrame {
 			JFileChooser chooser = new JFileChooser();
 			FileNameExtensionFilter filter = new FileNameExtensionFilter("Planets Enigma worlds", "mp_world");
 			chooser.setFileFilter(filter);
-			chooser.setCurrentDirectory(Preferences.defaultWorldsDir.toFile());
+			chooser.setCurrentDirectory(curWorldsDir);
 			int result = chooser.showOpenDialog(this);
 			if (result == JFileChooser.CANCEL_OPTION) {
 				return;
@@ -305,6 +312,9 @@ public class EditorFrame extends JFrame {
 				return;
 			}
 			File worldFile = chooser.getSelectedFile();
+			
+			File selectedFolder = worldFile.getParentFile();
+			if (selectedFolder != null) curWorldsDir = selectedFolder;
 			
 			
 			WorldInfo world = WorldInfo.load(worldFile.toPath());
@@ -361,8 +371,7 @@ public class EditorFrame extends JFrame {
 			JFileChooser chooser = new JFileChooser();
 			FileNameExtensionFilter filter = new FileNameExtensionFilter("Planets Enigma rooms", "mp_room");
 			chooser.setFileFilter(filter);
-			File basePath = new File(".").getCanonicalFile();
-			chooser.setSelectedFile(basePath);
+			chooser.setCurrentDirectory(curRoomsDir);
 			int result = chooser.showOpenDialog(this);
 			if (result == JFileChooser.CANCEL_OPTION) {
 				return;
@@ -376,6 +385,9 @@ public class EditorFrame extends JFrame {
 				return;
 			}
 			File roomFile = chooser.getSelectedFile();
+			
+			File selectedFolder = roomFile.getParentFile();
+			if (selectedFolder != null) curRoomsDir = selectedFolder;
 		
 			RoomInfo room = RoomInfo.load(roomFile.toPath());
 			

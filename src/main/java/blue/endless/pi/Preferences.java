@@ -14,16 +14,13 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.github.weisj.darklaf.LafManager;
-import com.github.weisj.darklaf.settings.ThemeSettings;
 import com.github.weisj.darklaf.theme.DarculaTheme;
 import com.github.weisj.darklaf.theme.IntelliJTheme;
 import com.github.weisj.darklaf.theme.SolarizedDarkTheme;
 import com.github.weisj.darklaf.theme.SolarizedLightTheme;
 import com.github.weisj.darklaf.theme.Theme;
-import com.github.weisj.darklaf.theme.info.DefaultThemeProvider;
 import com.github.weisj.darklaf.theme.spec.AccentColorRule;
 import com.github.weisj.darklaf.theme.spec.FontPrototype;
-import com.github.weisj.darklaf.theme.spec.FontSizePreset;
 import com.github.weisj.darklaf.theme.spec.FontSizeRule;
 
 import blue.endless.jankson.api.Jankson;
@@ -81,7 +78,7 @@ public class Preferences {
 		if (roomsDir.isPresent()) defaultRoomsDir = roomsDir.get();
 		if (worldsDir.isPresent()) defaultWorldsDir = worldsDir.get();
 		
-		try (BufferedWriter out = Files.newBufferedWriter(prefsFile, StandardOpenOption.WRITE, StandardOpenOption.CREATE)) {
+		try (BufferedWriter out = Files.newBufferedWriter(prefsFile, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
 			
 			Jankson.writeJson(prefs, out, JsonWriterOptions.STRICT);
 			out.flush();

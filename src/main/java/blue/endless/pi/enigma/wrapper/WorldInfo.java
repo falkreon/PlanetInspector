@@ -293,7 +293,7 @@ public record WorldInfo(ObjectElement json, ObjectElement metaJson, List<RoomInf
 	}
 	
 	public void save(Path worldFile) throws IOException, SyntaxError {
-		try (OutputStream fileOut = Files.newOutputStream(worldFile, StandardOpenOption.CREATE)) {
+		try (OutputStream fileOut = Files.newOutputStream(worldFile, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
 			DeflaterOutputStream deflaterOut = new DeflaterOutputStream(fileOut, new Deflater(), 4096, true);
 			
 			OutputStreamWriter writer = new OutputStreamWriter(deflaterOut, StandardCharsets.UTF_8);
