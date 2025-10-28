@@ -8,7 +8,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -23,6 +22,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import blue.endless.jankson.api.SyntaxError;
@@ -42,7 +42,7 @@ import blue.endless.pi.enigma.wrapper.WorldInfo;
 /**
  * This is the main application window - but not a lot of real behavior lives here. It's mainly in the individual panels this frame hosts.
  */
-public class EditorFrame extends JFrame {
+public class WorldEditor extends AbstractView implements CloseAware {
 	static Map<String, SchemaType<?>> ROOM_SCHEMA = Map.of(
 			"META", SchemaType.IMMUTABLE,
 			"GENERAL", SchemaType.IMMUTABLE,
@@ -89,7 +89,7 @@ public class EditorFrame extends JFrame {
 	private ScrollingPlanetView planetView = new ScrollingPlanetView();
 	private PropertyEditor propertyView = new PropertyEditor();
 	
-	private WorldInfo world;
+	private static WorldInfo world;
 	
 	private JMenu fileMenu = new JMenu("File");
 	private JMenu worldMenu = new JMenu("World");
@@ -99,18 +99,14 @@ public class EditorFrame extends JFrame {
 	private File curRoomsDir;
 	
 	
-	public EditorFrame() {
-		this.setTitle("Planet Inspector");
-		this.setIconImage(Assets.getCachedImage("icon.png").orElseGet(Assets::missingImage));
+	public WorldEditor(ViewContext context) {
+		super(context);
 		
-		Container container = this.getContentPane();
-		container.setLayout(new BorderLayout());
-		container.add(planetView, BorderLayout.CENTER);
-		container.add(propertyView, BorderLayout.EAST);
+		mainPanel = planetView;
+		rightPanel = propertyView;
+		//planetView.setMinimumSize(new Dimension(600, 600));
 		
-		this.setMinimumSize(new Dimension(800, 600));
-		
-		JMenuBar menuBar = new JMenuBar();
+		menuBar = new JMenuBar();
 		JMenuItem openMenuItem = new JMenuItem("Open...");
 		openMenuItem.setAction(new AbstractAction("Open...") {
 			@Override
@@ -133,7 +129,7 @@ public class EditorFrame extends JFrame {
 		exitItem.setAction(new AbstractAction("Exit") {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				exit();
+				context.attemptClose();
 			}
 		});
 		fileMenu.add(exitItem);
@@ -197,7 +193,7 @@ public class EditorFrame extends JFrame {
 		duplicateRoomItem.setAction(new AbstractAction("Duplicate Room") {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RoomInfo selectedRoom = EditorFrame.this.planetView.getView().getSelectedRoom();
+				RoomInfo selectedRoom = WorldEditor.this.planetView.getView().getSelectedRoom();
 				if (selectedRoom == null) return;
 				
 				ObjectElement copyObj = selectedRoom.json().clone();
@@ -216,23 +212,15 @@ public class EditorFrame extends JFrame {
 		aboutItem.setAction(new AbstractAction("About") {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(EditorFrame.this, "Authors: Falkreon (maintainer, code, reverse eng) Reverse Engineering Help: Frio");
+				JOptionPane.showMessageDialog(null, "Authors: Falkreon (maintainer, code, reverse eng) Reverse Engineering Help: Frio");
 			}
 		});
 		helpMenu.add(aboutItem);
 		menuBar.add(helpMenu);
 		
-		this.setJMenuBar(menuBar);
-		
 		planetView.getView().setRoomSelectionCallback(this::roomSelected);
-		
-		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		this.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e) {
-				exit();
-			}
-		});
+		planetView.getView().setRoomDoubleClickCallback(this::roomOpened);
+		planetView.getView().setRoomRightClickCallback(this::roomContext);
 		
 		this.curWorldsDir = Preferences.defaultWorldsDir.toFile();
 		this.curRoomsDir = Preferences.defaultRoomsDir.toFile();
@@ -280,17 +268,17 @@ public class EditorFrame extends JFrame {
 		});
 	}
 	
-	public void exit() {
+	public boolean attemptClose() {
 		if (planetView.getView().isDirty()) {
 			// TODO: Fix this confirmation dialog because it's kind of confusing as is
 			
-			int selectedResult = JOptionPane.showConfirmDialog(this, "This world has unsaved data. Are you sure you want to quit?", "Really Quit?", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+			int selectedResult = JOptionPane.showConfirmDialog(null, "This world has unsaved data. Are you sure you want to quit?", "Really Quit?", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 			if (selectedResult == JOptionPane.CANCEL_OPTION) {
-				return;
+				return false;
 			}
 		}
-		this.setVisible(false);
-		System.exit(0);
+		//this.setVisible(false);
+		return true;
 	}
 	
 	public void open() {
@@ -299,7 +287,7 @@ public class EditorFrame extends JFrame {
 			FileNameExtensionFilter filter = new FileNameExtensionFilter("Planets Enigma worlds", "mp_world");
 			chooser.setFileFilter(filter);
 			chooser.setCurrentDirectory(curWorldsDir);
-			int result = chooser.showOpenDialog(this);
+			int result = chooser.showOpenDialog(null);
 			if (result == JFileChooser.CANCEL_OPTION) {
 				return;
 			}
@@ -320,7 +308,7 @@ public class EditorFrame extends JFrame {
 			WorldInfo world = WorldInfo.load(worldFile.toPath());
 			this.setWorld(world);
 			worldMenu.setEnabled(true);
-			this.repaint();
+			planetView.repaint();
 		} catch (IOException | SyntaxError ex) {
 			ex.printStackTrace();
 		}
@@ -337,7 +325,7 @@ public class EditorFrame extends JFrame {
 			
 			chooser.setCurrentDirectory(curWorldsDir);
 			chooser.setSelectedFile(new File(curWorldsDir, defaultFileName));
-			int result = chooser.showSaveDialog(this);
+			int result = chooser.showSaveDialog(null);
 			if (result == JFileChooser.CANCEL_OPTION) {
 				return;
 			}
@@ -376,7 +364,7 @@ public class EditorFrame extends JFrame {
 			FileNameExtensionFilter filter = new FileNameExtensionFilter("Planets Enigma rooms", "mp_room");
 			chooser.setFileFilter(filter);
 			chooser.setCurrentDirectory(curRoomsDir);
-			int result = chooser.showOpenDialog(this);
+			int result = chooser.showOpenDialog(null);
 			if (result == JFileChooser.CANCEL_OPTION) {
 				return;
 			}
@@ -473,7 +461,7 @@ public class EditorFrame extends JFrame {
 		}
 		
 		planetView.getView().setDirty(true);
-		repaint();
+		planetView.repaint();
 	}
 	
 	public void roomSelected(RoomInfo room) {
@@ -482,5 +470,13 @@ public class EditorFrame extends JFrame {
 		} else {
 			roomMenu.setEnabled(false);
 		}
+	}
+	
+	public void roomOpened(RoomInfo room) {
+		context.go(new RoomConfiguratorView(context, world, world.indexOf(room)));
+	}
+	
+	public void roomContext(RoomInfo room) {
+		
 	}
 }

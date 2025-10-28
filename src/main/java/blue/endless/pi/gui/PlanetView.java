@@ -28,8 +28,6 @@ import blue.endless.pi.SchemaType;
 import blue.endless.pi.datastruct.Vec2;
 import blue.endless.pi.enigma.Direction;
 import blue.endless.pi.enigma.DoorConnectionLogic;
-import blue.endless.pi.enigma.DoorType;
-import blue.endless.pi.enigma.EnemyType;
 import blue.endless.pi.enigma.Palette;
 import blue.endless.pi.enigma.wrapper.AreaInfo;
 import blue.endless.pi.enigma.wrapper.DoorInfo;
@@ -44,6 +42,8 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 	private WorldInfo world;
 	private BiConsumer<ObjectElement, Map<String, SchemaType<?>>> propertiesConsumer = (o, s) -> {};
 	private Consumer<RoomInfo> roomSelectionCallback = (it) -> {};
+	private Consumer<RoomInfo> roomRightClickCallback = (it) -> {};
+	private Consumer<RoomInfo> roomDoubleClickCallback = (it) -> {};
 	private int selectedRoom = -1;
 	private int dragRoom = -1;
 	private int dragStartX = -1;
@@ -233,17 +233,24 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 		} else {
 			selectedRoom = clickedRoom;
 			RoomInfo room = world.rooms().get(clickedRoom);
-			propertiesConsumer.accept(room.general(), EditorFrame.ROOM_GENERAL_SCHEMA);
+			propertiesConsumer.accept(room.general(), WorldEditor.ROOM_GENERAL_SCHEMA);
 			roomSelectionCallback.accept(room);
 			this.repaint();
+			
+			if (e.getButton() == MouseEvent.BUTTON2) {
+				this.repaint();
+				roomRightClickCallback.accept(room);
+			}
 		}
 		
 		if (e.getClickCount() == 2) {
 			// Let's go!
 			if (clickedRoom < 0) return;
 			System.out.println("Opening configurator for room " + clickedRoom);
-			RoomConfiguratorFrame configurator = new RoomConfiguratorFrame(world, clickedRoom);
-			configurator.setVisible(true);
+			roomDoubleClickCallback.accept(world.rooms().get(clickedRoom));
+			//TODO: Fix
+			//RoomConfiguratorView configurator = new RoomConfiguratorView(context, world, clickedRoom);
+			//configurator.setVisible(true);
 		}
 		
 	}
@@ -613,5 +620,13 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 	public void setRoomSelectionCallback(Consumer<RoomInfo> callback) {
 		this.roomSelectionCallback = callback;
 		
+	}
+
+	public void setRoomDoubleClickCallback(Consumer<RoomInfo> callback) {
+		this.roomDoubleClickCallback = callback;
+	}
+	
+	public void setRoomRightClickCallback(Consumer<RoomInfo> callback) {
+		this.roomRightClickCallback = callback;
 	}
 }

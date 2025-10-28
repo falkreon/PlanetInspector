@@ -7,7 +7,8 @@ import blue.endless.jankson.api.document.ObjectElement;
  */
 public enum ObjectType {
 	ITEM(0),
-	GUNSHIP(1)
+	GUNSHIP(1),
+	SAVE_STATION(8)
 	;
 	
 	private final int value;

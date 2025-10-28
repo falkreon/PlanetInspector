@@ -53,7 +53,7 @@ public sealed interface SchemaType<T> permits SchemaType.Editable, SchemaType.No
 	
 	default JComponent createEditor(ObjectElement parent, String key) {
 		JTextField result = new JTextField();
-		result.setBackground(Color.WHITE);
+		//result.setBackground(Color.WHITE);
 		T value = get(parent, key);
 		
 		if (value == null) {
@@ -70,7 +70,8 @@ public sealed interface SchemaType<T> permits SchemaType.Editable, SchemaType.No
 					if (value.isPresent()) {
 						editable.put(parent, key, value.get());
 						
-						result.setForeground(Color.BLACK);
+						//result.setForeground(Color.BLACK);
+						result.setForeground(null);
 					} else {
 						result.setForeground(Color.RED);
 					}
