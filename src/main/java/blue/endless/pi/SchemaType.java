@@ -8,8 +8,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -30,6 +33,7 @@ public sealed interface SchemaType<T> permits SchemaType.Editable, SchemaType.No
 	public static final SchemaType<Integer> INT = new EditableInt();
 	public static final SchemaType<List<String>> STRING_LIST = new EditableStringList();
 	//public static final SchemaType<Boolean> BOOLEAN = new SchemaType<>();
+	public static final SchemaType<Color> COLOR = new EditableColor();
 	
 	// Not editable, limited display
 	//public static final SchemaType<ArrayElement> ARRAY = new SchemaType<>();
@@ -53,7 +57,6 @@ public sealed interface SchemaType<T> permits SchemaType.Editable, SchemaType.No
 	
 	default JComponent createEditor(ObjectElement parent, String key) {
 		JTextField result = new JTextField();
-		//result.setBackground(Color.WHITE);
 		T value = get(parent, key);
 		
 		if (value == null) {
@@ -70,7 +73,6 @@ public sealed interface SchemaType<T> permits SchemaType.Editable, SchemaType.No
 					if (value.isPresent()) {
 						editable.put(parent, key, value.get());
 						
-						//result.setForeground(Color.BLACK);
 						result.setForeground(null);
 					} else {
 						result.setForeground(Color.RED);
@@ -329,4 +331,75 @@ public sealed interface SchemaType<T> permits SchemaType.Editable, SchemaType.No
 		}
 	}
 	
+	public static class EditableColor implements Editable<Color> {
+		@Override
+		public JComponent createEditor(ObjectElement parent, String key) {
+			JColorChooser chooser = new JColorChooser();
+			
+			
+			chooser.getSelectionModel().addChangeListener(new ChangeListener() {
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					Color c = chooser.getSelectionModel().getSelectedColor();
+					//System.out.println("StateChanged to "+c);
+					put(parent, key, c);
+				}
+			});
+			
+			Color c = get(parent, key);
+			//System.out.println("Initializing to "+c);
+			Color check = chooser.getSelectionModel().getSelectedColor();
+			//System.out.println("Checked as "+check);
+			
+			
+			return chooser;
+		}
+		
+		@Override
+		public JComponent createEditor(ArrayElement parent, int index) {
+			JColorChooser chooser = new JColorChooser();
+			
+			chooser.getSelectionModel().setSelectedColor(get(parent, index));
+			chooser.getSelectionModel().addChangeListener(new ChangeListener() {
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					//System.out.println("StateChanged to "+chooser.getColor());
+					put(parent, index, chooser.getColor());
+				}
+			});
+			
+			return chooser;
+		}
+		
+		@Override
+		public ValueElement serialize(Color value) {
+			int bgr =
+					value.getRed() |
+					(value.getGreen() << 8) |
+					(value.getBlue() << 16);
+			return PrimitiveElement.of(bgr);
+		}
+
+		@Override
+		public Color deserialize(ValueElement val) {
+			return switch(val) {
+				case PrimitiveElement prim -> {
+					int bgr = prim.asInt().orElse(0);
+					System.out.println("BGR: "+bgr);
+					int r = bgr & 0xFF;
+					int g = (bgr >> 8) & 0xFF;
+					int b = (bgr >> 16) & 0xFF;
+					System.out.println("Converted to "+r+","+g+","+b);
+					yield new Color(r, g, b);
+				}
+				default -> Color.BLUE;
+			};
+		}
+
+		@Override
+		public Optional<Color> convert(String value) {
+			return Optional.empty();
+		}
+
+	}
 }

@@ -1,4 +1,4 @@
-package blue.endless.pi.gui;
+package blue.endless.pi.gui.view;
 
 import javax.swing.JComponent;
 import javax.swing.JMenuBar;

@@ -1,4 +1,4 @@
-package blue.endless.pi.gui;
+package blue.endless.pi.gui.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

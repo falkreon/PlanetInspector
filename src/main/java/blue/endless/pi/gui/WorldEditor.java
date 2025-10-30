@@ -38,6 +38,9 @@ import blue.endless.pi.enigma.wrapper.AreaInfo;
 import blue.endless.pi.enigma.wrapper.RoomInfo;
 import blue.endless.pi.enigma.wrapper.ScreenInfo;
 import blue.endless.pi.enigma.wrapper.WorldInfo;
+import blue.endless.pi.gui.view.AbstractView;
+import blue.endless.pi.gui.view.CloseAware;
+import blue.endless.pi.gui.view.ViewContext;
 
 /**
  * This is the main application window - but not a lot of real behavior lives here. It's mainly in the individual panels this frame hosts.
@@ -145,6 +148,17 @@ public class WorldEditor extends AbstractView implements CloseAware {
 			}
 		});
 		worldMenu.add(importRoomItem);
+		
+		JMenuItem areasItem = new JMenuItem("Areas");
+		areasItem.setAction(new AbstractAction("Areas") {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				AreaView areaView = new AreaView(context, world);
+				context.go(areaView);
+			}
+		});
+		worldMenu.add(areasItem);
+		
 		
 		JMenuItem makeUniqueItem = new JMenuItem("Make Unique");
 		makeUniqueItem.setAction(new AbstractAction("Make Unique") {

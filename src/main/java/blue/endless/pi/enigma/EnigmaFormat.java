@@ -1,6 +1,7 @@
 package blue.endless.pi.enigma;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 import blue.endless.jankson.api.document.ArrayElement;
@@ -49,7 +50,7 @@ public class EnigmaFormat {
 			debugLog.put(PI_ID, new ArrayElement());
 		}
 		ArrayElement lines = debugLog.getArray(PI_ID);
-		lines.add(PrimitiveElement.of("Edited on "+LocalDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME)));
+		lines.add(PrimitiveElement.of("Edited on "+LocalDateTime.now().atOffset(ZoneOffset.UTC).format(DateTimeFormatter.RFC_1123_DATE_TIME)));
 	}
 	
 	/**

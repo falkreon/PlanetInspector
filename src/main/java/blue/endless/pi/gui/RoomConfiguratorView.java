@@ -13,6 +13,8 @@ import javax.swing.JSplitPane;
 import blue.endless.pi.SchemaType;
 import blue.endless.pi.enigma.wrapper.MapObjectInfo;
 import blue.endless.pi.enigma.wrapper.WorldInfo;
+import blue.endless.pi.gui.view.AbstractView;
+import blue.endless.pi.gui.view.ViewContext;
 
 public class RoomConfiguratorView extends AbstractView {
 	private static final Map<String, SchemaType<?>> ENEMY_SCHEMA = Map.of(
