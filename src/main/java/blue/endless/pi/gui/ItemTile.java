@@ -2,20 +2,24 @@ package blue.endless.pi.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JButton;
+import javax.swing.TransferHandler;
 
+import blue.endless.pi.ItemStack;
 import blue.endless.pi.enigma.ItemType;
 
 public class ItemTile extends JButton {
 	private int scale = 3;
 	private ItemType item;
+	private int count;
 	private BufferedImage itemImage;
-	private boolean selected = false;
 	private Runnable onClick = () -> {};
 	
 	public ItemTile() {
@@ -25,8 +29,10 @@ public class ItemTile extends JButton {
 			public void mouseClicked(MouseEvent e) {
 				onClick.run();
 			}
-			
 		});
+		
+		setTransferHandler(new TransferHandler("item"));
+		
 	}
 	
 	public int scale() {
@@ -48,6 +54,7 @@ public class ItemTile extends JButton {
 	
 	public void setItem(ItemType item) {
 		this.item = item;
+		this.count = 1;
 		if (item != null) {
 			this.itemImage = item.getSprite();
 			this.setToolTipText(item.name());
@@ -66,14 +73,29 @@ public class ItemTile extends JButton {
 			int diff = (this.getWidth() - (itemImage.getWidth() * scale)) / 2;
 			g.drawImage(itemImage, diff, 0, itemImage.getWidth()*scale + diff, itemImage.getHeight()*scale, 0, 0, itemImage.getWidth(), itemImage.getHeight(), null);
 		}
-		if (selected) {
-			g.setColor(Color.GREEN);
-			g.drawRect(1, 1, this.getWidth()-2, this.getHeight()-2);
-			g.drawRect(0, 0, this.getWidth(), this.getHeight());
+		
+		if (this.count > 1) {
+			String countString = Integer.toString(count);
+			g.setFont(g.getFont().deriveFont(Font.BOLD));
+			Rectangle2D bounds = g.getFontMetrics().getStringBounds(countString, g);
+			int x = this.getWidth() - (int) bounds.getMaxX() - 2;
+			int y = this.getHeight() - (int) bounds.getMaxY();
+			
+			Drawing.textWithOutline(g, x, y, countString, getFont().deriveFont(Font.BOLD, 6 * scale), Color.WHITE, Color.BLACK, 2.0f * scale);
 		}
 	}
 	
-	public void setOnClick(Runnable evt) {
+	public void onClick(Runnable evt) {
 		this.onClick = evt;
+	}
+
+	public void setStack(ItemStack stack) {
+		this.item = stack.item();
+		this.count = stack.count();
+		
+		this.itemImage = this.item.getSprite();
+		this.setToolTipText(this.item.name());
+		
+		this.repaint();
 	}
 }

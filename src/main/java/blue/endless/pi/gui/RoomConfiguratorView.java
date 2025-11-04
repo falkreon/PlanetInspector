@@ -29,7 +29,7 @@ public class RoomConfiguratorView extends AbstractView {
 	
 	private final RoomDisplayPanel roomDisplay;
 	private JPanel emptyPanel = new JPanel();
-	private ItemSelectorPanel itemSelector = new ItemSelectorPanel();
+	private ItemEditorPanel itemSelector = new ItemEditorPanel();
 	private PropertyEditor editor = new PropertyEditor();
 	
 	public RoomConfiguratorView(ViewContext context, WorldInfo world, int roomId) {

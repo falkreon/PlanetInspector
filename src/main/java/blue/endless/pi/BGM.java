@@ -1,5 +1,7 @@
 package blue.endless.pi;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -52,20 +54,36 @@ public class BGM {
 		}
 		
 		@Override
-		public JComponent createEditor(ObjectElement parent, String key) {
+		public JComponent createEditor(ObjectElement parent, String key, Runnable editCallback) {
 			JComboBox<String> result = new JComboBox<>(bgm.toArray(new String[bgm.size()]));
 			result.setEditable(true);
 			String value = deserialize(parent.getPrimitive(key));
 			result.setSelectedItem(value);
+			result.addItemListener(new ItemListener() {
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					put(parent, key, (String) result.getSelectedItem());
+					editCallback.run();
+				}
+				
+			});
 			return result;
 		}
 		
 		@Override
-		public JComponent createEditor(ArrayElement parent, int index) {
+		public JComponent createEditor(ArrayElement parent, int index, Runnable editCallback) {
 			JComboBox<String> result = new JComboBox<>(bgm.toArray(new String[bgm.size()]));
 			result.setEditable(true);
 			String value = deserialize(parent.getPrimitive(index));
 			result.setSelectedItem(value);
+			result.addItemListener(new ItemListener() {
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					put(parent, index, (String) result.getSelectedItem());
+					editCallback.run();
+				}
+				
+			});
 			return result;
 		}
 	}

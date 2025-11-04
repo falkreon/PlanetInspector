@@ -21,7 +21,7 @@ import blue.endless.pi.gui.layout.Axis;
 import blue.endless.pi.gui.layout.CardLayout;
 import blue.endless.pi.gui.layout.LinearLayout;
 
-public class ItemSelectorPanel extends JPanel {
+public class ItemEditorPanel extends JPanel {
 	private MapObjectInfo.ItemInfo itemInfo = null;
 	private JPanel selectedItemView = new JPanel();
 	private ItemTile selectedItemTile = new ItemTile();
@@ -32,7 +32,7 @@ public class ItemSelectorPanel extends JPanel {
 	
 	private Runnable editCallback = () -> {};
 	
-	public ItemSelectorPanel() {
+	public ItemEditorPanel() {
 		this.setMinimumSize(new Dimension(300, -1));
 		this.setPreferredSize(new Dimension(300, -1));
 		this.setMaximumSize(new Dimension(500, -1));
@@ -105,7 +105,7 @@ public class ItemSelectorPanel extends JPanel {
 					if (!item.isReleased()) continue;
 					ItemTile tile = new ItemTile();
 					tile.setItem(item);
-					tile.setOnClick(()->setItem(item));
+					tile.onClick(()->setItem(item));
 					itemsPanel.add(tile);
 				}
 			}
@@ -113,7 +113,7 @@ public class ItemSelectorPanel extends JPanel {
 			for(ItemType item : items) {
 				ItemTile tile = new ItemTile();
 				tile.setItem(item);
-				tile.setOnClick(()->setItem(item));
+				tile.onClick(()->setItem(item));
 				itemsPanel.add(tile);
 			}
 		}

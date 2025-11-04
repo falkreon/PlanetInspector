@@ -30,6 +30,7 @@ public class PropertyEditor extends JPanel {
 	private JScrollPane scrollPane = new JScrollPane();
 	private JPanel editorPanel = null;
 	private ObjectElement value = null;
+	private Runnable editCallback = () -> {};
 	
 	public PropertyEditor() {
 		this.setLayout(new BorderLayout());
@@ -120,7 +121,7 @@ public class PropertyEditor extends JPanel {
 	
 	private void addLine(String key, ValueElement value, SchemaType<?> schema) {
 		JComponent editorComponent = (schema != null) ?
-			schema.createEditor(this.value, key) :
+			schema.createEditor(this.value, key, editCallback) :
 			createEditorComponent(value, schema);
 		
 		addLine(key, editorComponent);
@@ -141,17 +142,21 @@ public class PropertyEditor extends JPanel {
 	
 	public void addExternalLine(String label, ObjectElement sourceObject, String sourceKey, SchemaType<?> schema) {
 		JComponent editor = (schema != null) ?
-				schema.createEditor(sourceObject, sourceKey) :
-				SchemaType.IMMUTABLE.createEditor(sourceObject, sourceKey);
+				schema.createEditor(sourceObject, sourceKey, editCallback) :
+				SchemaType.IMMUTABLE.createEditor(sourceObject, sourceKey, editCallback);
 		addLine(label, editor);
 		editorPanel.validate();
 	}
 	
 	public void addExternalLine(String label, ArrayElement sourceArray, int sourceIndex, SchemaType<?> schema) {
 		JComponent editor = (schema != null) ?
-				schema.createEditor(sourceArray, sourceIndex) :
-				SchemaType.IMMUTABLE.createEditor(sourceArray, sourceIndex);
+				schema.createEditor(sourceArray, sourceIndex, editCallback) :
+				SchemaType.IMMUTABLE.createEditor(sourceArray, sourceIndex, editCallback);
 		addLine(label, editor);
 		editorPanel.validate();
+	}
+
+	public void setEditCallback(Runnable callback) {
+		this.editCallback = callback;
 	}
 }

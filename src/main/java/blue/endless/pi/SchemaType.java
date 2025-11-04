@@ -8,11 +8,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JTextField;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -22,6 +19,7 @@ import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.jankson.impl.document.DoubleElementImpl;
 import blue.endless.jankson.impl.document.NullElementImpl;
+import blue.endless.pi.gui.ColorChooser;
 
 public sealed interface SchemaType<T> permits SchemaType.Editable, SchemaType.NonEditable {
 	// Editable
@@ -55,7 +53,7 @@ public sealed interface SchemaType<T> permits SchemaType.Editable, SchemaType.No
 		return value.toString();
 	}
 	
-	default JComponent createEditor(ObjectElement parent, String key) {
+	default JComponent createEditor(ObjectElement parent, String key, Runnable editCallback) {
 		JTextField result = new JTextField();
 		T value = get(parent, key);
 		
@@ -72,8 +70,9 @@ public sealed interface SchemaType<T> permits SchemaType.Editable, SchemaType.No
 					Optional<T> value = editable.convert(result.getText());
 					if (value.isPresent()) {
 						editable.put(parent, key, value.get());
-						
 						result.setForeground(null);
+						
+						editCallback.run();
 					} else {
 						result.setForeground(Color.RED);
 					}
@@ -99,7 +98,7 @@ public sealed interface SchemaType<T> permits SchemaType.Editable, SchemaType.No
 		return result;
 	}
 	
-	default JComponent createEditor(ArrayElement parent, int index) {
+	default JComponent createEditor(ArrayElement parent, int index, Runnable editCallback) {
 		JTextField result = new JTextField();
 		result.setBackground(Color.WHITE);
 		T value = get(parent, index);
@@ -116,8 +115,9 @@ public sealed interface SchemaType<T> permits SchemaType.Editable, SchemaType.No
 					Optional<T> value = editable.convert(result.getText());
 					if (value.isPresent()) {
 						editable.put(parent, index, value.get());
-						result.setSelectedTextColor(null);
-						result.setForeground(Color.BLACK);
+						result.setForeground(null);
+						
+						editCallback.run();
 					} else {
 						result.setForeground(Color.RED);
 					}
@@ -333,39 +333,24 @@ public sealed interface SchemaType<T> permits SchemaType.Editable, SchemaType.No
 	
 	public static class EditableColor implements Editable<Color> {
 		@Override
-		public JComponent createEditor(ObjectElement parent, String key) {
-			JColorChooser chooser = new JColorChooser();
-			
-			
-			chooser.getSelectionModel().addChangeListener(new ChangeListener() {
-				@Override
-				public void stateChanged(ChangeEvent e) {
-					Color c = chooser.getSelectionModel().getSelectedColor();
-					//System.out.println("StateChanged to "+c);
-					put(parent, key, c);
-				}
+		public JComponent createEditor(ObjectElement parent, String key, Runnable editCallback) {
+			ColorChooser chooser = new ColorChooser();
+			chooser.setColor(get(parent, key));
+			chooser.setEditCallback((col) -> {
+				put(parent, key, col);
+				editCallback.run();
 			});
-			
-			Color c = get(parent, key);
-			//System.out.println("Initializing to "+c);
-			Color check = chooser.getSelectionModel().getSelectedColor();
-			//System.out.println("Checked as "+check);
-			
 			
 			return chooser;
 		}
 		
 		@Override
-		public JComponent createEditor(ArrayElement parent, int index) {
-			JColorChooser chooser = new JColorChooser();
-			
-			chooser.getSelectionModel().setSelectedColor(get(parent, index));
-			chooser.getSelectionModel().addChangeListener(new ChangeListener() {
-				@Override
-				public void stateChanged(ChangeEvent e) {
-					//System.out.println("StateChanged to "+chooser.getColor());
-					put(parent, index, chooser.getColor());
-				}
+		public JComponent createEditor(ArrayElement parent, int index, Runnable editCallback) {
+			ColorChooser chooser = new ColorChooser();
+			chooser.setColor(get(parent, index));
+			chooser.setEditCallback((col) -> {
+				put(parent, index, col);
+				editCallback.run();
 			});
 			
 			return chooser;

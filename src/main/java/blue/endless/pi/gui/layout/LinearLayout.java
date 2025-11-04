@@ -80,6 +80,11 @@ public class LinearLayout implements LayoutManager {
 		int mainAxisSize = 0;
 		int crossAxisSize = 0;
 		
+		Vec2 insetSizes = axis.arrange(
+				container.getInsets().left + container.getInsets().right,
+				container.getInsets().top + container.getInsets().bottom
+				);
+		
 		boolean first = true;
 		for(Component c : container.getComponents()) {
 			Dimension d = c.getMinimumSize();
@@ -93,6 +98,9 @@ public class LinearLayout implements LayoutManager {
 			int curCrossAxis = axis.opposite().select(d);
 			crossAxisSize = Math.max(crossAxisSize, curCrossAxis);
 		}
+		
+		mainAxisSize += insetSizes.x();
+		crossAxisSize += insetSizes.y();
 		
 		Vec2 result = axis.arrange(mainAxisSize, crossAxisSize);
 		return new Dimension(result.x(), result.y());

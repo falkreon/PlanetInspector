@@ -21,7 +21,7 @@ import blue.endless.pi.BGM;
 import blue.endless.pi.SchemaType;
 import blue.endless.pi.enigma.wrapper.WorldInfo;
 import blue.endless.pi.gui.layout.Axis;
-import blue.endless.pi.gui.layout.CardLayout;
+import blue.endless.pi.gui.layout.LinearLayout;
 import blue.endless.pi.gui.layout.MultiItemAxisLayout;
 import blue.endless.pi.gui.layout.SingleItemAxisLayout;
 import blue.endless.pi.gui.view.AbstractView;
@@ -35,6 +35,8 @@ public class AreaView extends AbstractView {
 			);
 	private WorldInfo world;
 	private JPanel areaPanel = new JPanel();
+	private JScrollPane scroll = new JScrollPane(areaPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+	
 	private PropertyEditor properties = new PropertyEditor();
 	
 	public AreaView(ViewContext context, WorldInfo world) {
@@ -43,31 +45,37 @@ public class AreaView extends AbstractView {
 		
 		
 		areaPanel.setBorder(new EmptyBorder(16,16,16,16));
-		CardLayout layout = new CardLayout();
-		layout.setInterCardSpacing(16);
-		layout.setInterLineSpacing(16);
-		layout.setLineAxis(Axis.HORIZONTAL);
-		layout.setMainLineLayout(MultiItemAxisLayout.FILL_PROPORTIONAL);
-		layout.setCrossLineLayout(SingleItemAxisLayout.LEADING);
+		
+		LinearLayout layout = new LinearLayout();
+		layout.setAxis(Axis.VERTICAL);
+		layout.setSpacing(16);
+		layout.setMainAxisLayout(MultiItemAxisLayout.FILL_PROPORTIONAL);
+		layout.setCrossAxisLayout(SingleItemAxisLayout.CENTER);
 		areaPanel.setLayout(layout);
 		
-		JScrollPane scroll = new JScrollPane(areaPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		properties.setEditCallback(areaPanel::repaint);
 		
-		mainPanel = areaPanel;
+		//JScrollPane scroll = new JScrollPane(areaPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		
+		mainPanel = scroll;
 		rightPanel = properties;
+		
+		properties.setMinimumSize(new Dimension(400, -1));
+		properties.setPreferredSize(new Dimension(400, -1));
 		
 		refreshAreas();
 		scroll.setViewportView(areaPanel);
+		scroll.validate();
 	}
 	
 	public void refreshAreas() {
-		mainPanel.removeAll();
+		areaPanel.removeAll();
 		
 		ArrayElement areasArray = world.json().getArray("AREAS");
 		for(int i=0; i<areasArray.size(); i++) {
 			ValueElement val = areasArray.get(i);
 			if (val instanceof ObjectElement obj) {
-				mainPanel.add(new AreaCard(obj, i, properties));
+				areaPanel.add(new AreaCard(obj, i, properties));
 			}
 		}
 		
@@ -84,9 +92,10 @@ public class AreaView extends AbstractView {
 				refreshAreas();
 			}
 		});
-		mainPanel.add(plus);
+		areaPanel.add(plus);
 		
-		mainPanel.validate();
+		areaPanel.validate();
+		scroll.setViewportView(areaPanel);
 	}
 	
 	public static class AreaCard extends JButton {
@@ -94,16 +103,16 @@ public class AreaView extends AbstractView {
 		
 		public AreaCard(ObjectElement areaObj, int index, PropertyEditor properties) {
 			this.json = areaObj;
-			updateColors();
+			updateCard();
 			
 			Dimension cardSize = new Dimension(400, 100);
 			this.setMinimumSize(cardSize);
 			this.setPreferredSize(cardSize);
 			this.setMaximumSize(cardSize);
 			
+			
 			String buttonName = areaObj.getPrimitive("name").asString().orElse("UNKNOWN");
 			this.setText(buttonName);
-			
 			this.setFont(this.getFont().deriveFont(Font.BOLD));
 			
 			this.setAction(new AbstractAction(buttonName) {
@@ -114,7 +123,7 @@ public class AreaView extends AbstractView {
 			});
 		}
 		
-		private void updateColors() {
+		private void updateCard() {
 			int bgr = json.getPrimitive("color").asInt().orElse(0xFFFFFF);
 			int r = bgr & 0xFF;
 			int g = (bgr >> 8) & 0xFF;
@@ -124,11 +133,14 @@ public class AreaView extends AbstractView {
 			
 			int avg = (r+g+b) / 3;
 			this.setForeground((avg>128) ? Color.BLACK : Color.WHITE);
+			
+			String buttonName = json.getPrimitive("name").asString().orElse("UNKNOWN");
+			this.setText(buttonName);
 		}
 		
 		@Override
 		public void paint(Graphics g) {
-			updateColors();
+			updateCard();
 			
 			super.paint(g);
 		}

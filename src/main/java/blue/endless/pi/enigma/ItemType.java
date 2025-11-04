@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -16,6 +17,10 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 public class ItemType {
 	public static final Map<String, ItemType> byName = new HashMap<>();
 	public static final Int2ObjectOpenHashMap<ItemType> values = new Int2ObjectOpenHashMap<ItemType>();
+	
+	public static final Set<String> LOCKED = Set.of(
+			"zero_suit", "stun_pistol"
+			);
 	
 	public static void load(ObjectElement obj) {
 		for(KeyValuePairElement kvp : obj) {

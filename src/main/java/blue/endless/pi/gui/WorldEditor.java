@@ -159,6 +159,16 @@ public class WorldEditor extends AbstractView implements CloseAware {
 		});
 		worldMenu.add(areasItem);
 		
+		JMenuItem startingItemsItem = new JMenuItem("Starting Items");
+		startingItemsItem.setAction(new AbstractAction("Starting Items") {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				StartingItemsView view = new StartingItemsView(context, world);
+				context.go(view);
+			}
+		});
+		worldMenu.add(startingItemsItem);
+		
 		
 		JMenuItem makeUniqueItem = new JMenuItem("Make Unique");
 		makeUniqueItem.setAction(new AbstractAction("Make Unique") {
