@@ -19,6 +19,8 @@ import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.pi.BGM;
 import blue.endless.pi.SchemaType;
+import blue.endless.pi.enigma.wrapper.AreaInfo;
+import blue.endless.pi.enigma.wrapper.RoomInfo;
 import blue.endless.pi.enigma.wrapper.WorldInfo;
 import blue.endless.pi.gui.layout.Axis;
 import blue.endless.pi.gui.layout.LinearLayout;
@@ -75,7 +77,7 @@ public class AreaView extends AbstractView {
 		for(int i=0; i<areasArray.size(); i++) {
 			ValueElement val = areasArray.get(i);
 			if (val instanceof ObjectElement obj) {
-				areaPanel.add(new AreaCard(obj, i, properties));
+				areaPanel.add(new AreaCard(world, obj, i, properties, this::refreshAreas));
 			}
 		}
 		
@@ -89,6 +91,7 @@ public class AreaView extends AbstractView {
 				newArea.put("bgm", PrimitiveElement.of("bgm_Crateria_Arrival_SM"));
 				newArea.put("color", PrimitiveElement.of(0x808080));
 				areasArray.add(newArea);
+				world.areas().add(new AreaInfo(newArea));
 				refreshAreas();
 			}
 		});
@@ -101,7 +104,7 @@ public class AreaView extends AbstractView {
 	public static class AreaCard extends JButton {
 		private ObjectElement json;
 		
-		public AreaCard(ObjectElement areaObj, int index, PropertyEditor properties) {
+		public AreaCard(WorldInfo world, ObjectElement areaObj, int index, PropertyEditor properties, Runnable refreshAreas) {
 			this.json = areaObj;
 			updateCard();
 			
@@ -119,6 +122,26 @@ public class AreaView extends AbstractView {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					properties.setObject(areaObj, AREA_SCHEMA);
+					
+					if (world.areas().size() > 1) {
+						properties.addExternalButton("Delete", () -> {
+							if (world.areas().size() <= 1) return;
+							
+							for(RoomInfo room : world.rooms()) {
+								if (room.area() == index) {
+									room.setArea(0);
+								} else if (room.area() > index) {
+									room.setArea(room.area() - 1);
+								}
+							}
+							
+							world.areas().remove(index);
+							ArrayElement areasArray = world.json().getArray("AREAS");
+							areasArray.remove(index);
+							
+							refreshAreas.run();
+						});
+					}
 				}
 			});
 		}

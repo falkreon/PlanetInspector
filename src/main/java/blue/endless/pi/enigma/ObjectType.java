@@ -1,4 +1,4 @@
-package blue.endless.pi.gui;
+package blue.endless.pi.enigma;
 
 import blue.endless.jankson.api.document.ObjectElement;
 
@@ -8,7 +8,11 @@ import blue.endless.jankson.api.document.ObjectElement;
 public enum ObjectType {
 	ITEM(0),
 	GUNSHIP(1),
-	SAVE_STATION(8)
+	
+	SCANNER(3),
+	
+	SAVE_STATION(8),
+	SPAZER_BARRIER(10)
 	;
 	
 	private final int value;

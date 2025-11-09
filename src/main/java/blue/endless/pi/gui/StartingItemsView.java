@@ -1,5 +1,6 @@
 package blue.endless.pi.gui;
 
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -15,13 +16,11 @@ import blue.endless.pi.ItemStack;
 import blue.endless.pi.enigma.ItemType;
 import blue.endless.pi.enigma.wrapper.WorldInfo;
 import blue.endless.pi.gui.layout.Axis;
-import blue.endless.pi.gui.layout.CardLayout;
 import blue.endless.pi.gui.layout.LinearLayout;
 import blue.endless.pi.gui.layout.MultiItemAxisLayout;
 import blue.endless.pi.gui.layout.SingleItemAxisLayout;
 import blue.endless.pi.gui.view.AbstractView;
 import blue.endless.pi.gui.view.ViewContext;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 
 public class StartingItemsView extends AbstractView {
 	private WorldInfo world;
@@ -29,20 +28,11 @@ public class StartingItemsView extends AbstractView {
 	private JPanel startingItemDisplay = new JPanel();
 	private ItemPanel lockedItemPanel = new ItemPanel();
 	private ItemPanel editableItemPanel = new ItemPanel();
-	//private JPanel itemContainer = new JPanel();
 	private ItemPanel itemSelector = new ItemPanel();
 	
 	public StartingItemsView(ViewContext context, WorldInfo world) {
 		super(context);
 		this.world = world;
-		
-		/*
-		CardLayout layout = new CardLayout();
-		layout.setMainLineLayout(MultiItemAxisLayout.FILL_PROPORTIONAL);
-		layout.setCrossLineLayout(SingleItemAxisLayout.LEADING);
-		layout.setLineAxis(Axis.HORIZONTAL);
-		layout.setInterCardSpacing(16);
-		layout.setInterLineSpacing(16);*/
 		
 		LinearLayout layout = new LinearLayout();
 		layout.setAxis(Axis.VERTICAL);
@@ -78,6 +68,7 @@ public class StartingItemsView extends AbstractView {
 			mainPanel.repaint();
 		});
 		
+		itemSelector.setPreferredSize(new Dimension(300, -1));
 		itemSelector.setItems(ItemType::isReleased);
 		itemSelector.onClick((stack) -> {
 			ArrayElement itemsArray = world.json().getObject("SAMUS").getObject("items").getArray("starting");
@@ -86,12 +77,6 @@ public class StartingItemsView extends AbstractView {
 			mainPanel.validate();
 			mainPanel.repaint();
 		});
-		
-		/*
-		itemSelector.setItemStacks(List.<ItemStack>of(
-				new ItemStack(ItemType.byName.get("screw_attack"), 2),
-				new ItemStack(ItemType.byName.get("missile_tank"), 3)		
-						));*/
 		
 		rightPanel = itemSelector;
 		

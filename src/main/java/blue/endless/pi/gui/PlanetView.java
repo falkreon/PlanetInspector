@@ -41,6 +41,7 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 	private static final Color MAP_BACKGROUND = new Color(42, 42, 42);
 	private WorldInfo world;
 	private BiConsumer<ObjectElement, Map<String, SchemaType<?>>> propertiesConsumer = (o, s) -> {};
+	
 	private Consumer<RoomInfo> roomSelectionCallback = (it) -> {};
 	private Consumer<RoomInfo> roomRightClickCallback = (it) -> {};
 	private Consumer<RoomInfo> roomDoubleClickCallback = (it) -> {};
@@ -325,41 +326,6 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 				
 				// De-stitch doors
 				DoorConnectionLogic.unstitchAll(world, room);
-				/*
-				for(ScreenInfo s : room.screens()) {
-					for(ObjectElement door : s.doors()) {
-						int destRoom = door.getPrimitive("dest_rm").asInt().orElse(-1);
-						int destId = door.getPrimitive("dest_id").asInt().orElse(0);
-						
-						if (destRoom >=0 && destRoom < world.rooms().size()) {
-							RoomInfo reverseRoom = world.rooms().get(destRoom);
-							
-							findLinkedDoor:
-							for (ScreenInfo reverseScreen : reverseRoom.screens()) {
-								for(ObjectElement reverseDoor : reverseScreen.doors()) {
-									int reverseDoorId = reverseDoor.getPrimitive("id").asInt().orElse(-1);
-									if (reverseDoorId == destId) {
-										reverseDoor.put("dest_rm", PrimitiveElement.of(-1));
-										reverseDoor.put("dest_id", PrimitiveElement.of(0));
-										DoorType existingType = reverseDoor.getPrimitive("type").mapAsInt(DoorType::of).orElse(DoorType.BLUE);
-										switch(existingType) {
-											case BLUE, MISSILE, BOSS ->
-												reverseDoor.put("type", PrimitiveElement.of(DoorType.BLUE.value()));
-											default -> {}
-										}
-										if (existingType != DoorType.COMBAT) reverseDoor.put("type", PrimitiveElement.of(DoorType.BLUE.value()));
-										break findLinkedDoor;
-									}
-								}
-							}
-						}
-						
-						door.put("dest_rm", PrimitiveElement.of(-1));
-						door.put("dest_id", PrimitiveElement.of(0));
-						DoorType existingType = door.getPrimitive("type").mapAsInt(DoorType::of).orElse(DoorType.BLUE);
-						if (existingType != DoorType.COMBAT) door.put("type", PrimitiveElement.of(DoorType.BLUE.value()));
-					}
-				}*/
 				
 				//Stitch doors
 				
@@ -387,94 +353,6 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 						}
 					}
 				}
-				/*
-				for(ScreenInfo s : room.screens()) {
-					for(ObjectElement door : s.doors()) {
-						Direction d = Direction.of(door.getPrimitive("pos").asInt().orElse(0));
-						int doorDestRoom = door.getPrimitive("dest_rm").asInt().orElse(0);
-						
-						Vec2 dest = new Vec2(s.x(), s.y()).add(d.offset());
-						int destRoom = roomAt(dest.x(), dest.y());
-						if (doorDestRoom != destRoom) {
-							if (destRoom != -1) {
-								
-								RoomInfo destRoomObj = world.rooms().get(destRoom);
-								boolean doorFound = false;
-								findDoor:
-								for(ScreenInfo destScreen : destRoomObj.screens()) {
-									if (destScreen.x() == dest.x() && destScreen.y() == dest.y()) {
-										for(ObjectElement destDoor : destScreen.doors()) {
-											Direction destDirection = Direction.of(destDoor.getPrimitive("pos").asInt().orElse(0));
-											if (d == destDirection.opposite()) {
-												//Found it!
-												doorFound = true;
-												
-												// Link forward
-												door.put("dest_rm", PrimitiveElement.of(destRoom));
-												int destDoorId = destDoor.getPrimitive("id").asInt().orElse(0);
-												door.put("dest_id", PrimitiveElement.of(destDoorId));
-												
-												// Link backward
-												destDoor.put("dest_rm", PrimitiveElement.of(dragRoom));
-												destDoor.put("dest_id", door.getPrimitive("id"));
-												
-												// Fix door types
-												boolean sourceBoss = room.isBossRoom();
-												boolean destBoss = destRoomObj.isBossRoom();
-												DoorType sourceDoorType = door.getPrimitive("type").mapAsInt(DoorType::of).orElse(DoorType.BLUE);
-												boolean adjustSourceDoor = (sourceDoorType != DoorType.COMBAT);
-												DoorType destDoorType = destDoor.getPrimitive("type").mapAsInt(DoorType::of).orElse(DoorType.BLUE);
-												boolean adjustDestDoor = (destDoorType != DoorType.COMBAT);
-												
-												if (sourceBoss && destBoss) {
-													if (adjustSourceDoor) door.put("type", PrimitiveElement.of(DoorType.COMBAT.value()));
-													if (adjustDestDoor) destDoor.put("type", PrimitiveElement.of(DoorType.COMBAT.value()));
-												} else if (sourceBoss) {
-													if (adjustSourceDoor) door.put("type", PrimitiveElement.of(DoorType.COMBAT.value()));
-													if (adjustDestDoor) destDoor.put("type", PrimitiveElement.of(DoorType.BOSS.value()));
-												} else if (destBoss) {
-													if (adjustSourceDoor) door.put("type", PrimitiveElement.of(DoorType.BOSS.value()));
-													if (adjustDestDoor) destDoor.put("type", PrimitiveElement.of(DoorType.COMBAT.value()));
-												}
-												
-												
-												boolean sourceMB = sourceBoss && (room.bossId() == EnemyType.MOTHER_BRAIN_ID);
-												boolean destMB = destBoss && (destRoomObj.bossId() == EnemyType.MOTHER_BRAIN_ID);
-												if (sourceMB && destMB) {
-													// We don't need to add a yellow door or an impassable door. 
-												} else if (sourceMB) {
-													if (sourceDoorType == DoorType.BLUE) {
-														destDoor.put("type", PrimitiveElement.of(DoorType.MOTHER_BRAIN.value())); // Yellow door going into a Mother Brain regular door
-													} else if (sourceDoorType == DoorType.COMBAT) {
-														destDoor.put("type", PrimitiveElement.of(DoorType.IMPASSABLE.value())); // Impassable door going into MB exits
-													}
-												} else if (destMB) {
-													if (destDoorType == DoorType.BLUE) {
-														door.put("type", PrimitiveElement.of(DoorType.MOTHER_BRAIN.value())); // Yellow door going into a Mother Brain regular door
-													} else if (destDoorType == DoorType.COMBAT) {
-														door.put("type", PrimitiveElement.of(DoorType.IMPASSABLE.value())); // Impassable door going into MB exits
-													}
-												}
-												
-												break findDoor;
-											}
-										}
-									}
-								}
-								if (!doorFound) {
-									System.out.println("Flagging door as invalid");
-									door.put("dest_rm", PrimitiveElement.of(-1));
-									door.put("dest_id", PrimitiveElement.of(0));
-								}
-								
-							} else {
-								System.out.println("Flagging door as invalid");
-								door.put("dest_rm", PrimitiveElement.of(-1));
-								door.put("dest_id", PrimitiveElement.of(0));
-							}
-						}
-					}
-				}*/
 				
 				// De-stitch elevators
 				for(ScreenInfo screen : room.screens()) {
@@ -493,8 +371,8 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 						}
 					}
 				}
-				// Stitch elevators
 				
+				// Stitch elevators
 				for(ScreenInfo screen : room.screens()) {
 					for(ValueElement val : screen.json().getArray("ELEVATORS")) {
 						if (val instanceof ObjectElement elevatorObj) {

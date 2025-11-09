@@ -4,10 +4,13 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -154,6 +157,21 @@ public class PropertyEditor extends JPanel {
 				SchemaType.IMMUTABLE.createEditor(sourceArray, sourceIndex, editCallback);
 		addLine(label, editor);
 		editorPanel.validate();
+	}
+	
+	public void addExternalLine(String label, JComponent editor) {
+		addLine(label, editor);
+		editorPanel.validate();
+	}
+	
+	public void addExternalButton(String name, Runnable action) {
+		JButton button = new JButton(new AbstractAction(name) {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				action.run();
+			}
+		});
+		editorPanel.add(button);
 	}
 
 	public void setEditCallback(Runnable callback) {

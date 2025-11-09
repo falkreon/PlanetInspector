@@ -85,7 +85,10 @@ public class Assets {
 	
 	public static Optional<BufferedImage> getPalettedImage(String id, int... palette) {
 		BufferedImage maybe = palettedImageCache.get(new PalettedImageKey(id, palette));
-		if (maybe != null) return Optional.of(maybe);
+		if (maybe != null) {
+			System.out.println("Couldn't get sprite '"+id+"'");
+			return Optional.of(maybe);
+		}
 		
 		Optional<BufferedImage> opt = readImage(id);
 		opt.ifPresent((it) -> Palette.colorize(it, palette));

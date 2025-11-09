@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
+import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.pi.enigma.wrapper.AreaInfo;
 import blue.endless.pi.enigma.wrapper.RoomInfo;
 import blue.endless.pi.enigma.wrapper.ScreenInfo;
@@ -53,6 +54,19 @@ public class EnigmaFormat {
 		lines.add(PrimitiveElement.of("Edited on "+LocalDateTime.now().atOffset(ZoneOffset.UTC).format(DateTimeFormatter.RFC_1123_DATE_TIME)));
 	}
 	
+	private static void fixCrashingEnemies(WorldInfo world) {
+		for(RoomInfo room : world.rooms()) {
+			for(ScreenInfo screen : room.screens()) {
+				ArrayElement enemiesArray = screen.json().getArray("ENEMIES");
+				for(ValueElement val : enemiesArray) {
+					if (val instanceof ObjectElement obj) {
+						obj.computeIfAbsent("level", (it)->PrimitiveElement.of(0));
+					}
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Goes through all rooms and ensures that `GENERAL.gate_bosses` contains one and only one of the boss for each
 	 * boss room present.
@@ -95,6 +109,7 @@ public class EnigmaFormat {
 	 * Fix spawn points. Make sure there's one spawn point at each elevator and gunship
 	 * @param world
 	 */
+	/*
 	private static void fixSpawnPoints(WorldInfo world) {
 		for(RoomInfo room : world.rooms()) {
 			for(ScreenInfo screen : room.screens()) {
@@ -110,7 +125,7 @@ public class EnigmaFormat {
 				}
 			}
 		}
-	}
+	}*/
 	
 	/**
 	 * Goes over the sector and makes sure it's appropriately sized for its contents. This is incredibly important to
@@ -150,6 +165,7 @@ public class EnigmaFormat {
 		
 		removeEnigmaDebug(world);
 		logEdit(world);
+		fixCrashingEnemies(world);
 		
 		regenGateBosses(world);
 		

@@ -370,11 +370,9 @@ public sealed interface SchemaType<T> permits SchemaType.Editable, SchemaType.No
 			return switch(val) {
 				case PrimitiveElement prim -> {
 					int bgr = prim.asInt().orElse(0);
-					System.out.println("BGR: "+bgr);
 					int r = bgr & 0xFF;
 					int g = (bgr >> 8) & 0xFF;
 					int b = (bgr >> 16) & 0xFF;
-					System.out.println("Converted to "+r+","+g+","+b);
 					yield new Color(r, g, b);
 				}
 				default -> Color.BLUE;

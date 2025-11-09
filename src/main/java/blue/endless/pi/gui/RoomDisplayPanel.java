@@ -20,6 +20,7 @@ import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.pi.Assets;
 import blue.endless.pi.datastruct.Rect;
 import blue.endless.pi.datastruct.Vec2;
+import blue.endless.pi.enigma.ObjectType;
 import blue.endless.pi.enigma.wrapper.MapObjectInfo;
 import blue.endless.pi.enigma.wrapper.RoomInfo;
 import blue.endless.pi.enigma.wrapper.ScreenInfo;
@@ -34,7 +35,6 @@ public class RoomDisplayPanel extends JPanel {
 	
 	private int scale = 2;
 	
-	private Consumer<MapObjectInfo.ItemInfo> itemSelectCallback = (it) -> {};
 	private Consumer<MapObjectInfo> selectCallback = (it) -> {};
 	
 	private static record Selectable(MapObjectInfo object, Rect rect) {}
@@ -62,6 +62,7 @@ public class RoomDisplayPanel extends JPanel {
 		if (minX != Integer.MAX_VALUE && minY != Integer.MAX_VALUE) offset = new Vec2(minX, minY);
 		
 		
+		selectables.clear();
 		for(ScreenInfo s : room.screens()) {
 			// Grab enemies and items
 			ArrayElement objectsArr = s.json().getArray("OBJECTS");
@@ -93,6 +94,28 @@ public class RoomDisplayPanel extends JPanel {
 					selectables.add(new Selectable(enemyInfo, r));
 				}
 			}
+			
+			ArrayElement elevatorsArr = s.json().getArray("ELEVATORS");
+			for(ValueElement val : elevatorsArr) {
+				if (val instanceof ObjectElement elevatorObj) {
+					MapObjectInfo.MapElevatorInfo elevatorInfo = new MapObjectInfo.MapElevatorInfo(s, elevatorObj);
+					int baseX = elevatorInfo.roomX() - (offset.x() * ScreenInfo.PIXEL_WIDTH);
+					int baseY = elevatorInfo.roomY() - (offset.y() * ScreenInfo.PIXEL_HEIGHT);
+					Rect r = new Rect(baseX-8, baseY-8, 16, 16);
+					selectables.add(new Selectable(elevatorInfo, r));
+				}
+			}
+			
+			ArrayElement doorsArr = s.json().getArray("DOORS");
+			for(ValueElement val : doorsArr) {
+				if (val instanceof ObjectElement doorObj) {
+					MapObjectInfo.DoorObjectInfo doorInfo = new MapObjectInfo.DoorObjectInfo(s, doorObj);
+					int baseX = doorInfo.roomX() - (offset.x() * ScreenInfo.PIXEL_WIDTH);
+					int baseY = doorInfo.roomY() - (offset.y() * ScreenInfo.PIXEL_HEIGHT);
+					Rect r = new Rect(baseX-8, baseY-8, 16, 16);
+					selectables.add(new Selectable(doorInfo, r));
+				}
+			}
 		}
 		
 		int dx = maxX - minX + 1;
@@ -111,22 +134,10 @@ public class RoomDisplayPanel extends JPanel {
 				
 				for(Selectable s : selectables) {
 					if (s.rect().contains(clickX, clickY)) {
-						switch(s.object()) {
-							case MapObjectInfo.ItemInfo item -> {
-								selectedObject = s;
-								selectCallback.accept(item);
-								RoomDisplayPanel.this.repaint();
-								return;
-							}
-							case MapObjectInfo.EnemyInfo enemy -> {
-								selectedObject = s;
-								selectCallback.accept(enemy);
-								RoomDisplayPanel.this.repaint();
-								return;
-							}
-							
-							default -> {}
-						}
+						selectedObject = s;
+						selectCallback.accept(s.object());
+						RoomDisplayPanel.this.repaint();
+						return;
 					}
 				}
 				
@@ -169,14 +180,39 @@ public class RoomDisplayPanel extends JPanel {
 					image = item.item().getSprite();
 				}
 				case MapObjectInfo.EnemyInfo enemy -> {
-					image = enemy.enemy().getSprite();
+					image = enemy.getSprite(world);
 				}
-				default -> {}
+				case MapObjectInfo.MapElevatorInfo elevator -> {
+					image = Assets.getPalettedImage("objects/spr_Elevator_0.png", new int[] { 22, 40, 26 }).orElseGet(Assets::missingImage);
+				}
+				case MapObjectInfo.DoorObjectInfo door -> {
+					image = door.sprite();
+				}
+				default -> {
+					ObjectType type = selectable.object().type();
+					switch(type) {
+						case GUNSHIP -> {
+							image = Assets.getPalettedImage("objects/gunship.png", new int[] { 0x10, 0x17, 0x28 }).orElseGet(Assets::missingImage);
+						}
+						
+						case SCANNER -> {
+							image = Assets.getPalettedImage("objects/map_scanner.png", new int[] { 0x10, 0x20, 0x30 }).orElseGet(Assets::missingImage);
+						}
+						
+						case null, default -> { image = null; }
+					}
+					
+				}
 			}
 			int halfWidth = 8;
 			int halfHeight = 8;
+			if (image != null) {
+				halfWidth = image.getWidth() / 2;
+				halfHeight = image.getHeight() / 2;
+			}
 			int baseX = selectable.object().roomX() - (offset.x() * ScreenInfo.PIXEL_WIDTH);
 			int baseY = selectable.object().roomY() - (offset.y() * ScreenInfo.PIXEL_HEIGHT);
+			//System.out.println("Selectable of type "+selectable.object.getClass().getSimpleName()+" is at "+baseX+", "+baseY+", with rect "+selectable.rect());
 			if (image != null) {
 				g.drawImage(image, (baseX - halfWidth) * scale, (baseY - halfHeight) * scale, image.getWidth() * scale, image.getHeight() * scale, null);
 			} else {
@@ -198,10 +234,6 @@ public class RoomDisplayPanel extends JPanel {
 						selectionReticleImage.getHeight() * scale, null);
 			}
 		}
-	}
-
-	public void setItemSelectCallback(Consumer<MapObjectInfo.ItemInfo> callback) {
-		this.itemSelectCallback = callback;
 	}
 	
 	public void setSelectCallback(Consumer<MapObjectInfo> callback) {

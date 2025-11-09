@@ -1,11 +1,8 @@
 package blue.endless.pi.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,13 +13,12 @@ import java.util.Optional;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import blue.endless.jankson.api.SyntaxError;
@@ -30,7 +26,7 @@ import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
-import blue.endless.pi.Assets;
+import blue.endless.pi.BGM;
 import blue.endless.pi.Preferences;
 import blue.endless.pi.SchemaType;
 import blue.endless.pi.enigma.EnigmaFormat;
@@ -77,7 +73,7 @@ public class WorldEditor extends AbstractView implements CloseAware {
 			Map.entry("magnet", SchemaType.IMMUTABLE),
 			Map.entry("tags", SchemaType.IMMUTABLE)
 			);
-	
+	/*
 	private static Map<String, SchemaType<?>> WORLD_META_SCHEMA = Map.of(
 			"id", SchemaType.INT,
 			"world_version", SchemaType.DOUBLE,
@@ -87,7 +83,7 @@ public class WorldEditor extends AbstractView implements CloseAware {
 			"name", SchemaType.STRING,
 			"name_full", SchemaType.STRING,
 			"key", SchemaType.DOUBLE
-			);
+			);*/
 	
 	private ScrollingPlanetView planetView = new ScrollingPlanetView();
 	private PropertyEditor propertyView = new PropertyEditor();
@@ -169,6 +165,15 @@ public class WorldEditor extends AbstractView implements CloseAware {
 		});
 		worldMenu.add(startingItemsItem);
 		
+		JMenuItem progressionOrderItem = new JMenuItem("Progression Order");
+		progressionOrderItem.setAction(new AbstractAction("Progression Order") {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ProgressionOrderView view = new ProgressionOrderView(context, world);
+				context.go(view);
+			}
+		});
+		worldMenu.add(progressionOrderItem);
 		
 		JMenuItem makeUniqueItem = new JMenuItem("Make Unique");
 		makeUniqueItem.setAction(new AbstractAction("Make Unique") {
@@ -260,6 +265,54 @@ public class WorldEditor extends AbstractView implements CloseAware {
 		propertyView.addExternalLine("Tags", world.metaJson().getObject("external_editor"), "tags", SchemaType.STRING_LIST);
 		propertyView.addExternalLine("Id", world.metaJson(), "id", SchemaType.IMMUTABLE_INT);
 	}
+	/*
+	public void setRoomProperties(ObjectElement room) {
+		propertyView.setObject(null, null);
+		if (world == null) return;
+		propertyView.addExternalLine("Name", room, "name", SchemaType.IMMUTABLE);
+		propertyView.addExternalLine("Designer", room, "designer", SchemaType.IMMUTABLE);
+		propertyView.addExternalLine("Tags", room, "tags", SchemaType.STRING_LIST);
+		propertyView.addExternalLine("Area", room, "area", SchemaType.INT); // TODO: Very change
+		propertyView.addExternalLine("Music", room, "bgm", BGM.SCHEMA);
+		propertyView.addExternalLine("Background", room, "bg_color", SchemaType.INT);
+	}*/
+	
+	
+	public void setRoomProperties(RoomInfo room) {
+		propertyView.setObject(null, null);
+		if (world == null || room == null) return;
+		ObjectElement general = room.json().getObject("GENERAL");
+		propertyView.addExternalLine("Name", general, "name", SchemaType.IMMUTABLE);
+		propertyView.addExternalLine("Designer", general, "designer", SchemaType.IMMUTABLE);
+		propertyView.addExternalLine("Tags", general, "tags", SchemaType.STRING_LIST);
+		
+		record AreaId(String name, int id) {
+			public String toString() { return name; }
+		}
+		AreaId[] areas = new AreaId[world.areas().size()];
+		for(int i=0; i<world.areas().size(); i++) areas[i] = new AreaId(world.areas().get(i).name(), i);
+		JComboBox<AreaId> areaBox = new JComboBox<AreaId>(areas);
+		areaBox.setSelectedIndex(general.getPrimitive("area").asInt().orElse(0));
+		areaBox.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				int areaNumber = areaBox.getSelectedIndex();
+				if (areaNumber >= 0 && areaNumber < areas.length) {
+					general.put("area", PrimitiveElement.of(areaNumber));
+					for(ScreenInfo screen : room.screens()) {
+						screen.json().getObject("MAP").put("area", PrimitiveElement.of(areaNumber));
+					}
+					planetView.getView().setDirty(true);
+					planetView.repaint();
+				}
+			}
+		});
+		propertyView.addExternalLine("Area", areaBox);
+		
+		//propertyView.addExternalLine("Area", room, "area", SchemaType.INT); // TODO: Very change
+		propertyView.addExternalLine("Music", general, "bgm", BGM.SCHEMA);
+		propertyView.addExternalLine("Background", general, "bg_color", SchemaType.IMMUTABLE_INT);
+	}
 	
 	public void setWorld(ObjectElement obj, ObjectElement meta) {
 		world = WorldInfo.of(obj, meta);
@@ -272,13 +325,14 @@ public class WorldEditor extends AbstractView implements CloseAware {
 				setWorldProperties();
 				//propertyView.setObject(meta, WORLD_META_SCHEMA);
 			} else {
-				propertyView.setObject(o, schema);
+				//setRoomProperties(o);
+				//propertyView.setObject(o, schema);
 			}
 		});
 	}
 	
 	public void setWorld(WorldInfo world) {
-		this.world = world;
+		WorldEditor.world = world;
 		setWorldProperties();
 		//propertyView.setObject(world.metaJson(), WORLD_META_SCHEMA);
 		planetView.setWorld(world);
@@ -287,7 +341,8 @@ public class WorldEditor extends AbstractView implements CloseAware {
 				setWorldProperties();
 				//propertyView.setObject(world.metaJson(), WORLD_META_SCHEMA);
 			} else {
-				propertyView.setObject(o, schema);
+				//propertyView.setObject(o, schema);
+				//setRoomProperties(o);
 			}
 		});
 	}
@@ -407,6 +462,15 @@ public class WorldEditor extends AbstractView implements CloseAware {
 		
 			RoomInfo room = RoomInfo.load(roomFile.toPath());
 			
+			for(ScreenInfo screen : room.screens()) {
+				ArrayElement enemiesArray = screen.json().getArray("ENEMIES");
+				for(ValueElement val : enemiesArray) {
+					if (val instanceof ObjectElement obj) {
+						obj.computeIfAbsent("level", (it)->PrimitiveElement.of(0));
+					}
+				}
+			}
+			
 			addRoom(room);
 		} catch (IOException | SyntaxError ex) {
 			ex.printStackTrace();
@@ -491,6 +555,7 @@ public class WorldEditor extends AbstractView implements CloseAware {
 	public void roomSelected(RoomInfo room) {
 		if (room != null) {
 			roomMenu.setEnabled(true);
+			setRoomProperties(room);
 		} else {
 			roomMenu.setEnabled(false);
 		}

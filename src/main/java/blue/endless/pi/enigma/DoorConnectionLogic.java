@@ -49,7 +49,7 @@ public class DoorConnectionLogic {
 		switch(toDowngrade.type()) {
 			case BLUE   -> toDowngrade.fixMapType();
 			case COMBAT -> toDowngrade.fixMapType();
-			case ZERO, MISSILE, BOSS, SUPER_MISSILE, UNKNOWN -> toDowngrade.setType(DoorType.BLUE);
+			case ZERO, MISSILE, BOSS, SUPER_MISSILE, POWER_BOMB -> toDowngrade.setType(DoorType.BLUE);
 			
 			case IMPASSABLE -> {
 				// Impassable can only downgrade if oppositeDoor is in a Mother Brain room
@@ -60,18 +60,21 @@ public class DoorConnectionLogic {
 			case MOTHER_BRAIN -> {
 				toDowngrade.setType(DoorType.BLUE);
 			}
+			
+			case UNKNOWN_BLUE, UNKNOWN_CYAN -> toDowngrade.fixMapType();
+			default -> {}
 		}
 	}
 	
 	public static void upgradeDoorType(DoorInfo toUpgrade, DoorInfo oppositeDoor) {
 		switch(toUpgrade.type()) {
-			case ZERO, BLUE, MISSILE, BOSS, SUPER_MISSILE, UNKNOWN -> {
+			case ZERO, BLUE, MISSILE, BOSS, SUPER_MISSILE, POWER_BOMB -> {
 				// OK to zap this data.
 				if (oppositeDoor.room().isBossRoom()) {
 					if (oppositeDoor.room().bossId() == EnemyType.MOTHER_BRAIN_ID) {
 						
 						switch(oppositeDoor.type()) {
-							case ZERO, BLUE, MISSILE, BOSS, SUPER_MISSILE, UNKNOWN -> {
+							case ZERO, BLUE, MISSILE, BOSS, SUPER_MISSILE, POWER_BOMB -> {
 								// Upgrade most doors to yellow door
 								toUpgrade.setType(DoorType.MOTHER_BRAIN);
 							}
@@ -80,7 +83,8 @@ public class DoorConnectionLogic {
 								toUpgrade.setType(DoorType.IMPASSABLE);
 							}
 							
-							case IMPASSABLE, MOTHER_BRAIN -> {}
+							case IMPASSABLE, MOTHER_BRAIN, UNKNOWN_BLUE, UNKNOWN_CYAN -> {}
+							default -> {}
 						}
 						
 					} else {
@@ -89,7 +93,8 @@ public class DoorConnectionLogic {
 				}
 				
 			}
-			case COMBAT, IMPASSABLE, MOTHER_BRAIN -> {} // Never upgrade
+			case COMBAT, IMPASSABLE, MOTHER_BRAIN, UNKNOWN_BLUE, UNKNOWN_CYAN -> {} // Never upgrade
+			default -> {}
 		}
 	}
 	

@@ -1,31 +1,30 @@
 package blue.endless.pi.gui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.util.Map;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.OptionalInt;
 
-import javax.swing.JFrame;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
-import blue.endless.pi.SchemaType;
+import blue.endless.jankson.api.document.ArrayElement;
+import blue.endless.jankson.api.document.PrimitiveElement;
+import blue.endless.pi.enigma.DoorType;
+import blue.endless.pi.enigma.ObjectType;
 import blue.endless.pi.enigma.wrapper.MapObjectInfo;
 import blue.endless.pi.enigma.wrapper.WorldInfo;
 import blue.endless.pi.gui.view.AbstractView;
 import blue.endless.pi.gui.view.ViewContext;
 
 public class RoomConfiguratorView extends AbstractView {
-	private static final Map<String, SchemaType<?>> ENEMY_SCHEMA = Map.of(
-			"id", SchemaType.IMMUTABLE_INT,
-			"x", SchemaType.IMMUTABLE_INT,
-			"y", SchemaType.IMMUTABLE_INT,
-			"type", SchemaType.IMMUTABLE_INT,
-			"lock", SchemaType.IMMUTABLE, // TODO: This should be a BOOLEAN
-			"rot", SchemaType.IMMUTABLE_INT,
-			"level", SchemaType.INT
-			);
 	
 	private final RoomDisplayPanel roomDisplay;
 	private JPanel emptyPanel = new JPanel();
@@ -34,7 +33,6 @@ public class RoomConfiguratorView extends AbstractView {
 	
 	public RoomConfiguratorView(ViewContext context, WorldInfo world, int roomId) {
 		super(context);
-		//super("Configuring "+world.rooms().get(roomId).name());
 		
 		emptyPanel.setBackground(new Color(80, 80, 80));
 		
@@ -48,7 +46,73 @@ public class RoomConfiguratorView extends AbstractView {
 					context.setRightPanel(itemSelector);
 				}
 				case MapObjectInfo.EnemyInfo enemy -> {
-					editor.setObject(enemy.json(), ENEMY_SCHEMA);
+					editor.setObject(null, null);
+					editor.addExternalLine("Type", new JLabel(enemy.enemy().name()));
+					editor.addExternalLine("Position", new JLabel(
+							enemy.x()+", "+enemy.y()
+							));
+					int enemyTierCount = 0;
+					int enemyTypeId = enemy.enemy().id();
+					ArrayElement enemyData = world.json().getArray("ENEMY_DATA");
+					if (enemyTypeId >= 0 && enemyTypeId < enemyData.size()) {
+						ArrayElement enemyTiers = enemyData.getArray(enemyTypeId);
+						enemyTierCount = enemyTiers.size();
+					}
+					
+					JSlider tierSlider = new JSlider();
+					tierSlider.setMinimum(1);
+					tierSlider.setMaximum(enemyTierCount);
+					tierSlider.setMajorTickSpacing(1);
+					tierSlider.setPaintTicks(true);
+					tierSlider.setValue(enemy.json().getPrimitive("level").asInt().orElse(0) + 1);
+					tierSlider.addChangeListener(new ChangeListener() {
+						@Override
+						public void stateChanged(ChangeEvent e) {
+							enemy.json().put("level", PrimitiveElement.of(tierSlider.getValue() - 1));
+							roomDisplay.repaint();
+						}
+					});
+					editor.addExternalLine("Level", tierSlider);
+					
+					//editor.setObject(enemy.json(), ENEMY_SCHEMA);
+					this.rightPanel = editor;
+					context.setRightPanel(editor);
+				}
+				
+				case MapObjectInfo.MapElevatorInfo elevator -> {
+					editor.setObject(null, null);
+					editor.addExternalLine("Direction", new JLabel(elevator.dir().toString()));
+					JCheckBox escapeCheckBox = new JCheckBox();
+					escapeCheckBox.setSelected(elevator.isEscape());
+					escapeCheckBox.addChangeListener(new ChangeListener() {
+						@Override
+						public void stateChanged(ChangeEvent arg0) {
+							elevator.setEscape(escapeCheckBox.isSelected());
+							roomDisplay.repaint();
+						}
+					});
+					editor.addExternalLine("Is Escape?", escapeCheckBox);
+					//editor.setObject(elevator.json(), null);
+					this.rightPanel = editor;
+					context.setRightPanel(editor);
+				}
+				
+				case MapObjectInfo.DoorObjectInfo door -> { // TODO: Something else!
+					editor.setObject(null, null);
+					editor.addExternalLine("Direction", new JLabel(door.dir().toString()));
+					
+					JComboBox<DoorType> valuesControl = DoorType.createControl();
+					valuesControl.setSelectedItem(door.doorType());
+					valuesControl.addItemListener(new ItemListener() {
+						@Override
+						public void itemStateChanged(ItemEvent e) {
+							door.json().put("type", PrimitiveElement.of(((DoorType) valuesControl.getSelectedItem()).value()));
+							mainPanel.repaint();
+						}
+					});
+					
+					editor.addExternalLine("Type", valuesControl);
+					
 					this.rightPanel = editor;
 					context.setRightPanel(editor);
 				}
@@ -59,28 +123,43 @@ public class RoomConfiguratorView extends AbstractView {
 				}
 				
 				default -> {
-					
+					ObjectType type = mapObject.type();
+					if (type != null) {
+						switch(type) {
+							case SCANNER -> {
+								editor.setObject(mapObject.json(), null);
+							}
+							case GUNSHIP -> {
+								editor.setObject(mapObject.json(), null);
+							}
+							
+							default -> {
+								editor.setObject(mapObject.json(), null);
+							}
+						}
+						
+						this.rightPanel = editor;
+						context.setRightPanel(editor);
+					} else {
+						OptionalInt opt = mapObject.json().getPrimitive("type").asInt();
+						if (opt.isPresent()) {
+							System.out.println("Selected unknown object of type "+opt.getAsInt());
+						}
+						
+						editor.setObject(mapObject.json(), null);
+						this.rightPanel = editor;
+						context.setRightPanel(editor);
+					}
 				}
 			}
-			//itemSelector.selectItem(item);
-			//itemSelector.setEditCallback(this::repaint);
-			//splitPane.setRightComponent(itemSelector);
 		});
-		//this.getContentPane().setLayout(new BorderLayout());
+		
 		JScrollPane roomScroll = new JScrollPane(roomDisplay, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		roomScroll.getHorizontalScrollBar().setUnitIncrement(16);
 		roomScroll.getVerticalScrollBar().setUnitIncrement(16);
 		roomScroll.setMinimumSize(new Dimension(400,400));
 		mainPanel = roomScroll;
 		rightPanel = editor;
-		
-		//splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, roomScroll, emptyPanel);
-		//splitPane.setResizeWeight(1.0);
-		//this.getContentPane().add(splitPane, BorderLayout.CENTER);
-		
-		
-		//this.setMinimumSize(new Dimension(640, 480));
-		//this.setPreferredSize(new Dimension(640, 480));
 	}
 	
 	

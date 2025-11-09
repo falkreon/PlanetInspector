@@ -1,0 +1,40 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "Enemy",
+    "description": "An enemy object, as found in ROOMS[*].SCREENS[*].ENEMIES[*]",
+    "type": "object",
+    "properties": {
+        "id": {
+            "description": "The Room-unique Id of this enemy.",
+            "type": "integer"
+        },
+        "x": {
+            "description": "The number of pixels from the left edge of the Screen to the center of this Enemy.",
+            "type": "integer"
+        },
+        "y": {
+            "description": "The number of pixels from the top of the Screen to the center of this Enemy.",
+            "type": "integer"
+        },
+        "rot": {
+            "description": "The number of degrees this enemy is rotated by when it spawns in.",
+            "type": "number",
+            "multipleOf": 90
+        },
+        "type": {
+            "description": "The enemy type, for example 0 for Zoomer.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 50
+        },
+        "lock": {
+            "description": "Whether this enemy MUST spawn every time the player enters the room.",
+            "type": [ "boolean", "number" ]
+        },
+        "level": {
+            "description": "The difficulty level of this enemy - refers to an object at ENEMY_DATA[type][level].",
+            "type": "integer"
+        }
+    },
+    "required": [ "id", "type", "x", "y", "level", "lock" ]
+}

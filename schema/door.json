@@ -1,0 +1,51 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "Door",
+    "description": "A door object, as found in ROOMS[*].SCREENS[*].DOORS[*]",
+    "type": "object",
+    "properties": {
+        "id": {
+            "description": "The Room-unique Id of this door.",
+            "type": "integer"
+        },
+        "type": {
+            "description": "An enum specifying the color/type of this door - blue, missile, boss, combat, etc.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10
+        },
+        "pos": {
+            "description": "Which edge of its screen this door is affixed to",
+            "type": "integer"
+        },
+        "x": {
+            "description": "The number of pixels from the left of the Screen to the center of the shootable bubble part of this Door",
+            "type": "integer"
+        },
+        "y": {
+            "description": "The number of pixels from the top of the Screen to the center of the shootable bubble part of this Door.",
+            "type": "integer"
+        },
+        "dest_id": {
+            "description": "The Room-unique Id of the Door at the other end of this connection.",
+            "type": "integer"
+        },
+        "dest_rm": {
+            "description": "The Room index (position in ROOMS array) of the room at the other end of this connection.",
+            "type": "integer"
+        },
+        "skin": {
+            "description": "The Id of the appearance of the fixed (non-shootable) part of this door.",
+            "type": "integer"
+        },
+        "clear_on_use": {
+            "description": "If this door is opened, or if it's entered from the opposite side, should it clear to the blue type?",
+            "type": [ "boolean", "number" ]
+        },
+        "path_point": {
+            "description": "The Room-unique Path Point Id of this door, referred to by pathing entries.",
+            "type": "integer"
+        }
+    },
+    "required": [ "id", "x", "y", "pos", "skin", "type", "clear_on_use" ]
+}
