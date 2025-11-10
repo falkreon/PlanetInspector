@@ -55,7 +55,10 @@ public class AreaView extends AbstractView {
 		layout.setCrossAxisLayout(SingleItemAxisLayout.CENTER);
 		areaPanel.setLayout(layout);
 		
-		properties.setEditCallback(areaPanel::repaint);
+		properties.setEditCallback(() -> {
+			context.markUnsaved();
+			areaPanel.repaint();
+		});
 		
 		//JScrollPane scroll = new JScrollPane(areaPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		
@@ -92,6 +95,7 @@ public class AreaView extends AbstractView {
 				newArea.put("color", PrimitiveElement.of(0x808080));
 				areasArray.add(newArea);
 				world.areas().add(new AreaInfo(newArea));
+				context.markUnsaved();
 				refreshAreas();
 			}
 		});

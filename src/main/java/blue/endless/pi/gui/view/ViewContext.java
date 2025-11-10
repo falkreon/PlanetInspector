@@ -40,5 +40,9 @@ public interface ViewContext {
 	}
 
 	public void setRightPanel(JComponent component);
+	
+	public boolean isUnsaved();
+	public void markUnsaved();
+	public void clearUnsaved();
 
 }

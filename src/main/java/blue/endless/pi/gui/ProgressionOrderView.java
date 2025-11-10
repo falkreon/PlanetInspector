@@ -11,7 +11,6 @@ import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -41,6 +40,7 @@ public class ProgressionOrderView extends AbstractView {
 	private JScrollPane activeScroll = new JScrollPane(activeList);
 	private JScrollPane availableScroll = new JScrollPane(availableList);
 	
+	@SuppressWarnings("unused")
 	private static record Entry(WorldInfo world, ObjectElement json) {
 		
 		public int x() {
@@ -238,6 +238,7 @@ public class ProgressionOrderView extends AbstractView {
 		Entry selectedItem = availableItems.remove(selected);
 		activeItems.addElement(selectedItem);
 		world.json().getArray("PROGRESSION_LOG").add(selectedItem.json());
+		context.markUnsaved();
 		mainPanel.repaint();
 		rightPanel.repaint();
 	}
@@ -249,6 +250,7 @@ public class ProgressionOrderView extends AbstractView {
 		Entry subject = activeItems.remove(selected);
 		availableItems.addElement(subject);
 		world.json().getArray("PROGRESSION_LOG").remove(selected);
+		context.markUnsaved();
 		mainPanel.repaint();
 		rightPanel.repaint();
 	}
@@ -263,6 +265,7 @@ public class ProgressionOrderView extends AbstractView {
 		ValueElement elem = world.json().getArray("PROGRESSION_LOG").remove(selected);
 		world.json().getArray("PROGRESSION_LOG").add(selected - 1, elem);
 		activeList.setSelectedIndex(selected - 1);
+		context.markUnsaved();
 		mainPanel.repaint();
 		rightPanel.repaint();
 	}
@@ -278,6 +281,7 @@ public class ProgressionOrderView extends AbstractView {
 		ValueElement elem = world.json().getArray("PROGRESSION_LOG").remove(selected);
 		world.json().getArray("PROGRESSION_LOG").add(selected + 1, elem);
 		activeList.setSelectedIndex(selected + 1);
+		context.markUnsaved();
 		mainPanel.repaint();
 		rightPanel.repaint();
 	}

@@ -15,7 +15,9 @@ public interface MultiItemAxisLayout {
 		int perComponent = availableMinusSpacing / components.size();
 		int advance = 0;
 		
-		for(ComponentAxisInfo component : components) {
+		// TODO: Update to Java 25 to use this instead
+		//for(var _ : components) {
+		for(int i=0; i<components.size(); i++) {
 			result.add(new SingleAxisLayout(advance, perComponent));
 			advance += perComponent + spacing;
 		}

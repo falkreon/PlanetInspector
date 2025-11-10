@@ -28,7 +28,7 @@ import blue.endless.pi.enigma.wrapper.WorldInfo;
 
 public class RoomDisplayPanel extends JPanel {
 	private final WorldInfo world;
-	private int roomId;
+	//private int roomId;
 	private final RoomInfo room;
 	private HashMap<Vec2, BufferedImage> tiles = new HashMap<>();
 	private Vec2 offset = new Vec2(0, 0);
@@ -45,7 +45,7 @@ public class RoomDisplayPanel extends JPanel {
 	public RoomDisplayPanel(WorldInfo world, int roomId) {
 		this.room = world.rooms().get(roomId);
 		this.world = world;
-		this.roomId = roomId;
+		//this.roomId = roomId;
 		
 		int minX = Integer.MAX_VALUE;
 		int minY = Integer.MAX_VALUE;

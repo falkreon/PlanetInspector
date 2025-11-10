@@ -21,6 +21,7 @@ public class ViewerFrame extends JFrame implements ViewContext {
 	JButton backButton = new JButton("Back");
 	JPanel statusBar;
 	View currentView;
+	boolean unsaved;
 	
 	public ArrayDeque<View> stack = new ArrayDeque<>();
 	
@@ -157,5 +158,19 @@ public class ViewerFrame extends JFrame implements ViewContext {
 		System.exit(0);
 	}
 	
+	@Override
+	public void markUnsaved() {
+		this.unsaved = true;
+	}
+	
+	@Override
+	public void clearUnsaved() {
+		this.unsaved = false;
+	}
+	
+	@Override
+	public boolean isUnsaved() {
+		return this.unsaved;
+	}
 	
 }

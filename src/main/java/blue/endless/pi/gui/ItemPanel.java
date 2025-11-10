@@ -8,7 +8,6 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import javax.swing.JPanel;
-import javax.swing.TransferHandler;
 import javax.swing.border.EmptyBorder;
 
 import blue.endless.pi.ItemStack;

@@ -3,16 +3,7 @@ package blue.endless.pi.gui;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Optional;
-
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
 
 import blue.endless.pi.Assets;
 import blue.endless.pi.enigma.wrapper.RoomInfo;
@@ -67,17 +58,6 @@ public class Tileset {
 				} // Otherwise, the pixel will be transparent.
 			}
 		}
-		
-		/*
-		try {
-			ImageIO.write(tilesetImage, "png", new File("stitched.png"));
-			for(int i=0; i<3; i++) {
-				ImageIO.write(colorSeparated[i], "png", new File("stitched_"+i+".png"));
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
 		
 	}
 	

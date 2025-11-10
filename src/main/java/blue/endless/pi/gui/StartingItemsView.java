@@ -1,7 +1,6 @@
 package blue.endless.pi.gui;
 
 import java.awt.Dimension;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 

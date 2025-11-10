@@ -1,12 +1,9 @@
 package blue.endless.pi;
 
 import java.awt.Color;
-import java.awt.Dialog;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -68,8 +65,10 @@ public class Preferences {
 		ObjectElement directories = prefs.getObject("directories");
 		prefs.put("directories", directories);
 		
+		@SuppressWarnings("unused")
 		Optional<Path> planetsDir = readOrCompute(directories, "planets_data", Preferences::detectPlanetsDir);
 		Optional<Path> worldsDir = readOrCompute(directories, "worlds", Optional::empty);
+		@SuppressWarnings("unused")
 		Optional<Path> areasDir = readOrCompute(directories, "areas", Optional::empty);
 		Optional<Path> roomsDir = readOrCompute(directories, "rooms", Optional::empty);
 		

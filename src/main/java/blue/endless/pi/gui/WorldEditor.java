@@ -183,7 +183,8 @@ public class WorldEditor extends AbstractView implements CloseAware {
 				long seconds = System.currentTimeMillis() / 1_000L; // Seconds since midnight, january 1, 1970
 				long newId = seconds * 1000L + (long) (Math.random() * 999);
 				world.metaJson().put("id", PrimitiveElement.of(newId));
-				planetView.getView().setDirty(true);
+				context.markUnsaved();
+				//planetView.getView().setDirty(true);
 				setWorldProperties();
 			}
 		});
@@ -211,7 +212,8 @@ public class WorldEditor extends AbstractView implements CloseAware {
 						screen.clean();
 					}
 				}
-				planetView.getView().setDirty(true);
+				context.markUnsaved();
+				//planetView.getView().setDirty(true);
 			}
 		});
 		worldMenu.add(cleanItem);
@@ -302,14 +304,14 @@ public class WorldEditor extends AbstractView implements CloseAware {
 					for(ScreenInfo screen : room.screens()) {
 						screen.json().getObject("MAP").put("area", PrimitiveElement.of(areaNumber));
 					}
-					planetView.getView().setDirty(true);
+					//planetView.getView().setDirty(true);
+					context.markUnsaved();
 					planetView.repaint();
 				}
 			}
 		});
 		propertyView.addExternalLine("Area", areaBox);
 		
-		//propertyView.addExternalLine("Area", room, "area", SchemaType.INT); // TODO: Very change
 		propertyView.addExternalLine("Music", general, "bgm", BGM.SCHEMA);
 		propertyView.addExternalLine("Background", general, "bg_color", SchemaType.IMMUTABLE_INT);
 	}
@@ -348,7 +350,8 @@ public class WorldEditor extends AbstractView implements CloseAware {
 	}
 	
 	public boolean attemptClose() {
-		if (planetView.getView().isDirty()) {
+		if (context.isUnsaved()) {
+		//if (planetView.getView().isDirty()) {
 			// TODO: Fix this confirmation dialog because it's kind of confusing as is
 			
 			int selectedResult = JOptionPane.showConfirmDialog(null, "This world has unsaved data. Are you sure you want to quit?", "Really Quit?", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
@@ -387,6 +390,7 @@ public class WorldEditor extends AbstractView implements CloseAware {
 			WorldInfo world = WorldInfo.load(worldFile.toPath());
 			this.setWorld(world);
 			worldMenu.setEnabled(true);
+			context.clearUnsaved();
 			planetView.repaint();
 		} catch (IOException | SyntaxError ex) {
 			ex.printStackTrace();
@@ -428,7 +432,8 @@ public class WorldEditor extends AbstractView implements CloseAware {
 			
 			world.save(outputFile.toPath());
 			
-			planetView.getView().setDirty(false);
+			context.clearUnsaved();
+			//planetView.getView().setDirty(false);
 			System.out.println("Saved.");
 		} catch (IOException | SyntaxError ex) {
 			ex.printStackTrace();
@@ -548,7 +553,8 @@ public class WorldEditor extends AbstractView implements CloseAware {
 			}
 		}
 		
-		planetView.getView().setDirty(true);
+		//planetView.getView().setDirty(true);
+		context.markUnsaved();
 		planetView.repaint();
 	}
 	

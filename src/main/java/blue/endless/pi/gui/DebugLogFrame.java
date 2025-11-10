@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
@@ -25,7 +24,7 @@ import blue.endless.pi.enigma.ItemType;
 import blue.endless.pi.enigma.wrapper.WorldInfo;
 
 public class DebugLogFrame extends JFrame implements ListSelectionListener {
-	private final WorldInfo world;
+	//private final WorldInfo world;
 	private final ObjectElement debug;
 	private JList<String> left = new JList<>();
 	private JList<String> right = new JList<>();
@@ -38,7 +37,7 @@ public class DebugLogFrame extends JFrame implements ListSelectionListener {
 	public DebugLogFrame(WorldInfo world) {
 		super("Debug Log");
 		
-		this.world = world;
+		//this.world = world;
 		this.debug = world.json().getObject("GENERATION_DEBUG_LOG");
 		ArrayList<String> items = new ArrayList<>();
 		for (KeyValuePairElement kvp : debug) {
