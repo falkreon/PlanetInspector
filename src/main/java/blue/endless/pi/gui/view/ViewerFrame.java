@@ -15,6 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.border.EmptyBorder;
 
 public class ViewerFrame extends JFrame implements ViewContext {
 	JSplitPane splitPane;
@@ -52,11 +53,12 @@ public class ViewerFrame extends JFrame implements ViewContext {
 			}
 		});
 		
-		Dimension barSize = new Dimension(-1, 24);
+		Dimension barSize = new Dimension(-1, 32);
 		statusBar.setMinimumSize(barSize);
 		statusBar.setPreferredSize(barSize);
 		statusBar.setMaximumSize(barSize);
 		statusBar.setBackground(new Color(10, 10, 10));
+		statusBar.setBorder(new EmptyBorder(4, 16, 4, 16));
 		this.getContentPane().add(statusBar, BorderLayout.NORTH);
 		
 		clearView();
@@ -137,6 +139,15 @@ public class ViewerFrame extends JFrame implements ViewContext {
 	public void setRightPanel(JComponent component) {
 		splitPane.setRightComponent(component);
 		this.repaint();
+	}
+	
+	@Override
+	public void setStatusLine(JComponent component) {
+		statusBar.removeAll();
+		if (!stack.isEmpty()) {
+			statusBar.add(backButton, BorderLayout.WEST);
+		}
+		statusBar.add(component, BorderLayout.CENTER);
 	}
 	
 	@Override

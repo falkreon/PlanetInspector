@@ -40,6 +40,7 @@ public interface ViewContext {
 	}
 
 	public void setRightPanel(JComponent component);
+	public void setStatusLine(JComponent component);
 	
 	public boolean isUnsaved();
 	public void markUnsaved();

@@ -223,6 +223,8 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		this.requestFocusInWindow();
+		
 		int clickedRoom = roomAt(e.getX() / CELL_SIZE, e.getY() / CELL_SIZE);
 		if (clickedRoom == -1) {
 			if (selectedRoom != -1) {

@@ -88,6 +88,28 @@ public class EnigmaFormat {
 		general.put("gate_bosses", gateBossArray);
 	}
 	
+	private static void fixProgressionItemAreas(WorldInfo world) {
+		if (world.rooms().size() == 0) {
+			// The best thing we can do is nuke the progression log, it will only cause us grief like this.
+			world.json().put("PROGRESSION_LOG", new ArrayElement());
+			return;
+		}
+		
+		for(ValueElement val : world.json().getArray("PROGRESSION_LOG")) {
+			if (val instanceof ObjectElement entry) {
+				int roomId = entry.getPrimitive("room_id").asInt().orElse(-1);
+				if (roomId < 0 || roomId >= world.rooms().size()) {
+					// This will definitely crash enigma
+					entry.put("room_id", PrimitiveElement.of(0));
+					entry.put("area", PrimitiveElement.of(world.rooms().get(0).area()));
+				} else {
+					RoomInfo room = world.rooms().get(roomId);
+					entry.put("area", PrimitiveElement.of(room.area()));
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Make sure the world has an external_editor key with editor_tool set to Planet Inspector. Also initialize the
 	 * authors and tags arrays if they're not found.
@@ -167,6 +189,7 @@ public class EnigmaFormat {
 		fixCrashingEnemies(world);
 		
 		regenGateBosses(world);
+		fixProgressionItemAreas(world);
 		
 		// Grab stats and include in the preview
 		ObjectElement stats = world.metaJson().getObject("stats");

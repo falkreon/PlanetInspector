@@ -1,5 +1,7 @@
 package blue.endless.pi.gui;
 
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -15,6 +17,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -29,7 +32,9 @@ import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.pi.BGM;
 import blue.endless.pi.Preferences;
 import blue.endless.pi.SchemaType;
+import blue.endless.pi.enigma.EnemyType;
 import blue.endless.pi.enigma.EnigmaFormat;
+import blue.endless.pi.enigma.ObjectType;
 import blue.endless.pi.enigma.wrapper.AreaInfo;
 import blue.endless.pi.enigma.wrapper.RoomInfo;
 import blue.endless.pi.enigma.wrapper.ScreenInfo;
@@ -97,12 +102,16 @@ public class WorldEditor extends AbstractView implements CloseAware {
 	private File curWorldsDir;
 	private File curRoomsDir;
 	
+	private JLabel statusLine = new JLabel();
 	
 	public WorldEditor(ViewContext context) {
 		super(context);
 		
 		mainPanel = planetView;
 		rightPanel = propertyView;
+		super.statusLine = statusLine;
+		propertyView.setPreferredSize(new Dimension(400, -1));
+		propertyView.setMinimumSize(new Dimension(400, -1));
 		//planetView.setMinimumSize(new Dimension(600, 600));
 		
 		menuBar = new JMenuBar();
@@ -554,8 +563,69 @@ public class WorldEditor extends AbstractView implements CloseAware {
 		}
 		
 		//planetView.getView().setDirty(true);
+		validateWorld();
 		context.markUnsaved();
 		planetView.repaint();
+	}
+	
+	public static boolean hasGunship(WorldInfo world) {
+		for(RoomInfo room : world.rooms()) {
+			for(ScreenInfo screen : room.screens()) {
+				int objectCount = screen.objectCount();
+				for(int i=0; i<objectCount; i++) {
+					ObjectElement obj = screen.object(i);
+					if (obj.getPrimitive("type").asInt().orElse(-1) == ObjectType.GUNSHIP.value()) return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	public static boolean hasMotherBrain(WorldInfo world) {
+		for(RoomInfo room : world.rooms()) {
+			if (room.isBossRoom() && room.bossId() == EnemyType.MOTHER_BRAIN_ID) return true;
+		}
+		return false;
+	}
+	
+	public static boolean hasEscapeElevator(WorldInfo world) {
+		for(RoomInfo room : world.rooms()) {
+			for(ScreenInfo screen : room.screens()) {
+				ArrayElement elevators = screen.json().getArray("ELEVATORS");
+				for(ValueElement val : elevators) {
+					if (val instanceof ObjectElement elevator) {
+						if (elevator.getPrimitive("dest_rm").asInt().orElse(-2) == -1) return true;
+					}
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	public void validateWorld() {
+		if (!hasGunship(world)) {
+			statusLine.setText("There is no Gunship - the player cannot spawn!");
+			statusLine.setForeground(Color.RED);
+			return;
+		}
+		
+		if (!hasMotherBrain(world)) {
+			statusLine.setText("There is no Mother Brain room - the player cannot win!");
+			statusLine.setForeground(Color.RED);
+			return;
+		}
+		
+		if (!hasEscapeElevator(world)) {
+			statusLine.setText("There is no escape elevator - cannot verify that escape is survivable!");
+			statusLine.setForeground(Color.ORANGE);
+			return;
+		}
+		
+		statusLine.setText("");
+		statusLine.setBackground(null);
+		statusLine.setForeground(null);
 	}
 	
 	public void roomSelected(RoomInfo room) {
@@ -564,6 +634,7 @@ public class WorldEditor extends AbstractView implements CloseAware {
 			setRoomProperties(room);
 		} else {
 			roomMenu.setEnabled(false);
+			validateWorld();
 		}
 	}
 	
