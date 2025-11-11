@@ -8,14 +8,16 @@ import javax.swing.JScrollPane;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.pi.SchemaType;
 import blue.endless.pi.enigma.wrapper.WorldInfo;
+import blue.endless.pi.gui.view.ViewContext;
 
 /**
  * Zoomable and scrollable view
  */
 public class ScrollingPlanetView extends JScrollPane {
-	private PlanetView planetView = new PlanetView();
+	private PlanetView planetView;
 	
-	public ScrollingPlanetView() {
+	public ScrollingPlanetView(ViewContext context) {
+		planetView = new PlanetView(context);
 		this.getViewport().setView(planetView);
 		
 		this.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);

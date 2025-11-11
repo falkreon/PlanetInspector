@@ -61,7 +61,8 @@ public class AreaView extends AbstractView {
 		});
 		
 		//JScrollPane scroll = new JScrollPane(areaPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		
+		scroll.getVerticalScrollBar().setUnitIncrement(16);
+		scroll.getVerticalScrollBar().setBlockIncrement(100);
 		mainPanel = scroll;
 		rightPanel = properties;
 		

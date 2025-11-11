@@ -3,13 +3,23 @@ package blue.endless.pi.gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
+import java.awt.dnd.DropTargetListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -36,15 +46,18 @@ import blue.endless.pi.enigma.wrapper.PlacedScreen;
 import blue.endless.pi.enigma.wrapper.RoomInfo;
 import blue.endless.pi.enigma.wrapper.ScreenInfo;
 import blue.endless.pi.enigma.wrapper.WorldInfo;
+import blue.endless.pi.gui.view.ViewContext;
 
 public class PlanetView extends JPanel implements MouseListener, MouseMotionListener {
 	private static final Color MAP_BACKGROUND = new Color(42, 42, 42);
 	private WorldInfo world;
+	private ViewContext context;
 	private BiConsumer<ObjectElement, Map<String, SchemaType<?>>> propertiesConsumer = (o, s) -> {};
 	
 	private Consumer<RoomInfo> roomSelectionCallback = (it) -> {};
 	private Consumer<RoomInfo> roomRightClickCallback = (it) -> {};
 	private Consumer<RoomInfo> roomDoubleClickCallback = (it) -> {};
+	private Consumer<File> roomFileDragCallback = (it) -> {};
 	private int selectedRoom = -1;
 	private int dragRoom = -1;
 	private int dragStartX = -1;
@@ -53,7 +66,8 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 	private int dragCurY = -1;
 	private boolean dirty = false;
 	
-	public PlanetView() {
+	public PlanetView(ViewContext context) {
+		this.context = context;
 		this.setMinimumSize(new Dimension(1024, 768));
 		this.setMaximumSize(new Dimension(1024, 768));
 		this.setPreferredSize(new Dimension(1024, 768));
@@ -74,6 +88,37 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 					PlanetView.this.repaint();
 				}
 			}
+		});
+		
+		// This constructor has side effects
+		new DropTarget(this, new DropTargetListener() {
+			@Override
+			public void dragEnter(DropTargetDragEvent e) {}
+			@Override
+			public void dragExit(DropTargetEvent e) {}
+			@Override
+			public void dragOver(DropTargetDragEvent e) {}
+			@Override
+			public void dropActionChanged(DropTargetDragEvent e) {}
+			@Override
+			public void drop(DropTargetDropEvent e) {
+				e.acceptDrop(DnDConstants.ACTION_COPY);
+				try {
+					Transferable data = e.getTransferable();
+					if (data.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+						@SuppressWarnings("unchecked")
+						List<File> files = (List<File>) data.getTransferData(DataFlavor.javaFileListFlavor);
+						for(File f : files) {
+							if (f.getName().endsWith(".mp_room")) {
+								roomFileDragCallback.accept(f);
+							}
+						}
+					}
+				} catch (Throwable t) {
+					t.printStackTrace();
+				}
+			}
+			
 		});
 		
 		this.setFocusable(true);
@@ -320,7 +365,7 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 			}
 			
 			if (!collision) {
-				dirty = true;
+				context.markUnsaved();
 				
 				for(ScreenInfo s : room.screens()) {
 					s.setPosition(s.x() + dx, s.y() + dy);
@@ -509,4 +554,9 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 	public void setRoomRightClickCallback(Consumer<RoomInfo> callback) {
 		this.roomRightClickCallback = callback;
 	}
+	
+	public void setRoomFileDragCallback(Consumer<File> callback) {
+		this.roomFileDragCallback = callback;
+	}
+	
 }

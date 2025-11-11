@@ -1,6 +1,7 @@
 package blue.endless.pi.gui;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
@@ -15,6 +16,7 @@ import java.util.Optional;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
+import javax.swing.Icon;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -90,7 +92,7 @@ public class WorldEditor extends AbstractView implements CloseAware {
 			"key", SchemaType.DOUBLE
 			);*/
 	
-	private ScrollingPlanetView planetView = new ScrollingPlanetView();
+	private ScrollingPlanetView planetView;
 	private PropertyEditor propertyView = new PropertyEditor();
 	
 	private static WorldInfo world;
@@ -107,6 +109,7 @@ public class WorldEditor extends AbstractView implements CloseAware {
 	public WorldEditor(ViewContext context) {
 		super(context);
 		
+		planetView = new ScrollingPlanetView(context);
 		mainPanel = planetView;
 		rightPanel = propertyView;
 		super.statusLine = statusLine;
@@ -261,6 +264,7 @@ public class WorldEditor extends AbstractView implements CloseAware {
 		planetView.getView().setRoomSelectionCallback(this::roomSelected);
 		planetView.getView().setRoomDoubleClickCallback(this::roomOpened);
 		planetView.getView().setRoomRightClickCallback(this::roomContext);
+		planetView.getView().setRoomFileDragCallback(this::importRoom);
 		
 		this.curWorldsDir = Preferences.defaultWorldsDir.toFile();
 		this.curRoomsDir = Preferences.defaultRoomsDir.toFile();
@@ -363,8 +367,19 @@ public class WorldEditor extends AbstractView implements CloseAware {
 		//if (planetView.getView().isDirty()) {
 			// TODO: Fix this confirmation dialog because it's kind of confusing as is
 			
-			int selectedResult = JOptionPane.showConfirmDialog(null, "This world has unsaved data. Are you sure you want to quit?", "Really Quit?", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-			if (selectedResult == JOptionPane.CANCEL_OPTION) {
+			int selectedResult = JOptionPane.showOptionDialog(
+					planetView,
+					"This world has unsaved data. Are you sure you want to quit?",
+					"Really Quit?",
+					JOptionPane.OK_CANCEL_OPTION,
+					JOptionPane.WARNING_MESSAGE,
+					null,
+					new Object[] { "Quit", "Cancel" },
+					"Cancel"
+					);
+			
+			// I suspect OK_OPTION only works here because Quit is the zeroth element in the array
+			if (selectedResult != JOptionPane.OK_OPTION) {
 				return false;
 			}
 		}
@@ -452,28 +467,33 @@ public class WorldEditor extends AbstractView implements CloseAware {
 	public void importRoom() {
 		if (world == null) return;
 		
-		try {
-			JFileChooser chooser = new JFileChooser();
-			FileNameExtensionFilter filter = new FileNameExtensionFilter("Planets Enigma rooms", "mp_room");
-			chooser.setFileFilter(filter);
-			chooser.setCurrentDirectory(curRoomsDir);
-			int result = chooser.showOpenDialog(null);
-			if (result == JFileChooser.CANCEL_OPTION) {
-				return;
-			}
-			if (result == JFileChooser.ERROR_OPTION) {
-				System.out.println("Error selecting a room file.");
-				return;
-			}
-			if (result != JFileChooser.APPROVE_OPTION) {
-				System.out.println("Unknown result code: "+result);
-				return;
-			}
-			File roomFile = chooser.getSelectedFile();
-			
-			File selectedFolder = roomFile.getParentFile();
-			if (selectedFolder != null) curRoomsDir = selectedFolder;
+		JFileChooser chooser = new JFileChooser();
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("Planets Enigma rooms", "mp_room");
+		chooser.setFileFilter(filter);
+		chooser.setCurrentDirectory(curRoomsDir);
+		int result = chooser.showOpenDialog(null);
+		if (result == JFileChooser.CANCEL_OPTION) {
+			return;
+		}
+		if (result == JFileChooser.ERROR_OPTION) {
+			System.out.println("Error selecting a room file.");
+			return;
+		}
+		if (result != JFileChooser.APPROVE_OPTION) {
+			System.out.println("Unknown result code: "+result);
+			return;
+		}
+		File roomFile = chooser.getSelectedFile();
 		
+		File selectedFolder = roomFile.getParentFile();
+		if (selectedFolder != null) curRoomsDir = selectedFolder;
+		
+		importRoom(roomFile);
+			
+	}
+	
+	public void importRoom(File roomFile) {
+		try {
 			RoomInfo room = RoomInfo.load(roomFile.toPath());
 			
 			for(ScreenInfo screen : room.screens()) {
@@ -487,7 +507,15 @@ public class WorldEditor extends AbstractView implements CloseAware {
 			
 			addRoom(room);
 		} catch (IOException | SyntaxError ex) {
-			ex.printStackTrace();
+			JOptionPane.showOptionDialog(
+					(Component) planetView,
+					"Could not load the file '"+roomFile.getName()+"'.\n"+ex.getLocalizedMessage(),
+					"Unable to Open File",
+					JOptionPane.ERROR_MESSAGE,
+					JOptionPane.DEFAULT_OPTION,
+					(Icon) null,
+					new Object[] { "Ok" },
+					"Ok");
 		}
 	}
 	
