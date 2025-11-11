@@ -28,7 +28,8 @@ public class ItemEditorPanel extends JPanel {
 	private JLabel selectedItemLabel = new JLabel("");
 	private JComboBox<ItemCategory> categoriesBox;
 	private Map<ItemCategory, List<ItemType>> releasedItems = new HashMap<>();
-	private JPanel itemsPanel = new JPanel();
+	//private JPanel itemsPanel = new JPanel();
+	private  ItemPanel itemsPanel = new ItemPanel();
 	
 	private Runnable editCallback = () -> {};
 	
@@ -83,12 +84,10 @@ public class ItemEditorPanel extends JPanel {
 		this.add(categoriesBox);
 		
 		itemsPanel.setBorder(new EmptyBorder(8, 8, 8, 8));
-		CardLayout cardLayout = new CardLayout();
-		cardLayout.setInterCardSpacing(8);
-		cardLayout.setInterLineSpacing(8);
-		itemsPanel.setLayout(cardLayout);
-		itemsPanel.setBackground(Color.BLACK);
 		this.add(itemsPanel);
+		itemsPanel.onClick((stack) -> {
+			setItem(stack.item());
+		});
 		
 		selectCategory(ItemCategory.ALL);
 		this.selectItem(null);
@@ -96,6 +95,14 @@ public class ItemEditorPanel extends JPanel {
 	
 	private void selectCategory(ItemCategory category) {
 		categoriesBox.setSelectedItem(category);
+		if (category == ItemCategory.ALL) {
+			itemsPanel.setItems(ItemType::isReleased);
+		} else {
+			itemsPanel.setItems((it) -> it.isReleased() && it.category().equals(category));
+		}
+		
+		
+		/*
 		itemsPanel.removeAll();
 		List<ItemType> items = releasedItems.get(category);
 		if (items == null) {
@@ -116,10 +123,10 @@ public class ItemEditorPanel extends JPanel {
 				tile.onClick(()->setItem(item));
 				itemsPanel.add(tile);
 			}
-		}
+		}*/
 		
 		
-		itemsPanel.validate();
+		//itemsPanel.validate();
 		this.repaint();
 	}
 	
