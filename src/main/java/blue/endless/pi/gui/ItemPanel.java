@@ -3,7 +3,8 @@ package blue.endless.pi.gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -15,8 +16,15 @@ import blue.endless.pi.enigma.ItemType;
 import blue.endless.pi.gui.layout.CardLayout;
 
 public class ItemPanel extends JPanel {
-	private List<ItemStack> items = new ArrayList<>();
+	private ArrayList<ItemStack> items = new ArrayList<>();
 	private Consumer<ItemStack> onClick = (it) -> {};
+	Comparator<ItemStack> ITEM_COMPARATOR = (a, b) -> {
+		int aCat = a.item().category().ordinal();
+		int bCat = b.item().category().ordinal();
+		if (aCat != bCat) return Integer.compare(aCat, bCat);
+		
+		return Integer.compare(a.item().id(), b.item().id());
+	};
 	
 	public ItemPanel() {
 		CardLayout layout = new CardLayout();
@@ -31,7 +39,7 @@ public class ItemPanel extends JPanel {
 	
 	public void onClick(Consumer<ItemStack> callback) {
 		this.onClick = callback;
-		updateItems();
+		//updateItems();
 	}
 	
 	public void setItems(Iterable<ItemType> items) {
@@ -39,6 +47,7 @@ public class ItemPanel extends JPanel {
 		for(ItemType item : items) {
 			this.items.add(new ItemStack(item));
 		}
+		Collections.sort(this.items, ITEM_COMPARATOR);
 		updateItems();
 	}
 	
@@ -47,6 +56,7 @@ public class ItemPanel extends JPanel {
 		for(ItemStack stack : items) {
 			this.items.add(stack);
 		}
+		Collections.sort(this.items, ITEM_COMPARATOR);
 		updateItems();
 	}
 	
@@ -57,6 +67,7 @@ public class ItemPanel extends JPanel {
 				this.items.add(new ItemStack(item));
 			}
 		}
+		Collections.sort(this.items, ITEM_COMPARATOR);
 		updateItems();
 	}
 	
@@ -65,6 +76,7 @@ public class ItemPanel extends JPanel {
 		for(ItemType item : items) {
 			if (predicate.test(item)) this.items.add(new ItemStack(item));
 		}
+		Collections.sort(this.items, ITEM_COMPARATOR);
 		updateItems();
 	}
 	
@@ -73,6 +85,7 @@ public class ItemPanel extends JPanel {
 		for(ItemStack stack : stacks) {
 			if (predicate.test(stack)) this.items.add(stack);
 		}
+		Collections.sort(this.items, ITEM_COMPARATOR);
 		updateItems();
 	}
 	
