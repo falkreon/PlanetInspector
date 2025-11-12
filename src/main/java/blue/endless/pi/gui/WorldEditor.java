@@ -14,9 +14,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.swing.Action;
 import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.Icon;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -24,6 +26,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import blue.endless.jankson.api.SyntaxError;
@@ -34,8 +39,10 @@ import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.pi.BGM;
 import blue.endless.pi.Preferences;
 import blue.endless.pi.SchemaType;
+import blue.endless.pi.datastruct.Vec2;
 import blue.endless.pi.enigma.EnemyType;
 import blue.endless.pi.enigma.EnigmaFormat;
+import blue.endless.pi.enigma.Hazard;
 import blue.endless.pi.enigma.ObjectType;
 import blue.endless.pi.enigma.wrapper.AreaInfo;
 import blue.endless.pi.enigma.wrapper.RoomInfo;
@@ -100,7 +107,9 @@ public class WorldEditor extends AbstractView implements CloseAware {
 	private JMenu fileMenu = new JMenu("File");
 	private JMenu worldMenu = new JMenu("World");
 	private JMenu roomMenu = new JMenu("Room");
+	private JPopupMenu roomContextMenu = new JPopupMenu();
 	
+	private File thisFile;
 	private File curWorldsDir;
 	private File curRoomsDir;
 	
@@ -126,6 +135,30 @@ public class WorldEditor extends AbstractView implements CloseAware {
 			}
 		});
 		fileMenu.add(openMenuItem);
+		
+		JMenuItem saveMenuItem = new JMenuItem("Save");
+		saveMenuItem.setAction(new AbstractAction("Save") {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (thisFile == null) {
+					saveMenuItem.setEnabled(false);
+					return;
+				}
+				
+				try {
+				EnigmaFormat.prepareForSave(world);
+				world.save(thisFile.toPath());
+				context.clearUnsaved();
+				System.out.println("Saved.");
+				} catch (IOException | SyntaxError ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
+		saveMenuItem.setEnabled(false);
+		fileMenu.add(saveMenuItem);
+		
+		
 		JMenuItem saveAsMenuItem = new JMenuItem("Save As...");
 		saveAsMenuItem.setAction(new AbstractAction("Save As...") {
 			@Override
@@ -232,8 +265,8 @@ public class WorldEditor extends AbstractView implements CloseAware {
 		worldMenu.setEnabled(false);
 		menuBar.add(worldMenu);
 		
-		JMenuItem duplicateRoomItem = new JMenuItem("Duplicate Room");
-		duplicateRoomItem.setAction(new AbstractAction("Duplicate Room") {
+		//JMenuItem duplicateRoomItem = new JMenuItem("Duplicate Room");
+		Action duplicateRoomAction = new AbstractAction("Duplicate Room") {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				RoomInfo selectedRoom = WorldEditor.this.planetView.getView().getSelectedRoom();
@@ -241,10 +274,23 @@ public class WorldEditor extends AbstractView implements CloseAware {
 				
 				ObjectElement copyObj = selectedRoom.json().clone();
 				RoomInfo copy = RoomInfo.of(copyObj);
+				
+				for(ScreenInfo screen : copy.screens()) {
+					screen.json().put("x", PrimitiveElement.of(screen.x() + 1));
+					screen.json().put("y", PrimitiveElement.of(screen.y() + 1));
+					for(ObjectElement door : screen.doors()) {
+						door.put("dest_rm", PrimitiveElement.of(-1));
+						door.put("dest_id", PrimitiveElement.of(0));
+					}
+				}
+				
 				addRoom(copy);
+				
 			}
-		});
-		roomMenu.add(duplicateRoomItem);
+		};
+		//duplicateRoomItem.setAction(duplicateRoomAction);
+		roomMenu.add(new JMenuItem(duplicateRoomAction));
+		roomContextMenu.add(new JMenuItem(duplicateRoomAction));
 		roomMenu.setEnabled(false);
 		menuBar.add(roomMenu);
 		
@@ -265,6 +311,19 @@ public class WorldEditor extends AbstractView implements CloseAware {
 		planetView.getView().setRoomDoubleClickCallback(this::roomOpened);
 		planetView.getView().setRoomRightClickCallback(this::roomContext);
 		planetView.getView().setRoomFileDragCallback(this::importRoom);
+		planetView.getView().setWorldFileDragCallback(file -> {
+			if (world != null) return;
+			
+			try {
+				WorldInfo world = WorldInfo.load(file.toPath());
+				WorldEditor.this.setWorld(world);
+				worldMenu.setEnabled(true);
+				context.clearUnsaved();
+				planetView.repaint();
+			} catch (IOException | SyntaxError ex) {
+				ex.printStackTrace();
+			}
+		});
 		
 		this.curWorldsDir = Preferences.defaultWorldsDir.toFile();
 		this.curRoomsDir = Preferences.defaultRoomsDir.toFile();
@@ -324,6 +383,31 @@ public class WorldEditor extends AbstractView implements CloseAware {
 			}
 		});
 		propertyView.addExternalLine("Area", areaBox);
+		
+		// Later we can open up more hazards, as the game supports them better.
+		JComboBox<Hazard> hazardBox = new JComboBox<>(new Hazard[] { Hazard.ATMOSPHERIC });
+		hazardBox.setSelectedIndex(room.json().getObject("HAZARD").getPrimitive("type").asInt().orElse(0));
+		hazardBox.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (hazardBox.getSelectedItem() instanceof Hazard h) {
+					room.json().getObject("HAZARD").put("type", PrimitiveElement.of(h.id()));
+				}
+			}
+		});
+		propertyView.addExternalLine("Hazard Type", hazardBox);
+		
+		JCheckBox hazardEnable = new JCheckBox();
+		hazardEnable.setSelected(room.json().getObject("HAZARD").getPrimitive("set").asInt().orElse(0) != 0);
+		hazardEnable.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent arg0) {
+				room.json().getObject("HAZARD").put("set", PrimitiveElement.of(
+					hazardEnable.isSelected() ? 1 : 0
+					));
+			}
+		});
+		propertyView.addExternalLine("Hazard Enabled", hazardEnable);
 		
 		propertyView.addExternalLine("Music", general, "bgm", BGM.SCHEMA);
 		propertyView.addExternalLine("Background", general, "bg_color", SchemaType.IMMUTABLE_INT);
@@ -406,6 +490,7 @@ public class WorldEditor extends AbstractView implements CloseAware {
 				return;
 			}
 			File worldFile = chooser.getSelectedFile();
+			thisFile = worldFile;
 			
 			File selectedFolder = worldFile.getParentFile();
 			if (selectedFolder != null) curWorldsDir = selectedFolder;
@@ -670,7 +755,11 @@ public class WorldEditor extends AbstractView implements CloseAware {
 		context.go(new RoomConfiguratorView(context, world, world.indexOf(room)));
 	}
 	
-	public void roomContext(RoomInfo room) {
-		
+	public void roomContext(RoomInfo room, Vec2 vec) {
+		roomContextMenu.show(planetView.getView(), vec.x(), vec.y());
 	}
+	
+	
+	
+	
 }

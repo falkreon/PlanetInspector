@@ -18,7 +18,6 @@ import blue.endless.pi.enigma.ItemCategory;
 import blue.endless.pi.enigma.ItemType;
 import blue.endless.pi.enigma.wrapper.MapObjectInfo;
 import blue.endless.pi.gui.layout.Axis;
-import blue.endless.pi.gui.layout.CardLayout;
 import blue.endless.pi.gui.layout.LinearLayout;
 
 public class ItemEditorPanel extends JPanel {
@@ -28,7 +27,6 @@ public class ItemEditorPanel extends JPanel {
 	private JLabel selectedItemLabel = new JLabel("");
 	private JComboBox<ItemCategory> categoriesBox;
 	private Map<ItemCategory, List<ItemType>> releasedItems = new HashMap<>();
-	//private JPanel itemsPanel = new JPanel();
 	private  ItemPanel itemsPanel = new ItemPanel();
 	
 	private Runnable editCallback = () -> {};
@@ -101,32 +99,6 @@ public class ItemEditorPanel extends JPanel {
 			itemsPanel.setItems((it) -> it.isReleased() && it.category().equals(category));
 		}
 		
-		
-		/*
-		itemsPanel.removeAll();
-		List<ItemType> items = releasedItems.get(category);
-		if (items == null) {
-			for(int i=0; i<1000; i++) {
-				ItemType item = ItemType.values.get(i);
-				if (item != null) {
-					if (!item.isReleased()) continue;
-					ItemTile tile = new ItemTile();
-					tile.setItem(item);
-					tile.onClick(()->setItem(item));
-					itemsPanel.add(tile);
-				}
-			}
-		} else {
-			for(ItemType item : items) {
-				ItemTile tile = new ItemTile();
-				tile.setItem(item);
-				tile.onClick(()->setItem(item));
-				itemsPanel.add(tile);
-			}
-		}*/
-		
-		
-		//itemsPanel.validate();
 		this.repaint();
 	}
 	

@@ -55,9 +55,10 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 	private BiConsumer<ObjectElement, Map<String, SchemaType<?>>> propertiesConsumer = (o, s) -> {};
 	
 	private Consumer<RoomInfo> roomSelectionCallback = (it) -> {};
-	private Consumer<RoomInfo> roomRightClickCallback = (it) -> {};
+	private BiConsumer<RoomInfo, Vec2> roomRightClickCallback = (room, vec) -> {};
 	private Consumer<RoomInfo> roomDoubleClickCallback = (it) -> {};
 	private Consumer<File> roomFileDragCallback = (it) -> {};
+	private Consumer<File> worldFileDragCallback = (it) -> {};
 	private int selectedRoom = -1;
 	private int dragRoom = -1;
 	private int dragStartX = -1;
@@ -111,6 +112,8 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 						for(File f : files) {
 							if (f.getName().endsWith(".mp_room")) {
 								roomFileDragCallback.accept(f);
+							} else if (f.getName().endsWith(".mp_world")) {
+								worldFileDragCallback.accept(f);
 							}
 						}
 					}
@@ -268,6 +271,7 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		//System.out.println(e.getButton());
 		this.requestFocusInWindow();
 		
 		int clickedRoom = roomAt(e.getX() / CELL_SIZE, e.getY() / CELL_SIZE);
@@ -279,16 +283,18 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 				this.repaint();
 			}
 		} else {
+			
 			selectedRoom = clickedRoom;
 			RoomInfo room = world.rooms().get(clickedRoom);
 			propertiesConsumer.accept(room.general(), WorldEditor.ROOM_GENERAL_SCHEMA);
 			roomSelectionCallback.accept(room);
-			this.repaint();
 			
-			if (e.getButton() == MouseEvent.BUTTON2) {
-				this.repaint();
-				roomRightClickCallback.accept(room);
+			
+			if (e.getButton() == MouseEvent.BUTTON3) {
+				roomRightClickCallback.accept(room, new Vec2(e.getX(), e.getY()));
 			}
+			
+			this.repaint();
 		}
 		
 		if (e.getClickCount() == 2) {
@@ -551,12 +557,16 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 		this.roomDoubleClickCallback = callback;
 	}
 	
-	public void setRoomRightClickCallback(Consumer<RoomInfo> callback) {
+	public void setRoomRightClickCallback(BiConsumer<RoomInfo, Vec2> callback) {
 		this.roomRightClickCallback = callback;
 	}
 	
 	public void setRoomFileDragCallback(Consumer<File> callback) {
 		this.roomFileDragCallback = callback;
+	}
+	
+	public void setWorldFileDragCallback(Consumer<File> callback) {
+		this.worldFileDragCallback = callback;
 	}
 	
 }
