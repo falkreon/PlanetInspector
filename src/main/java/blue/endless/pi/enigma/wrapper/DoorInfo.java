@@ -3,11 +3,11 @@ package blue.endless.pi.enigma.wrapper;
 import java.util.Optional;
 
 import blue.endless.jankson.api.document.ArrayElement;
+import blue.endless.jankson.api.document.BooleanElement;
+import blue.endless.jankson.api.document.DoubleElement;
+import blue.endless.jankson.api.document.LongElement;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
-import blue.endless.jankson.impl.document.BooleanElementImpl;
-import blue.endless.jankson.impl.document.DoubleElementImpl;
-import blue.endless.jankson.impl.document.LongElementImpl;
 import blue.endless.pi.enigma.Direction;
 import blue.endless.pi.enigma.DoorType;
 
@@ -34,9 +34,9 @@ public record DoorInfo(WorldInfo world, RoomInfo room, ScreenInfo screen, Object
 	
 	public boolean clearOnUse() {
 		return switch(json.getPrimitive("clear_on_use")) {
-			case BooleanElementImpl b -> b.asBoolean().orElse(false);
-			case LongElementImpl l -> l.asLong().orElse(0L) != 0;
-			case DoubleElementImpl d -> d.asDouble().orElse(0.0) > 0.001;
+			case BooleanElement b -> b.asBoolean().orElse(false);
+			case LongElement l -> l.asLong().orElse(0L) != 0;
+			case DoubleElement d -> d.asDouble().orElse(0.0) > 0.001;
 			case null, default -> false;
 		};
 	}

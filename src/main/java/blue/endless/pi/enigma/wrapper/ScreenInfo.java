@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Optional;
 
 import blue.endless.jankson.api.document.ArrayElement;
+import blue.endless.jankson.api.document.DoubleElement;
+import blue.endless.jankson.api.document.LongElement;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
-import blue.endless.jankson.impl.document.DoubleElementImpl;
-import blue.endless.jankson.impl.document.LongElementImpl;
 import blue.endless.pi.enigma.Direction;
 import blue.endless.pi.enigma.DoorType;
 import blue.endless.pi.enigma.Wall;
@@ -136,10 +136,10 @@ public class ScreenInfo {
 		if (y >= column.size()) return EMPTY_TILE;
 		PrimitiveElement prim = column.getPrimitive(y);
 		
-		if (prim instanceof DoubleElementImpl d) {
+		if (prim instanceof DoubleElement d) {
 			// Work around bad data - vigorously cast back to int so we can bit-manipulate
 			return (int) d.asDouble().getAsDouble();
-		} else if (prim instanceof LongElementImpl l) {
+		} else if (prim instanceof LongElement l) {
 			return (int) l.asLong().getAsLong();
 		} else {
 			return EMPTY_TILE;

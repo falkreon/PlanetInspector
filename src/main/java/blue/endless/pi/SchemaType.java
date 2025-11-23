@@ -14,11 +14,11 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import blue.endless.jankson.api.document.ArrayElement;
+import blue.endless.jankson.api.document.DoubleElement;
+import blue.endless.jankson.api.document.NullElement;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
-import blue.endless.jankson.impl.document.DoubleElementImpl;
-import blue.endless.jankson.impl.document.NullElementImpl;
 import blue.endless.pi.gui.ColorChooser;
 
 public sealed interface SchemaType<T> permits SchemaType.Editable, SchemaType.NonEditable {
@@ -159,7 +159,7 @@ public sealed interface SchemaType<T> permits SchemaType.Editable, SchemaType.No
 		
 		public String express(ValueElement val) {
 			return switch(val) {
-				case NullElementImpl n -> "null";
+				case NullElement n -> "null";
 				case PrimitiveElement prim -> prim.asString().orElse("");
 				case ObjectElement obj -> "{ }";
 				case ArrayElement arr -> "[ ]";
@@ -186,7 +186,7 @@ public sealed interface SchemaType<T> permits SchemaType.Editable, SchemaType.No
 		@Override
 		public Long deserialize(ValueElement v) {
 			return switch(v) {
-				case DoubleElementImpl d -> (long) d.asDouble().getAsDouble();
+				case DoubleElement d -> (long) d.asDouble().getAsDouble();
 				case PrimitiveElement prim -> prim.asLong().orElse(0L);
 				default -> 0L;
 			};

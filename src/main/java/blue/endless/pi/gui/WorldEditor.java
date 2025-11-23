@@ -272,7 +272,7 @@ public class WorldEditor extends AbstractView implements CloseAware {
 				RoomInfo selectedRoom = WorldEditor.this.planetView.getView().getSelectedRoom();
 				if (selectedRoom == null) return;
 				
-				ObjectElement copyObj = selectedRoom.json().clone();
+				ObjectElement copyObj = selectedRoom.json().copy();
 				RoomInfo copy = RoomInfo.of(copyObj);
 				
 				for(ScreenInfo screen : copy.screens()) {
