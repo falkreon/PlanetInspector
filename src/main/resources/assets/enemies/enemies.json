@@ -172,17 +172,20 @@
     "kraid": {
         "id": 34,
         "name": "Kraid",
-        "sprite": "spr_Boss_Kraid_0"
+        "sprite": "spr_Boss_Kraid_0",
+        "boss": true
     },
     "ridley": {
         "id": 35,
         "name": "Ridley",
-        "sprite": "spr_Boss_Ridley_Upper_0"
+        "sprite": "spr_Boss_Ridley_Upper_0",
+        "boss": true
     },
     "mother_brain": {
         "id": 36,
         "name": "Mother Brain",
-        "sprite": "spr_Boss_MB_Head_0"
+        "sprite": "spr_Boss_MB_Head_0",
+        "boss": true
     },
     "spark": {
         "id": 37,
@@ -197,27 +200,32 @@
     "spore_spawn": {
         "id": 39,
         "name": "Spore Spawn",
-        "sprite": "spr_Boss_Spore_Spawn_3"
+        "sprite": "spr_Boss_Spore_Spawn_3",
+        "boss": true
     },
     "phantoon": { // (crashes on testing)
         "id": 40,
         "name": "Phantoon",
-        "sprite": "spr_Boss_Phantoon_0"
+        "sprite": "spr_Boss_Phantoon_0",
+        "boss": true
     },
     "super_kraid": { // Super Kraid's head (crashes on testing)
         "id": 41,
         "name": "Super Kraid",
-        "sprite": "spr_Boss_Kraid_Big_Body_0"
+        "sprite": "spr_Boss_Kraid_Big_Body_0",
+        "boss": true
     },
     "super_ridley": { // Super Ridley's body (crashes on testing)
         "id": 42,
         "name": "Super Ridley",
-        "sprite": "spr_Boss_Super_Ridley_Body_0"
+        "sprite": "spr_Boss_Super_Ridley_Body_0",
+        "boss": true
     },
     "super_mother_brain": { // (crashes on testing)
         "id": 43,
         "name": "Super Mother Brain",
-        "sprite": "spr_Boss_MB_Head_0"
+        "sprite": "spr_Boss_MB_Head_0",
+        "boss": true
     },
     "tangle_weed": {
         "id": 44,

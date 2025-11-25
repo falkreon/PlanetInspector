@@ -25,6 +25,8 @@ public class MapObjectInfo {
 		return json;
 	}
 	
+	public ScreenInfo screen() { return screen; }
+	
 	public int x() {
 		return json.getPrimitive("x").asInt().orElse(0);
 	}

@@ -106,7 +106,11 @@ public class RoomConfiguratorView extends AbstractView {
 					valuesControl.addItemListener(new ItemListener() {
 						@Override
 						public void itemStateChanged(ItemEvent e) {
-							door.json().put("type", PrimitiveElement.of(((DoorType) valuesControl.getSelectedItem()).value()));
+							DoorType doorType = (DoorType) valuesControl.getSelectedItem();
+							DoorType actualType = (doorType == DoorType.ZERO) ? DoorType.BLUE : doorType;
+							door.json().put("type", PrimitiveElement.of(actualType.value()));
+							ArrayElement mapCellDoors = door.screen().json().getObject("MAP").getArray("doors");
+							mapCellDoors.set(door.dir().value(), PrimitiveElement.of(doorType.value()));
 							mainPanel.repaint();
 						}
 					});

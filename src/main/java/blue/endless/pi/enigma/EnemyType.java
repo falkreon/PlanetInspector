@@ -91,16 +91,19 @@ public class EnemyType {
 	private final int id;
 	private final String name;
 	private final String spriteResource;
+	private final boolean isBoss;
 	
 	public EnemyType(ObjectElement obj) {
 		this.id = obj.getPrimitive("id").asInt().orElse(0);
 		this.name = obj.getPrimitive("name").asString().orElse("Unknown");
 		this.spriteResource = obj.getPrimitive("sprite").asString().orElse("");
+		this.isBoss = obj.getPrimitive("boss").asBoolean().orElse(Boolean.FALSE).booleanValue();
 	}
 	
 	public int id() { return id; }
 	public String name() { return name; }
 	public String spriteResource() { return spriteResource; }
+	public boolean isBoss() { return this.isBoss; }
 	
 	public BufferedImage getSprite() {
 		return Assets.getCachedImage("enemies/"+this.spriteResource+".png").orElseGet(Assets::missingImage);

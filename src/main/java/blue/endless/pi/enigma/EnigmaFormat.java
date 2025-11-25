@@ -53,17 +53,63 @@ public class EnigmaFormat {
 		lines.add(PrimitiveElement.of("Edited on "+LocalDateTime.now().atOffset(ZoneOffset.UTC).format(DateTimeFormatter.RFC_1123_DATE_TIME)));
 	}
 	
-	private static void fixCrashingEnemies(WorldInfo world) {
+	private static void fixCrashingRooms(WorldInfo world) {
 		for(RoomInfo room : world.rooms()) {
+			preventRoomCrashes(room);
+			/*
+			ObjectElement general = room.json().getObject("GENERAL");
+			general.computeIfAbsent("sector", (it) -> PrimitiveElement.of(0));
+			general.computeIfAbsent("bg_color", (it) -> PrimitiveElement.of(0));
+			general.computeIfAbsent("vision_limit", (it) -> PrimitiveElement.of(0));
+			
 			for(ScreenInfo screen : room.screens()) {
 				ArrayElement enemiesArray = screen.json().getArray("ENEMIES");
-				for(ValueElement val : enemiesArray) {
-					if (val instanceof ObjectElement obj) {
-						obj.computeIfAbsent("level", (it)->PrimitiveElement.of(0));
-					}
+				for(ObjectElement obj : enemiesArray.asObjectArray()) {
+					obj.computeIfAbsent("level", (it) -> PrimitiveElement.of(0));
+				}
+			*/
+		}
+	}
+	
+	public static void preventRoomCrashes(RoomInfo room) {
+		for(ScreenInfo screen : room.screens()) {
+			ArrayElement enemiesArray = screen.json().getArray("ENEMIES");
+			for(ObjectElement obj : enemiesArray.asObjectArray()) {
+				obj.computeIfAbsent("level", (it) -> PrimitiveElement.of(0));
+				
+				if (obj.getPrimitive("type").orElse(-1) == 39) {
+					// Seen in the wild: Instances of Spore Spawn missing a "color" attribute
+					obj.computeIfAbsent("color", (it) -> PrimitiveElement.of(0));
 				}
 			}
 		}
+		
+		ObjectElement general = room.json().getObject("GENERAL");
+		general.computeIfAbsent("sector", (it) -> PrimitiveElement.of(0));
+		general.computeIfAbsent("bg_color", (it) -> PrimitiveElement.of(64));
+		general.computeIfAbsent("vision_limit", (it) -> PrimitiveElement.of(0));
+		general.computeIfAbsent("gravity_multiplier", (it) -> PrimitiveElement.of(1));
+		general.computeIfAbsent("threat", (it) -> PrimitiveElement.of(0));
+		general.computeIfAbsent("powered", (it) -> PrimitiveElement.of(1));
+		general.computeIfAbsent("no_floor", (it) -> PrimitiveElement.of(0));
+		general.computeIfAbsent("darkness", (it) -> PrimitiveElement.of(0));
+		general.computeIfAbsent("spike_level", (it) -> PrimitiveElement.of(1));
+		general.computeIfAbsent("magnet", (it) -> {
+			ObjectElement magnet = new ObjectElement();
+			magnet.put("on_palette", PrimitiveElement.of(21));
+			magnet.put("off_palette", PrimitiveElement.of(0));
+			magnet.put("use_palettes", PrimitiveElement.of(0));
+			magnet.put("use_shader", PrimitiveElement.of(0));
+			return magnet;
+		});
+		
+		ObjectElement hazard = room.json().getObject("HAZARD");
+		hazard.computeIfAbsent("type", (it) -> PrimitiveElement.of(0));
+		hazard.computeIfAbsent("tanks", (it) -> PrimitiveElement.of(1));
+		hazard.computeIfAbsent("block_type", (it) -> PrimitiveElement.of(1));
+		hazard.computeIfAbsent("style", (it) -> PrimitiveElement.of(0));
+		hazard.computeIfAbsent("set", (it) -> PrimitiveElement.of(0));
+		hazard.computeIfAbsent("color", (it) -> PrimitiveElement.of(22));
 	}
 	
 	/**
@@ -151,6 +197,10 @@ public class EnigmaFormat {
 	/**
 	 * Goes over the sector and makes sure it's appropriately sized for its contents. This is incredibly important to
 	 * make sure Planets reserves enough space for explored map tiles. Not doing this will crash the game!
+	 * 
+	 * <p>
+	 * Also ensures that all rooms are marked with sector zero, fixing a second crash.
+	 * 
 	 * @param world The world to fix the sector for
 	 */
 	private static void fixSector(WorldInfo world) {
@@ -161,6 +211,7 @@ public class EnigmaFormat {
 				maxX = Math.max(maxX, screen.x());
 				maxY = Math.max(maxY, screen.y());
 			}
+			room.json().getObject("GENERAL").put("sector", PrimitiveElement.of(0));
 		}
 		
 		ArrayElement sectors = world.json().getArray("SECTORS");
@@ -186,7 +237,7 @@ public class EnigmaFormat {
 		
 		removeEnigmaDebug(world);
 		logEdit(world);
-		fixCrashingEnemies(world);
+		fixCrashingRooms(world);
 		
 		regenGateBosses(world);
 		fixProgressionItemAreas(world);

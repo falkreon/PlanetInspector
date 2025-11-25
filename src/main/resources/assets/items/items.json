@@ -100,6 +100,7 @@
         "id": 8,
         "name": "Gravity Suit",
         "category": "SUIT",
+        "released": false,
         "parameters": {
             "armor": 0.25,
             "hazard_full_protection": [],
@@ -115,6 +116,7 @@
         "id": 9,
         "name": "Phazon Suit",
         "category": "SUIT",
+        "released": false,
         "parameters": {
             "armor": 0.25,
             "hazard_full_protection": [ 8 ],

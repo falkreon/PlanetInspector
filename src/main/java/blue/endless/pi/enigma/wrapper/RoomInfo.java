@@ -21,6 +21,8 @@ import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
+import blue.endless.pi.enigma.EnemyType;
+import blue.endless.pi.enigma.EnigmaFormat;
 import blue.endless.pi.enigma.Palette;
 
 public record RoomInfo(ObjectElement json, ObjectElement general, List<ScreenInfo> screens) {
@@ -29,13 +31,25 @@ public record RoomInfo(ObjectElement json, ObjectElement general, List<ScreenInf
 		
 		ArrayList<ScreenInfo> screens = new ArrayList<>();
 		ArrayElement screensArray = roomJson.getArray("SCREENS");
-		for(ValueElement elem : screensArray) {
-			if (elem instanceof ObjectElement obj) {
-				screens.add(new ScreenInfo(obj));
+		for(ObjectElement screenObj : screensArray.asObjectArray()) {
+			screens.add(new ScreenInfo(screenObj));
+			
+			// Look for bosses
+			for(ObjectElement enemyObj : screenObj.getArray("ENEMIES").asObjectArray()) {
+				int enemyTypeId = (int) enemyObj.getPrimitive("type").orElse(-1);
+				EnemyType enemyType = EnemyType.of(enemyTypeId);
+				if (enemyType != null && enemyType.isBoss()) {
+					ObjectElement meta = roomJson.getObject("META");
+					meta.put("boss_room", PrimitiveElement.of(1));
+					meta.put("boss", PrimitiveElement.of(enemyTypeId));
+				}
 			}
 		}
 		
-		return new RoomInfo(roomJson, general, List.copyOf(screens));
+		RoomInfo result = new RoomInfo(roomJson, general, List.copyOf(screens));
+		
+		EnigmaFormat.preventRoomCrashes(result);
+		return result;
 	}
 
 	public String name() {
