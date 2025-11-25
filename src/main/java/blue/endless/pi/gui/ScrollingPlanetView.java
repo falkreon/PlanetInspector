@@ -23,8 +23,8 @@ public class ScrollingPlanetView extends JScrollPane {
 		this.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		this.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		
-		this.getHorizontalScrollBar().setUnitIncrement(PlanetView.CELL_SIZE / 2);
-		this.getVerticalScrollBar().setUnitIncrement(PlanetView.CELL_SIZE / 2);
+		this.getHorizontalScrollBar().setUnitIncrement(PlanetView.CELL_SIZE);
+		this.getVerticalScrollBar().setUnitIncrement(PlanetView.CELL_SIZE);
 		
 		planetView.setOpaque(true);
 	}

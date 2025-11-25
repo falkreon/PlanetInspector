@@ -87,7 +87,10 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 					selectedRoom = -1;
 					roomSelectionCallback.accept(null);
 					PlanetView.this.repaint();
+					
+					e.consume();
 				}
+				
 			}
 		});
 		

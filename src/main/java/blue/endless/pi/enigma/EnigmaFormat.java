@@ -56,18 +56,6 @@ public class EnigmaFormat {
 	private static void fixCrashingRooms(WorldInfo world) {
 		for(RoomInfo room : world.rooms()) {
 			preventRoomCrashes(room);
-			/*
-			ObjectElement general = room.json().getObject("GENERAL");
-			general.computeIfAbsent("sector", (it) -> PrimitiveElement.of(0));
-			general.computeIfAbsent("bg_color", (it) -> PrimitiveElement.of(0));
-			general.computeIfAbsent("vision_limit", (it) -> PrimitiveElement.of(0));
-			
-			for(ScreenInfo screen : room.screens()) {
-				ArrayElement enemiesArray = screen.json().getArray("ENEMIES");
-				for(ObjectElement obj : enemiesArray.asObjectArray()) {
-					obj.computeIfAbsent("level", (it) -> PrimitiveElement.of(0));
-				}
-			*/
 		}
 	}
 	
@@ -82,6 +70,8 @@ public class EnigmaFormat {
 					obj.computeIfAbsent("color", (it) -> PrimitiveElement.of(0));
 				}
 			}
+			
+			screen.json().computeIfAbsent("DECOR", (it) -> new ArrayElement());
 		}
 		
 		ObjectElement general = room.json().getObject("GENERAL");
@@ -94,6 +84,7 @@ public class EnigmaFormat {
 		general.computeIfAbsent("no_floor", (it) -> PrimitiveElement.of(0));
 		general.computeIfAbsent("darkness", (it) -> PrimitiveElement.of(0));
 		general.computeIfAbsent("spike_level", (it) -> PrimitiveElement.of(1));
+		general.computeIfAbsent("bgm", (it) -> PrimitiveElement.of(""));
 		general.computeIfAbsent("magnet", (it) -> {
 			ObjectElement magnet = new ObjectElement();
 			magnet.put("on_palette", PrimitiveElement.of(21));
@@ -103,13 +94,16 @@ public class EnigmaFormat {
 			return magnet;
 		});
 		
+		room.json().computeIfAbsent("HAZARD", (it) -> new ObjectElement());
 		ObjectElement hazard = room.json().getObject("HAZARD");
-		hazard.computeIfAbsent("type", (it) -> PrimitiveElement.of(0));
+		//hazard.computeIfAbsent("type", (it) -> PrimitiveElement.of(0));
+		if (hazard.getPrimitive("type").asInt().orElse(-1) < 0) hazard.put("type", PrimitiveElement.of(0));
 		hazard.computeIfAbsent("tanks", (it) -> PrimitiveElement.of(1));
 		hazard.computeIfAbsent("block_type", (it) -> PrimitiveElement.of(1));
 		hazard.computeIfAbsent("style", (it) -> PrimitiveElement.of(0));
 		hazard.computeIfAbsent("set", (it) -> PrimitiveElement.of(0));
 		hazard.computeIfAbsent("color", (it) -> PrimitiveElement.of(22));
+		
 	}
 	
 	/**
