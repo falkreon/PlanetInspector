@@ -5,7 +5,7 @@ plugins {
 
 group = "blue.endless.pi";
 archivesBaseName = "PlanetInspector";
-version = "1.0.0-rc.1";
+version = "1.0.0-rc.2";
 
 sourceCompatibility = 1.21;
 targetCompatibility = 1.21;
