@@ -202,7 +202,7 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 					// Draw icons
 					ArrayElement iconsArray = screen.json().getObject("MAP").getArray("icons");
 					if (!iconsArray.isEmpty()) {
-						int icon = iconsArray.getPrimitive(0).asInt().orElse(-1) - 1;
+						int icon = (int) iconsArray.getPrimitive(0).orElse(-1) - 1;
 						int iconAtlasX = icon * 14;
 						int iconAtlasY = 0;
 						g.drawImage(icons, x, y, x+CELL_SIZE, y+CELL_SIZE, iconAtlasX, iconAtlasY, iconAtlasX+14, iconAtlasY+14, null);

@@ -5,14 +5,17 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-import javax.swing.JPanel;
+import javax.swing.JComponent;
 
-public abstract class ScaledPanel extends JPanel{
-	public int scale = 2;
+public abstract class ZoomPanel extends JComponent {
+	private int scale = 2;
+	private int xofs = 0;
+	private int yofs = 0;
 	private BufferedImage buf;
 	
-	public ScaledPanel() {
+	public ZoomPanel() {
 		this.setDoubleBuffered(false);
+		this.setFocusable(true);
 	}
 	
 	@Override
@@ -31,10 +34,12 @@ public abstract class ScaledPanel extends JPanel{
 		
 		g.setColor(getBackground());
 		g.fillRect(0, 0, this.getWidth(), this.getHeight());
-		g.drawImage(buf, 0, 0, buf.getWidth() * scale, buf.getHeight() * scale, null);
+		g.drawImage(buf, -xofs, -yofs, buf.getWidth() * scale, buf.getHeight() * scale, null);
 	}
 	
 	public abstract void paintScaled(Graphics2D g);
+	
+	//public abstract void processClick()
 	
 	private int scale(int value) {
 		if (value < 0) return value;

@@ -15,8 +15,8 @@ import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.pi.enigma.Direction;
 import blue.endless.pi.enigma.DoorType;
+import blue.endless.pi.enigma.MinimapBaseShape;
 import blue.endless.pi.enigma.Wall;
-import blue.endless.pi.gui.MinimapBaseShape;
 import blue.endless.pi.gui.PlanetView;
 import blue.endless.pi.gui.Tileset;
 

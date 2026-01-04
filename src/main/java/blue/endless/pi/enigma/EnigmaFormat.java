@@ -188,6 +188,36 @@ public class EnigmaFormat {
 		}
 	}*/
 	
+	private static void updateMetadata(WorldInfo world) {
+		int bosses = 0;
+		int screens = 0;
+		int rooms = 0;
+		int areas = world.areas().size() - 2;
+		int items = 0;
+		
+		for (RoomInfo room : world.rooms()) {
+			if (room.isBossRoom()) bosses++;
+			rooms++;
+			
+			for(ScreenInfo screen : room.screens()) {
+				screens++;
+				
+				for(ObjectElement obj : screen.json().getArray("objects").asObjectArray()) {
+					switch(obj.getPrimitive("type").asInt().orElse(-1)) {
+						case 0 -> items++;
+					}
+				}
+			}
+		}
+		
+		ObjectElement stats = world.metaJson().getObject("stats");
+		stats.put("bosses", PrimitiveElement.of(bosses));
+		stats.put("screens", PrimitiveElement.of(screens));
+		stats.put("rooms", PrimitiveElement.of(rooms));
+		stats.put("areas", PrimitiveElement.of(areas));
+		stats.put("items", PrimitiveElement.of(items));
+	}
+	
 	/**
 	 * Goes over the sector and makes sure it's appropriately sized for its contents. This is incredibly important to
 	 * make sure Planets reserves enough space for explored map tiles. Not doing this will crash the game!
@@ -235,6 +265,8 @@ public class EnigmaFormat {
 		
 		regenGateBosses(world);
 		fixProgressionItemAreas(world);
+		
+		updateMetadata(world);
 		
 		// Grab stats and include in the preview
 		ObjectElement stats = world.metaJson().getObject("stats");

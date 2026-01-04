@@ -424,7 +424,7 @@
             "refresh_timer": 15.0 // How many frames of cooldown after attacking or being hit
         },
         "sprite": "spr_ITEM_Core_Phantom_0",
-        "sprite_palette": [ 16, 12, 48 ]
+        "sprite_palette": [ 16, 18, 48 ]
     },
     "sensor_core": {
         "id": 37,

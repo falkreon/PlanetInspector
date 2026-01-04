@@ -27,7 +27,7 @@ import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.jankson.api.io.json.JsonWriterOptions;
 import blue.endless.pi.enigma.EnigmaFormat;
-import blue.endless.pi.gui.MinimapBaseShape;
+import blue.endless.pi.enigma.MinimapBaseShape;
 
 public record WorldInfo(ObjectElement json, ObjectElement metaJson, List<RoomInfo> rooms, List<AreaInfo> areas) {
 	
