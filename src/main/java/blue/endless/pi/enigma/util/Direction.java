@@ -1,4 +1,4 @@
-package blue.endless.pi.enigma;
+package blue.endless.pi.enigma.util;
 
 import blue.endless.pi.datastruct.Rect;
 import blue.endless.pi.datastruct.Vec2;

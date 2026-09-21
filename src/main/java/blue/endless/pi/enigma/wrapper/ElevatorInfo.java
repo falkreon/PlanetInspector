@@ -2,7 +2,7 @@ package blue.endless.pi.enigma.wrapper;
 
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
-import blue.endless.pi.enigma.Direction;
+import blue.endless.pi.enigma.util.Direction;
 
 public record ElevatorInfo(WorldInfo world, RoomInfo room, ScreenInfo screen, ObjectElement json) {
 	public int id() {

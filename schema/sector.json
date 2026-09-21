@@ -1,0 +1,54 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "Sector",
+	"description": "A sector object, as found in SECTORS[*]",
+	"type": "object",
+	"properties": {
+		"name": {
+			"description": "The name of the Sector."
+			"type": "string"
+		},
+		"x": {
+			"description": "The number of screens from the left of the Sector map to the left edge of the Sector.",
+			"type": "integer"
+		},
+		"y": {
+			"description": "The number of screens from the top of the Sector map to the top edge of the Sector.",
+			"type": "integer"
+		},
+		"width": {
+			"description": "The number of screens wide the Sector is. Also affects the in-sector map of Areas.",
+			"type": "integer"
+		},
+		"height": {
+			"description": "The number of screens tall the Sector is. Also affects the in-sector map of Areas.",
+			"type": "integer"
+		},
+		"connections": {
+			"description": "A list of sector Ids for other Sectors this Sector has teleport connections to.",
+			"type": "array",
+			"items": {
+				"type": "integer"
+			}
+		},
+		"elevator_screens": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"x": {
+						"description": "The x coordinate of the elevator screen relative to the Sector x.",
+						"type": "integer"
+					},
+					"y": {
+						"description": "The y coordinate of the elevator screen relative to the Sector y.",
+						"type": "integer"
+					}
+				},
+				"required": [ "x", "y" ]
+			}
+		}
+	},
+	"required": [ "x", "y", "width", "height", "connections", "elevator_screens" ]
+}
+

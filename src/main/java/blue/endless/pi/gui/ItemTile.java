@@ -13,7 +13,7 @@ import javax.swing.JButton;
 import javax.swing.TransferHandler;
 
 import blue.endless.pi.ItemStack;
-import blue.endless.pi.enigma.ItemType;
+import blue.endless.pi.enigma.util.ItemType;
 
 public class ItemTile extends JButton {
 	private int scale = 3;

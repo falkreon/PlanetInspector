@@ -20,7 +20,7 @@ import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.pi.Assets;
 import blue.endless.pi.datastruct.Rect;
 import blue.endless.pi.datastruct.Vec2;
-import blue.endless.pi.enigma.ObjectType;
+import blue.endless.pi.enigma.util.ObjectType;
 import blue.endless.pi.enigma.wrapper.MapObjectInfo;
 import blue.endless.pi.enigma.wrapper.RoomInfo;
 import blue.endless.pi.enigma.wrapper.ScreenInfo;

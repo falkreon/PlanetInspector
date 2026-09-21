@@ -8,8 +8,8 @@ import blue.endless.jankson.api.document.DoubleElement;
 import blue.endless.jankson.api.document.LongElement;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
-import blue.endless.pi.enigma.Direction;
-import blue.endless.pi.enigma.DoorType;
+import blue.endless.pi.enigma.util.Direction;
+import blue.endless.pi.enigma.util.DoorType;
 
 public record DoorInfo(WorldInfo world, RoomInfo room, ScreenInfo screen, ObjectElement json) {
 	public int id() {

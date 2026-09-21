@@ -17,8 +17,8 @@ import javax.swing.event.ChangeListener;
 
 import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
-import blue.endless.pi.enigma.DoorType;
-import blue.endless.pi.enigma.ObjectType;
+import blue.endless.pi.enigma.util.DoorType;
+import blue.endless.pi.enigma.util.ObjectType;
 import blue.endless.pi.enigma.wrapper.MapObjectInfo;
 import blue.endless.pi.enigma.wrapper.WorldInfo;
 import blue.endless.pi.gui.view.AbstractView;

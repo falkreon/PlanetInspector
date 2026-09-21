@@ -12,7 +12,7 @@ import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.pi.ItemStack;
-import blue.endless.pi.enigma.ItemType;
+import blue.endless.pi.enigma.util.ItemType;
 import blue.endless.pi.enigma.wrapper.WorldInfo;
 import blue.endless.pi.gui.layout.Axis;
 import blue.endless.pi.gui.layout.LinearLayout;

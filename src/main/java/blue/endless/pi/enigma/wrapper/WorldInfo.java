@@ -1,6 +1,7 @@
 package blue.endless.pi.enigma.wrapper;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -26,8 +27,8 @@ import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.jankson.api.io.json.JsonWriterOptions;
-import blue.endless.pi.enigma.EnigmaFormat;
-import blue.endless.pi.enigma.MinimapBaseShape;
+import blue.endless.pi.enigma.util.EnigmaFormat;
+import blue.endless.pi.enigma.util.MinimapBaseShape;
 
 public record WorldInfo(ObjectElement json, ObjectElement metaJson, List<RoomInfo> rooms, List<AreaInfo> areas) {
 	
@@ -280,13 +281,30 @@ public record WorldInfo(ObjectElement json, ObjectElement metaJson, List<RoomInf
 			// Check world version
 			double enigmaVersion = worldMetaObj.getPrimitive("version").asDouble().orElse(-1.0);
 			
-			if ((enigmaVersion - EnigmaFormat.CURRENT_VERSION) > 0.0001) {
-				throw new SyntaxError("Cannot open this world version (version: "+enigmaVersion+")");
-			}
+			// Ignore version for testing
+			//if ((enigmaVersion - EnigmaFormat.CURRENT_VERSION) > 0.0001) {
+			//	throw new SyntaxError("Cannot open this world version (version: "+enigmaVersion+")");
+			//}
 			
 			ObjectElement worldObj = Jankson.readJsonObject(new ByteArrayInputStream(files.get(1)));
 			
 			// We can do additional validation here but let's try to load anything we can.
+			
+			String fileName = worldFile.getFileName().toString();
+			Path basePath = worldFile.getParent();
+			if (fileName.endsWith(".mp_world")) {
+				fileName = fileName.substring(0, fileName.length()-9);
+			}
+			String metaJsonName = fileName + ".meta.json";
+			String worldJsonName = fileName + ".json";
+			
+			BufferedWriter metaWriter = Files.newBufferedWriter(basePath.resolve(metaJsonName));
+			Jankson.writeJson(worldMetaObj, metaWriter, JsonWriterOptions.STRICT);
+			metaWriter.flush(); metaWriter.close();
+			
+			BufferedWriter worldWriter = Files.newBufferedWriter(basePath.resolve(worldJsonName));
+			Jankson.writeJson(worldObj, worldWriter, JsonWriterOptions.STRICT);
+			worldWriter.flush(); worldWriter.close();
 			
 			return WorldInfo.of(worldObj, worldMetaObj);
 		}

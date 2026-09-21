@@ -14,8 +14,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import blue.endless.pi.enigma.ItemCategory;
-import blue.endless.pi.enigma.ItemType;
+import blue.endless.pi.enigma.util.ItemCategory;
+import blue.endless.pi.enigma.util.ItemType;
 import blue.endless.pi.enigma.wrapper.MapObjectInfo;
 import blue.endless.pi.gui.layout.Axis;
 import blue.endless.pi.gui.layout.LinearLayout;

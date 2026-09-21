@@ -39,11 +39,12 @@ public interface ViewContext {
 		setView(pop());
 	}
 
+	public void setMainPanel(JComponent component);
 	public void setRightPanel(JComponent component);
 	public void setStatusLine(JComponent component);
 	
-	public boolean isUnsaved();
-	public void markUnsaved();
-	public void clearUnsaved();
+	public boolean isSaved();
+	public void clearSaved();
+	public void markSaved();
 
 }

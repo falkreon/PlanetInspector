@@ -13,10 +13,10 @@ import blue.endless.jankson.api.document.LongElement;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
-import blue.endless.pi.enigma.Direction;
-import blue.endless.pi.enigma.DoorType;
-import blue.endless.pi.enigma.MinimapBaseShape;
-import blue.endless.pi.enigma.Wall;
+import blue.endless.pi.enigma.util.Direction;
+import blue.endless.pi.enigma.util.DoorType;
+import blue.endless.pi.enigma.util.MinimapBaseShape;
+import blue.endless.pi.enigma.util.Wall;
 import blue.endless.pi.gui.PlanetView;
 import blue.endless.pi.gui.Tileset;
 

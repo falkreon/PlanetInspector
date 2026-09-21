@@ -4,10 +4,11 @@ import java.util.Optional;
 
 
 import blue.endless.jankson.api.document.ObjectElement;
-import blue.endless.pi.enigma.ItemType;
-import blue.endless.pi.enigma.EnemyType;
 import blue.endless.pi.gui.WorldEditor;
 import blue.endless.pi.gui.view.ViewerFrame;
+import blue.endless.pi.enigma.util.EnemyType;
+import blue.endless.pi.enigma.util.ItemType;
+import blue.endless.pi.gui.TestFrame;
 import blue.endless.pi.gui.Tileset;
 
 public class App {
@@ -16,14 +17,15 @@ public class App {
 		Tileset.init();
 		BGM.init();
 		
-		Optional<ObjectElement> itemsJson = Assets.readObject("items/items.json");
-		if (itemsJson.isPresent()) {
-			ItemType.load(itemsJson.get());
-		}
-		Optional<ObjectElement> enemiesJson = Assets.readObject("enemies/enemies.json");
-		if (enemiesJson.isPresent()) {
-			EnemyType.load(enemiesJson.get());
-		}
+		Assets.readObject("items/items.json").ifPresent(ItemType::load);
+		Assets.readObject("enemies/enemies.json").ifPresent(EnemyType::load);
+		
+		/*
+		TestFrame viewer = new TestFrame();
+		viewer.setTitle("Planet Inspector Tests");
+		viewer.setIconImage(Assets.getCachedImage("icon.png").orElseGet(Assets::missingImage));
+		viewer.setVisible(true);
+		*/
 		
 		ViewerFrame viewer = new ViewerFrame();
 		viewer.setTitle("Planet Inspector");
@@ -31,6 +33,7 @@ public class App {
 		viewer.setVisible(true);
 		
 		viewer.setView(new WorldEditor(viewer));
+		
 		//EditorFrame editor = new EditorFrame();
 		//editor.setVisible(true); // Launch the app proper!
 		//ThemeSettings.showSettingsDialog(editor, Dialog.ModalityType.APPLICATION_MODAL);

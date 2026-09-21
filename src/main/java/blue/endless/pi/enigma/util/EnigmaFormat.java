@@ -1,4 +1,4 @@
-package blue.endless.pi.enigma;
+package blue.endless.pi.enigma.util;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;

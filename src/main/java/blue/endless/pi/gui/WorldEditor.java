@@ -40,10 +40,10 @@ import blue.endless.pi.BGM;
 import blue.endless.pi.Preferences;
 import blue.endless.pi.SchemaType;
 import blue.endless.pi.datastruct.Vec2;
-import blue.endless.pi.enigma.EnemyType;
-import blue.endless.pi.enigma.EnigmaFormat;
-import blue.endless.pi.enigma.Hazard;
-import blue.endless.pi.enigma.ObjectType;
+import blue.endless.pi.enigma.util.EnemyType;
+import blue.endless.pi.enigma.util.EnigmaFormat;
+import blue.endless.pi.enigma.util.Hazard;
+import blue.endless.pi.enigma.util.ObjectType;
 import blue.endless.pi.enigma.wrapper.AreaInfo;
 import blue.endless.pi.enigma.wrapper.RoomInfo;
 import blue.endless.pi.enigma.wrapper.ScreenInfo;
@@ -148,7 +148,7 @@ public class WorldEditor extends AbstractView implements CloseAware {
 				try {
 				EnigmaFormat.prepareForSave(world);
 				world.save(thisFile.toPath());
-				context.clearUnsaved();
+				context.markSaved();
 				System.out.println("Saved.");
 				} catch (IOException | SyntaxError ex) {
 					ex.printStackTrace();
@@ -228,7 +228,7 @@ public class WorldEditor extends AbstractView implements CloseAware {
 				long seconds = System.currentTimeMillis() / 1_000L; // Seconds since midnight, january 1, 1970
 				long newId = seconds * 1000L + (long) (Math.random() * 999);
 				world.metaJson().put("id", PrimitiveElement.of(newId));
-				context.markUnsaved();
+				context.clearSaved();
 				//planetView.getView().setDirty(true);
 				setWorldProperties();
 			}
@@ -257,7 +257,7 @@ public class WorldEditor extends AbstractView implements CloseAware {
 						screen.clean();
 					}
 				}
-				context.markUnsaved();
+				context.clearSaved();
 				//planetView.getView().setDirty(true);
 			}
 		});
@@ -318,7 +318,7 @@ public class WorldEditor extends AbstractView implements CloseAware {
 				WorldInfo world = WorldInfo.load(file.toPath());
 				WorldEditor.this.setWorld(world);
 				worldMenu.setEnabled(true);
-				context.clearUnsaved();
+				context.markSaved();
 				planetView.repaint();
 			} catch (IOException | SyntaxError ex) {
 				ex.printStackTrace();
@@ -377,7 +377,7 @@ public class WorldEditor extends AbstractView implements CloseAware {
 						screen.json().getObject("MAP").put("area", PrimitiveElement.of(areaNumber));
 					}
 					//planetView.getView().setDirty(true);
-					context.markUnsaved();
+					context.clearSaved();
 					planetView.repaint();
 				}
 			}
@@ -447,7 +447,7 @@ public class WorldEditor extends AbstractView implements CloseAware {
 	}
 	
 	public boolean attemptClose() {
-		if (context.isUnsaved()) {
+		if (!context.isSaved()) {
 		//if (planetView.getView().isDirty()) {
 			// TODO: Fix this confirmation dialog because it's kind of confusing as is
 			
@@ -499,7 +499,7 @@ public class WorldEditor extends AbstractView implements CloseAware {
 			WorldInfo world = WorldInfo.load(worldFile.toPath());
 			this.setWorld(world);
 			worldMenu.setEnabled(true);
-			context.clearUnsaved();
+			context.markSaved();
 			planetView.repaint();
 		} catch (IOException | SyntaxError ex) {
 			ex.printStackTrace();
@@ -541,7 +541,7 @@ public class WorldEditor extends AbstractView implements CloseAware {
 			
 			world.save(outputFile.toPath());
 			
-			context.clearUnsaved();
+			context.markSaved();
 			//planetView.getView().setDirty(false);
 			System.out.println("Saved.");
 		} catch (IOException | SyntaxError ex) {
@@ -677,7 +677,7 @@ public class WorldEditor extends AbstractView implements CloseAware {
 		
 		//planetView.getView().setDirty(true);
 		validateWorld();
-		context.markUnsaved();
+		context.clearSaved();
 		planetView.repaint();
 	}
 	

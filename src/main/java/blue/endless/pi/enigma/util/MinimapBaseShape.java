@@ -1,4 +1,4 @@
-package blue.endless.pi.enigma;
+package blue.endless.pi.enigma.util;
 
 public enum MinimapBaseShape {
 	BLANK(1),

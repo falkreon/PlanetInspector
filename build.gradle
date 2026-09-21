@@ -4,11 +4,14 @@ plugins {
 }
 
 group = "blue.endless.pi";
-archivesBaseName = "PlanetInspector";
+base {
+	archivesName = "PlanetInspector";
+}
 version = "1.0.0-rc.2";
 
-sourceCompatibility = 1.21;
-targetCompatibility = 1.21;
+java {
+	sourceCompatibility = targetCompatibility = JavaVersion.VERSION_21;
+}
 
 repositories {
 	mavenCentral();

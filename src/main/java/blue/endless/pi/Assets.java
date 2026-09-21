@@ -14,7 +14,7 @@ import javax.imageio.ImageIO;
 import blue.endless.jankson.api.Jankson;
 import blue.endless.jankson.api.SyntaxError;
 import blue.endless.jankson.api.document.ObjectElement;
-import blue.endless.pi.enigma.Palette;
+import blue.endless.pi.enigma.util.Palette;
 import blue.endless.pi.gui.Tileset;
 
 public class Assets {

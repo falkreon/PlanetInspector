@@ -36,9 +36,9 @@ import blue.endless.jankson.api.document.ValueElement;
 import blue.endless.pi.Assets;
 import blue.endless.pi.SchemaType;
 import blue.endless.pi.datastruct.Vec2;
-import blue.endless.pi.enigma.Direction;
-import blue.endless.pi.enigma.DoorConnectionLogic;
-import blue.endless.pi.enigma.Palette;
+import blue.endless.pi.enigma.util.Direction;
+import blue.endless.pi.enigma.util.DoorConnectionLogic;
+import blue.endless.pi.enigma.util.Palette;
 import blue.endless.pi.enigma.wrapper.AreaInfo;
 import blue.endless.pi.enigma.wrapper.DoorInfo;
 import blue.endless.pi.enigma.wrapper.ElevatorInfo;
@@ -374,7 +374,7 @@ public class PlanetView extends JPanel implements MouseListener, MouseMotionList
 			}
 			
 			if (!collision) {
-				context.markUnsaved();
+				context.clearSaved();
 				
 				for(ScreenInfo s : room.screens()) {
 					s.setPosition(s.x() + dx, s.y() + dy);

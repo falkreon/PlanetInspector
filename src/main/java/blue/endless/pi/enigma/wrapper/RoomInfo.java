@@ -21,9 +21,9 @@ import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
-import blue.endless.pi.enigma.EnemyType;
-import blue.endless.pi.enigma.EnigmaFormat;
-import blue.endless.pi.enigma.Palette;
+import blue.endless.pi.enigma.util.EnemyType;
+import blue.endless.pi.enigma.util.EnigmaFormat;
+import blue.endless.pi.enigma.util.Palette;
 
 public record RoomInfo(ObjectElement json, ObjectElement general, List<ScreenInfo> screens) {
 	public static RoomInfo of(ObjectElement roomJson) {

@@ -22,7 +22,7 @@ public class ViewerFrame extends JFrame implements ViewContext {
 	JButton backButton = new JButton("Back");
 	JPanel statusBar;
 	View currentView;
-	boolean unsaved;
+	boolean saved;
 	
 	public ArrayDeque<View> stack = new ArrayDeque<>();
 	
@@ -136,6 +136,12 @@ public class ViewerFrame extends JFrame implements ViewContext {
 	}
 	
 	@Override
+	public void setMainPanel(JComponent component) {
+		splitPane.setLeftComponent(component);
+		this.repaint();
+	}
+	
+	@Override
 	public void setRightPanel(JComponent component) {
 		splitPane.setRightComponent(component);
 		this.repaint();
@@ -148,6 +154,8 @@ public class ViewerFrame extends JFrame implements ViewContext {
 			statusBar.add(backButton, BorderLayout.WEST);
 		}
 		statusBar.add(component, BorderLayout.CENTER);
+		
+		this.repaint();
 	}
 	
 	@Override
@@ -170,18 +178,19 @@ public class ViewerFrame extends JFrame implements ViewContext {
 	}
 	
 	@Override
-	public void markUnsaved() {
-		this.unsaved = true;
+	public void clearSaved() {
+		this.saved = false;
 	}
 	
 	@Override
-	public void clearUnsaved() {
-		this.unsaved = false;
+	public void markSaved() {
+		this.saved = true;
 	}
 	
 	@Override
-	public boolean isUnsaved() {
-		return this.unsaved;
+	public boolean isSaved() {
+		return this.saved;
 	}
+
 	
 }

@@ -5,12 +5,12 @@ import java.awt.image.BufferedImage;
 import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
-import blue.endless.pi.enigma.ItemType;
-import blue.endless.pi.enigma.ObjectType;
 import blue.endless.pi.Assets;
-import blue.endless.pi.enigma.Direction;
-import blue.endless.pi.enigma.DoorType;
-import blue.endless.pi.enigma.EnemyType;
+import blue.endless.pi.enigma.util.Direction;
+import blue.endless.pi.enigma.util.DoorType;
+import blue.endless.pi.enigma.util.EnemyType;
+import blue.endless.pi.enigma.util.ItemType;
+import blue.endless.pi.enigma.util.ObjectType;
 
 public class MapObjectInfo {
 	protected final ScreenInfo screen;

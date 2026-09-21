@@ -56,7 +56,7 @@ public class AreaView extends AbstractView {
 		areaPanel.setLayout(layout);
 		
 		properties.setEditCallback(() -> {
-			context.markUnsaved();
+			context.clearSaved();
 			areaPanel.repaint();
 		});
 		
@@ -96,13 +96,13 @@ public class AreaView extends AbstractView {
 				newArea.put("color", PrimitiveElement.of(0x808080));
 				areasArray.add(newArea);
 				world.areas().add(new AreaInfo(newArea));
-				context.markUnsaved();
+				context.clearSaved();
 				refreshAreas();
 			}
 		});
 		areaPanel.add(plus);
 		
-		areaPanel.validate();
+		areaPanel.invalidate();
 		scroll.setViewportView(areaPanel);
 	}
 	

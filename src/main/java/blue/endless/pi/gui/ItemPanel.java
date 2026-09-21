@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import blue.endless.pi.ItemStack;
-import blue.endless.pi.enigma.ItemType;
+import blue.endless.pi.enigma.util.ItemType;
 import blue.endless.pi.gui.layout.CardLayout;
 
 public class ItemPanel extends JPanel {

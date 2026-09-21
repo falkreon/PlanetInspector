@@ -20,7 +20,7 @@ import javax.swing.border.TitledBorder;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
-import blue.endless.pi.enigma.ItemType;
+import blue.endless.pi.enigma.util.ItemType;
 import blue.endless.pi.enigma.wrapper.RoomInfo;
 import blue.endless.pi.enigma.wrapper.ScreenInfo;
 import blue.endless.pi.enigma.wrapper.WorldInfo;
@@ -238,7 +238,7 @@ public class ProgressionOrderView extends AbstractView {
 		Entry selectedItem = availableItems.remove(selected);
 		activeItems.addElement(selectedItem);
 		world.json().getArray("PROGRESSION_LOG").add(selectedItem.json());
-		context.markUnsaved();
+		context.clearSaved();
 		mainPanel.repaint();
 		rightPanel.repaint();
 	}
@@ -250,7 +250,7 @@ public class ProgressionOrderView extends AbstractView {
 		Entry subject = activeItems.remove(selected);
 		availableItems.addElement(subject);
 		world.json().getArray("PROGRESSION_LOG").remove(selected);
-		context.markUnsaved();
+		context.clearSaved();
 		mainPanel.repaint();
 		rightPanel.repaint();
 	}
@@ -265,7 +265,7 @@ public class ProgressionOrderView extends AbstractView {
 		ValueElement elem = world.json().getArray("PROGRESSION_LOG").remove(selected);
 		world.json().getArray("PROGRESSION_LOG").add(selected - 1, elem);
 		activeList.setSelectedIndex(selected - 1);
-		context.markUnsaved();
+		context.clearSaved();
 		mainPanel.repaint();
 		rightPanel.repaint();
 	}
@@ -281,7 +281,7 @@ public class ProgressionOrderView extends AbstractView {
 		ValueElement elem = world.json().getArray("PROGRESSION_LOG").remove(selected);
 		world.json().getArray("PROGRESSION_LOG").add(selected + 1, elem);
 		activeList.setSelectedIndex(selected + 1);
-		context.markUnsaved();
+		context.clearSaved();
 		mainPanel.repaint();
 		rightPanel.repaint();
 	}

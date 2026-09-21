@@ -6,7 +6,7 @@ import java.util.List;
 import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
-import blue.endless.pi.enigma.ItemType;
+import blue.endless.pi.enigma.util.ItemType;
 
 public record ItemStack(ItemType item, int count) {
 	public ItemStack(ItemType item) {

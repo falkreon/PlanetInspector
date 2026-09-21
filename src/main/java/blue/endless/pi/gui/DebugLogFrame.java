@@ -20,7 +20,7 @@ import blue.endless.jankson.api.document.KeyValuePairElement;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
-import blue.endless.pi.enigma.ItemType;
+import blue.endless.pi.enigma.util.ItemType;
 import blue.endless.pi.enigma.wrapper.WorldInfo;
 
 public class DebugLogFrame extends JFrame implements ListSelectionListener {
