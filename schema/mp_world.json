@@ -68,25 +68,47 @@
 				"auto_map": { "$ref": "#/$defs/MessyBool" },
 				"freeze_effect_time_by_hazard": { "$ref": "#/$defs/MessyBool" },
 				"boss_missiles": { "$ref": "#/$defs/MessyBool" },
+				"show_boss_energy": { "$ref": "#/$defs/MessyBool" },
+				"room_info_show_designers": { "$ref": "#/$defs/MessyBool" },
+				"route_replay_reveal_all": { "$ref": "#/$defs/MessyBool" },
 				
 				
 				"door_red_health": { "type": "integer" },
 				"door_purple_health": { "type": "integer" },
 				"magnet_energize_time": { "type": "integer" },
-				"enemy_death_memory_distance": { "type": "integer" },
 				"block_crumble_time": { "type": "integer" },
-				"enemy_random_spawn_rate": { "type": "integer" },
-				"map_scanner_size": { "type": "integer" },
+				"freeze_effect_time": { "type": "integer" },
+				"block_reform_time": { "type": "integer" },
 				
-				"save_style": { "const": 0 },
-				"enemy_death_memory": { "const": 0 },
+				"enemy_random_spawn_rate": { "type": "integer" },
+				"enemy_death_memory_distance": { "type": "integer" },
+				"enemy_death_memory_time": { "type": "integer" },
+				"enemy_death_recovery_time": { "type": "integer" },
+				
+				"map_scanner_size": { "type": "integer" },
+				"map_scanner_time": { "type": "integer" },
+				
+				"room_info_indicate_major": { "description": "Data type unknown", "default": 0 },
+				"save_style": { "description": "Data type unknown", "default": 0 },
+				"enemy_death_memory": { "description": "Data type unknown", "default": 0 },
 				
 				"map_marker_icons": {
-					""
-					
-					
+					"type": "array",
+					"items": {
+						"type": "integer"
+					}
 				}
-			}
+			},
+			"required": [
+				"energy_refills", "route_replay", "door_red_health", "magnet_energize_time", "ammo_refills",
+				"enemy_death_memory_distance", "enemy_random_spawning", "map_revealed", "room_info_show_popup",
+				"door_purple_health", "auto_map", "block_crumble_time", "freeze_effect_time_by_hazard",
+				"save_style", "enemy_death_memory", "enemy_random_spawn_rate", "map_scanner_size", "boss_missiles",
+				"room_info_show_on_map", "map_marker_icons", "show_boss_energy", "freeze_effect_time",
+				"block_reform_time", "room_info_show_designers", "route_replay_reveal_all", "enemy_death_memory_time",
+				"room_info_indicate_major", "map_scanner_time"
+			],
+			"additionalProperties": false
 		},
 		"LIQUIDS_DAMAGE": { "type": "array" },
 		"SAMUS": { "type": "object" },
