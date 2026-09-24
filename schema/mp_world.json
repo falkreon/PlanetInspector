@@ -20,10 +20,87 @@
 	"properties": {
 		"MODES": { "type": "array" },
 		"LOGS": { "type": "array" },
-		"SECTORS": { "type": "array" },
+		"SECTORS": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"description": "The name of the Sector.",
+						"type": "string"
+					},
+					"x": {
+						"description": "The number of screens from the left of the Sector map to the left edge of the Sector.",
+						"type": "integer"
+					},
+					"y": {
+						"description": "The number of screens from the top of the Sector map to the top edge of the Sector.",
+						"type": "integer"
+					},
+					"width": {
+						"description": "The number of screens wide the Sector is. Also affects the in-sector map of Areas.",
+						"type": "integer"
+					},
+					"height": {
+						"description": "The number of screens tall the Sector is. Also affects the in-sector map of Areas.",
+						"type": "integer"
+					},
+					"connections": {
+						"description": "A list of sector Ids for other Sectors this Sector has teleport connections to.",
+						"type": "array",
+						"items": {
+							"type": "integer"
+						}
+					},
+					"elevator_screens": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"x": {
+									"description": "The x coordinate of the elevator screen relative to the Sector x.",
+									"type": "integer"
+								},
+								"y": {
+									"description": "The y coordinate of the elevator screen relative to the Sector y.",
+									"type": "integer"
+								}
+							},
+							"required": [ "x", "y" ]
+						}
+					}
+				},
+				"required": [ "x", "y", "width", "height", "connections", "elevator_screens" ],
+				"additionalProperties": false
+			}
+		},
 		"TIMERS": { "type": "array" },
-		"AREAS": { "type": "array" },
-		"ROOMS": { "type": "array" },
+		"AREAS": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"description": "The name of the Area",
+						"type": "string"
+					},
+					"color": {
+						"description": "A color, in packed 8.8.8 BGR integer format.",
+						"type": "integer"
+					},
+					"bgm": {
+						"description": "The name of the default background music track for the Area. Rooms that specify the empty string as their music will use this track instead.",
+						"type": "string"
+					}
+				},
+				"required": [ "name", "color", "bgm" ],
+				"additionalProperties": false
+			}
+		},
+		"ROOMS": {
+			"type": "array",
+			"$comment": "will be addressed in a separate schema file"
+		},
 		
 		"HAZARDS": {
 			"type": "array",
@@ -43,7 +120,6 @@
 			}
 		},
 		
-		"GENERATION_DEBUG_LOG": { "type": "object" },
 		"OBJECTIVES": {
 			"type": "object",
 			"properties": {
@@ -52,7 +128,10 @@
 					"description": "Type uncertain! It's 1.0 in practice!",
 					"$ref": "#/$defs/MessyBool"
 				},
-			}
+				"list": { "type": "array" }
+			},
+			"required": [ "enabled" , "required", "list" ],
+			"additionalProperties": false
 		},
 		"RULES": {
 			"type": "object",
@@ -110,17 +189,97 @@
 			],
 			"additionalProperties": false
 		},
-		"LIQUIDS_DAMAGE": { "type": "array" },
-		"SAMUS": { "type": "object" },
-		"EVENTS": { "type": "array" },
-		"SYSTEM_PALETTES": { "type": "array" },
-		"VALUES": { "type": "array" },
-		"PROGRESSION_LOG": { "type": "array" },
-		"GUNSHIP": { "type": "object" },
-		"ENEMY_DATA": { "type": "array" },
-		"CUTSCENES": { "type": "array" },
-		"FLAGS": { "type": "array" },
-		"ITEM_DATA": { "type": "array" },
+		
+		"LIQUIDS_DAMAGE": {
+			"type": "array",
+			"items": { "type": "integer" }
+		},
+		
+		"SAMUS": {
+			"type": "object"
+		},
+		
+		"PROGRESSION_LOG": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"x": { "type": "integer" },
+					"y": { "type": "integer" },
+					"sector": { "type": "integer" },
+					"room_id": { "type": "integer" },
+					"item": { "type": "integer" },
+					"area": { "type": "integer" },
+				},
+				"required": [ "x", "y", "sector", "room_id", "item", "area" ],
+				"additionalProperties": false
+			}
+		
+		},
+		
+		"GUNSHIP": {
+			"type": "object",
+			"properties": {
+				"starting_landsites": { "type": "array", "default": [] },
+				"recharge_enabled": { "$ref": "#/$defs/MessyBool", "default": true },
+				"starting_position": { "type": "integer", "default": 0 },
+				"starting_inventory": { "type": "array", "default": [] },
+				"save_available": { "$ref": "#/$defs/MessyBool", "default": true },
+				"map_scanner_link": { "$ref": "#/$defs/MessyBool", "default": false }
+			},
+			"required": [
+				"starting_landsites", "recharge_enabled", "starting_position",
+				"starting_inventory", "save_available", "map_scanner_link"
+			],
+			"additionalProperties": false
+		},
+		
+		"ENEMY_DATA": {
+			"type": "array",
+			"description": "Each position in this array corresponds to an Enemy Id.",
+			"items": {
+				"type": "array",
+				"description": "Each position in this array corresponds to an upgrade level for this enemy.",
+				"items": {
+					"type": "object",
+					"properties": {
+						"hp": { "type": "integer", "minimum": 1 },
+						"damage": { "type": "integer" },
+						"palette_data": {
+							"type": "array",
+							"description": "Each position in this array corresponds to an animation step(?) for this palette. Typically there is only one step.",
+							"items": {
+								"type": "array",
+								"description": "This integer triplet describes three palette colors to use for the enemy.",
+								"minItems": 3,
+								"maxItems": 3,
+								"items": {
+									"type": "integer"
+								}
+							}
+						}
+					},
+					"required": [ "hp", "damage", "palette_data" ],
+					"additionalProperties": false
+				}
+			}
+		},
+		
+		"ITEM_DATA": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"hidden": { "$ref": "#/$defs/MessyBool" },
+					"parameters": {
+						"type": "object",
+						"description": "The exact format of each item_data object depends on the corresponding item."
+					}
+				},
+				"required": [ "hidden", "parameters" ],
+				"additionalProperties": false
+			}
+		},
 		
 		"GENERAL": {
 			"type": "object",
@@ -147,6 +306,55 @@
 			"required": [ "escape", "slim", "starting_spawn_point_id", "gunship_hints", "gate_bosses" ],
 			"additionalProperties": false
 		},
+		
+		"GENERATION_DEBUG_LOG": {
+			"type": "object",
+			"description": "Freeform json object containing debug information. Created by enigma but not used by the game engine.",
+			"properties": {
+				"core_pool": {
+					"type": "array",
+					"items": { "type": "integer" }
+				},
+				"major_pool": {
+					"type": "array",
+					"items": { "type": "integer" }
+				},
+				"starting_items": {
+					"type": "array",
+					"items": { "type": "integer" }
+				},
+				"minor_pools": {
+					"type": "array",
+					"items": {
+						"type": "array",
+						"items": { "type": "integer" }
+					}
+				},
+				"placed_items": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"id": { "type": "integer" },
+							"room_id": { "type": "integer" },
+							"old_val": { "type": "integer" },
+							"new_val": { "type": "integer" }
+						},
+						"required": [ "id", "room_id", "old_val", "new_val" ],
+						"additionalProperties": false
+					}
+				},
+			},
+			"required": [],
+			"additionalProperties": true
+		},
+		
+		"CUTSCENES": { "type": "array" },
+		"FLAGS": { "type": "array" },
+		"EVENTS": { "type": "array" },
+		"SYSTEM_PALETTES": { "type": "array" },
+		"VALUES": { "type": "array" },
+		
 	},
 	"required": [
 		"MODES",
