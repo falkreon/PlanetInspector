@@ -1,0 +1,335 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"name": "Planets Room File",
+	"description": "The .mp_room file format, also describing each object in ROOMS[*]",
+	
+	"$defs": {
+		"MessyBool": {
+			"description": "Boolean that often shows up as an integer or double in the file",
+			"oneOf": [
+				{ "type": "boolean" },
+				{ "const": 0, "title": "false" },
+				{ "const": 1, "title": "true" }
+			]
+		}
+	},
+	
+	"type": "object",
+	"properties": {
+		"SCREENS": {
+			"type": "array",
+			"$comment": "will be addressed in a separate schema file"
+		},
+		
+		"PATHING": {
+			"type": "array",
+			"default": [],
+			"items": {
+				"a": { "type": "integer" },
+				"b": { "type": "integer" },
+				"meta": {
+					"type": "integer",
+					"description": "Currently contains the impassable flag. May gain extra bitmask bits later."
+				},
+				"base": {
+					"type": "integer",
+					"description": "Bitmask of items unconditionally required for this path."
+				},
+				"sets": {
+					"type": "array",
+					"description": "Each element in the array is a set. All sets must pass for this path's pathing requirements to be met.",
+					"items": {
+						"type": "array",
+						"description": "Each element in the array is a section. One section in each set must pass for the set to pass.",
+						"items": {
+							"type": "integer",
+							"description": "A bitmask of items required by pathing. If the player has all items indicated by the bitmask, the section passes."
+						}
+					}
+				}
+			},
+			"required": [ "a", "b", "meta", "base", "sets" ],
+			"additionalProperties": false
+		},
+		"HAZARD": {
+			"type": "object",
+			"properties": {
+				"tanks": { "type": "integer", "default": 1 },
+				"style": { "type": "integer", "default": 0 },
+				"color": { "type": "integer", "default": 22 },
+				"set": { "$ref": "#/$defs/MessyBool", "default": false },
+				"type": { "type": "integer", "default": 0 },
+				"block_type": { "type": "integer", "default": 1 }
+			},
+			"required": [ "tanks", "style", "color", "set", "type", "block_type" ],
+			"additionalProperties": false
+		},
+		"STATS": {
+			"type": "object",
+			"description": "Status block with precompiled room information about the room.",
+			
+			"properties": {
+				"pathing_items": {
+					"description": "Bitmask of items (items required to arrive here?)",
+					"type": "integer"
+				},
+				"combat": {
+					"description": "True if this Room is considered to be a 'combat room'.",
+					"$ref": "#/$defs/MessyBool"
+				},
+				"items": {
+					"description": "Count of item pickup locations in the Room.",
+					"type": "integer"
+				},
+				"potential_major": {
+					"description": "True if there was a major item pickup location in the original room design(?)",
+					"$ref": "#/$defs/MessyBool"
+				},
+				"doors": {
+					"type": "integer"
+				},
+				"door_directions": {
+					"description": "Bitmask of door directions present.",
+					"type": "integer"
+				},
+				"elevators": {
+					"description": "An array of two values: The number of elevators pointing up, and the number of elevators pointing down.",
+					"type": "array",
+					"items": {
+						"type": "integer"
+					},
+					"minItems": 2,
+					"maxItems": 2
+				},
+				"class": {
+					"type": "integer"
+				},
+				"object_types": {
+					"type": "array",
+					"items": {
+						"type": "integer"
+					}
+				},
+				"landsite": { "$ref": "#/$defs/MessyBool" },
+				"enemy_types": {
+					"description": "List of enemy Id's for all enemies found in the room.",
+					"type": "array",
+					"items": {
+						"type": "integer"
+					}
+				},
+				"boss": {
+					"description": "Enemy Id for the boss in this room if there is one. Otherwise -1.",
+					"type": "integer"
+				},
+				"liquid_types": {
+					"description": "This is supposed to be an array, but it is an integer in practice.",
+					"type": "integer",
+				},
+				"block_types": {
+					"description": "This is supposed to be an array, but it is an integer in practice.",
+					"type": "integer",
+				},
+				"filler": { "$ref": "#/$defs/MessyBool" },
+				"farming": { "$ref": "#/$defs/MessyBool" },
+				"missiles_required": { "$ref": "#/$defs/MessyBool" },
+				"emergency_linear": { "$ref": "#/$defs/MessyBool" },
+				"emergency_open": { "$ref": "#/$defs/MessyBool" },
+				"screens": {
+					"type": "integer"
+				},
+				"alternate_logic": {
+					"description": "Bitmask",
+					"type": "integer"
+				},
+				"region": {
+					"type": "object",
+					"properties": {
+						"list": {
+							"type": "array",
+							"items": {
+								"description": "Integer triplets, possibly xyz coordinates palette colors? But why??",
+								"type": "array",
+								"items": {
+									"type": "integer"
+								},
+								"minItems": 3,
+								"maxItems": 3
+							}
+						},
+						"x1": { "type": "integer" },
+						"y1": { "type": "integer" },
+						"width": { "type": "integer" },
+						"height": { "type": "integer" },
+						"mask": {
+							"type": "array",
+							"items": {
+								"type": "integer"
+							}
+						}
+					},
+					"required": [ "list", "x1", "y1", "width", "height", "mask" ]
+				}
+			},
+			"required": [
+				"emergency_linear", "screens", "object_types", "region", "boss", "alternate_logic", "landsite", "items",
+				"enemy_types", "door_directions", "combat", "potential_major", "class", "pathing_items", "liquid_types",
+				"missiles_required", "elevators", "doors", "farming", "filler", "emergency_open", "block_types"
+			],
+			"additionalProperties": false
+		},
+		
+		"VARIATIONS": {
+			"type": "array",
+			"default": []
+		},
+		
+		"EVENTS": {
+			"type": "array",
+			"default": []
+		},
+		
+		"GENERAL": {
+			"type": "object",
+			"properties": {
+				"threat": { "type": "integer", "default": 0 },
+				"spike_level": { "type": "integer", "default": 1 },
+				"difficulty": { "type": "integer", "default": 0 },
+				"tags": {
+					"description": "A list of tags applied to the Room",
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"default": []
+				},
+				"darkness": { "type": "integer", "default": 0 },
+				"magnet": {
+					"type": "object",
+					"properties": {
+						"use_shader": { "$ref": "#/$defs/MessyBool" },
+						"use_palettes": { "$ref": "#/$defs/MessyBool" },
+						"on_palette": { "type": "integer", "default": 21 },
+						"off_palette": { "type": "integer", "default": 0 }
+					},
+					"required": [ "use_palettes", "on_palette", "use_shader", "off_palette" ],
+					"additionalProperties": false
+				},
+				"classic_pathing": { "$ref": "#/$defs/MessyBool" },
+				"emergency_intended": { "$ref": "#/$defs/MessyBool" },
+				"gravity_multiplier": { "type": "number", "default": 1.0 },
+
+				"areas": {
+					"type": "array",
+					"description": "A list of names of Areas that the Room is thematically and/or mechanically appropriate for",
+					"items": { "type": "string" }
+				},
+				
+				"sector": { "type": "integer" },
+		 		"name": { "type": "string" },
+				"powered": { "$ref": "#/$defs/MessyBool" },
+				"focus": {
+					"type": "array",
+					"items": {
+						"type": "integer"
+					}
+				},
+				"bgm": {
+					"type": "string",
+					"description": "The name of this room's bgm. Using the empty string is common, which defaults to the Area bgm.",
+					"default": ""
+				},
+				"no_floor": { "$ref": "#/$defs/MessyBool", "default": false },
+				"designer": {
+					"type": "string"
+				},
+				"vision_limit": {
+					"default": 0,
+					"description": "Type unknown"
+				},
+				"miniboss": {
+					"type": "integer", "default": 0
+				},
+				"area": {
+					"description": "zero-based index into the AREAS list of the Area the Room is in.",
+					"type": "integer"
+				},
+				"bg_color": {
+					"type": "integer", "default": 64
+				}
+			},
+			"required": [
+				"threat", "spike_level", "darkness", "tags", "magnet", "classic_pathing", "emergency_intended",
+				"difficulty"
+			],
+			"additionalProperties": false
+		},
+		
+		"PALETTES": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"f": {
+						"type": "array",
+						"description": "Each item in the array is a frame of palette animation. For most entries there will just be one frame.",
+						"items": {
+							"type": "array",
+							"description": "A frame of palette data - three colors for a map tile at that moment in time.",
+							"items": { "type": "integer" },
+							"minItems": 3,
+							"maxItems": 3
+						}
+					},
+					"s": {
+						"type": "integer",
+						"description": "delay between palette animation frames",
+						"default": 0
+					}
+				},
+				"required": [ "f", "s" ],
+				"additionalProperties": false
+			}
+		},
+		"PARALLAX": {
+			"type": "object",
+			"properties": {
+				"type": { "type": "integer", "default": 0 },
+				"tiles": {
+					"type": "array",
+					"minItems": 20,
+					"maxItems": 20
+				},
+				"scroll_speed": {
+					"type": "array",
+					"items": { "type": "number", "default": 0.0 },
+					"minItems": 20,
+					"maxItems": 20
+				},
+				"wrap_speed": { "type": "number", "default": 0.0 },
+				"scroll_auto": { "description": "Type unknown", "default": 0.0 }
+			},
+			"required": [ "type", "tiles", "scroll_speed", "wrap_speed", "scroll_auto" ],
+			"additionalProperties": false
+		},
+		"META": {
+			"type": "object",
+			"properties": {
+				"id": { "type": "integer" },
+				"playable": { "$ref": "#/$defs/MessyBool" },
+				"last_patch": { "type": "integer", "default": 5 },
+				"content_version": { "type": "integer", "default": 1 },
+				"last_save": { "type": "number" }
+			},
+			"required": [ "id", "playable", "last_patch", "content_version", "last_save" ],
+			"additionalProperties": false
+		}
+	},
+	"required": [
+		"SCREENS", "PATHING", "HAZARD", "STATS", "VARIATIONS", "EVENTS", "GENERAL", "PALETTES",
+		"PARALLAX", "META"
+	],
+	"additionalProperties": false
+}
+
+

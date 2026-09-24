@@ -1,0 +1,152 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"name": "Screen object",
+	"description": "One screen in a room",
+	
+	"$defs": {
+		"MessyBool": {
+			"description": "Boolean that often shows up as an integer or double in the file",
+			"oneOf": [
+				{ "type": "boolean" },
+				{ "const": 0, "title": "false" },
+				{ "const": 1, "title": "true" }
+			]
+		},
+		
+		"DoorType": {
+			"oneOf": [
+				{ "const": 0, "title": "zero_blue" },
+				{ "const": 1, "title": "blue" },
+				{ "const": 2, "title": "missile" },
+				{ "const": 3, "title": "boss" },
+				{ "const": 4, "title": "super_missile" },
+				{ "const": 5, "title": "power_bomb" },
+				{ "const": 6, "title": "impassable" },
+				{ "const": 7, "title": "mother_brain" },
+				{ "const": 8, "title": "combat" },
+				{ "const": 9, "title": "unknown_cyan" },
+				{ "const":10, "title": "unknown_dark_blue" }
+			],
+		},
+		
+		"Direction": {
+			"oneOf": [
+				{ "const": 1, "title": "east" },
+				{ "const": 2, "title": "north" },
+				{ "const": 3, "title": "west" },
+				{ "const": 4, "title": "south" },
+			]
+		}
+	},
+
+	"type": "object",
+	"properties": {
+		"x": {
+			"type": "integer",
+			"description": "The x coordinate of the Screen in minimap cells, relative to the containing Room's x."
+		},
+		"y": {
+			"type": "integer",
+			"description": "The y coordinate of the Screen in minimap cells, relative to the containing Room's y."
+		},
+		"boss": {
+			"oneOf": [
+				{ "type": "integer" },
+				{ "const": false }
+			]
+		},
+		
+		"BLOCKS": {
+			"type": "array"
+		},
+		
+		"ELEVATORS": {
+			"type": "array"
+		},
+		
+		"DOORS": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"description": "The Room-unique Id of this door.",
+						"type": "integer"
+					},
+					"type": { "$ref": "#/$defs/DoorType" },
+					"pos":  { "$ref": "#/$defs/Direction" },
+					"x": {
+						"description": "The number of pixels from the left of the Screen to the center of the shootable bubble part of this Door",
+						"type": "integer"
+					},
+					"y": {
+						"description": "The number of pixels from the top of the Screen to the center of the shootable bubble part of this Door.",
+						"type": "integer"
+					},
+					"dest_id": {
+						"description": "The Room-unique Id of the Door at the other end of this connection.",
+						"type": "integer"
+					},
+					"dest_rm": {
+						"description": "The Room index (position in ROOMS array) of the room at the other end of this connection.",
+						"type": "integer"
+					},
+					"skin": {
+						"description": "The Id of the appearance of the fixed (non-shootable) part of this door.",
+						"type": "integer"
+					},
+					"clear_on_use": {
+						"description": "If this door is opened, or if it's entered from the opposite side, should it clear to the blue type?",
+						"$ref": "#/$defs/MessyBool",
+					},
+					"path_point": {
+						"description": "The Room-unique Path Point Id of this door, referred to by pathing entries.",
+						"type": "integer"
+					}
+				},
+				"required": [
+					"dest_id", "dest_rm", "id", "x", "y", "type", "clear_on_use", "skin", "pos"
+				],
+				"additionalProperties": false
+			}
+		},
+		
+		"SCROLLS": {
+			"type": "array",
+			"items": {
+				"type": "integer",
+				"default": 0
+			},
+			"minItems": 5,
+			"maxItems": 5
+		},
+		
+		"TILES": {
+			"type": "array"
+		},
+		
+		"ENEMIES": {
+			"type": "array"
+		},
+		
+		"MAP": {
+			"type": "object"
+		},
+		
+		"OBJECTS": {
+			"type": "array"
+		},
+		
+		"LIQUIDS": { "type": "array", "default": [] },
+		"DECOR": { "type": "array", "default": [] },
+		"TUBES": { "type": "array", "default": [] }
+	},
+	"required": [
+		"x", "y", "boss",
+		"BLOCKS", "ELEVATORS", "DOORS", "SCROLLS", "TILES", "LIQUIDS", "ENEMIES", "MAP", "DECOR", "OBJECTS", "TUBES"
+	],
+	"additionalProperties": false
+}
+
+
+

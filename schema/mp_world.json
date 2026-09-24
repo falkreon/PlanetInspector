@@ -1,7 +1,7 @@
 {
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
-	"name": "Planets World Format (.mp_world) - Entire File",
-	"description": "Status block with precompiled room information.",
+	"name": "Planets World File",
+	"description": "The .mp_world file format",
 	
 	"$defs": {
 		"MessyBool": {
@@ -99,7 +99,9 @@
 		},
 		"ROOMS": {
 			"type": "array",
-			"$comment": "will be addressed in a separate schema file"
+			"items": {
+				"$ref": "mp_room.json"
+			}
 		},
 		
 		"HAZARDS": {
@@ -116,7 +118,12 @@
 					"name": { "type": "string" },
 					"damage": { "type": "integer" },
 					"visual_style": { "type": "integer" }
-				}
+				},
+				"required": [
+					"touch", "suffocating", "corrupting", "air", "disabling_flags", "visual_color", "name",
+					"damage", "visual_style"
+				],
+				"additionalProperties": false
 			}
 		},
 		
@@ -196,7 +203,183 @@
 		},
 		
 		"SAMUS": {
-			"type": "object"
+			"type": "object",
+			"properties": {
+				"ammo": {
+					"type": "object",
+					"properties": {
+						"tanks_grant_capacity": { "$ref": "#/$defs/MessyBool", "default": true },
+						"universal": { "$ref": "#/$defs/MessyBool", "default": false },
+					},
+					"required": [ "tanks_grant_capacity", "universal" ],
+					"additionalProperties": false
+				},
+				"oxygen_base_capacity": { "type": "integer", "default": 30 },
+				"weapons": {
+					"type": "object",
+					"properties": {
+						"beam_distance": { "type": "integer", "default": 56 },
+						"missile_damage_frozen_multiplier": { "type": "integer", "default": 1 },
+						"power_bomb_base_damage": { "type": "integer", "default": 12 },
+						"speedboost_damage": { "type": "integer", "default": 30 },
+						"bomb_base_damage": { "type": "integer", "default": 3 },
+						"beam_base_cooldown": { "type": "integer", "default": 9 },
+						"bash_damage": { "type": "integer", "default": 10 },
+						"stun_time_mooks": { "type": "integer", "default": 10 },
+						"autofire_cooldown": { "type": "integer", "default": 3 },
+						"stun_time_bosses": { "type": "integer", "default": 10 },
+						"beam_speed": { "type": "number", "default": 5.0 },
+						"shinespark_damage": { "type": "integer", "default": 30 },
+						"charge_time": { "type": "integer", "default": 90 },
+						
+						"stun_bosses": { "$ref": "#/$defs/MessyBool", "default": false },
+						"missile_charge_replace_ammo": { "$ref": "#/$defs/MessyBool", "default": false },
+						"missile_autofire": { "$ref": "#/$defs/MessyBool", "default": false },
+						"stun_mooks": { "$ref": "#/$defs/MessyBool", "default": false },
+						"beam_autofire": { "$ref": "#/$defs/MessyBool", "default": true },
+						"inherit_momentum": { "$ref": "#/$defs/MessyBool", "default": true },
+						
+						"bomb_scale_damage_from_beams": { "description": "type unknown", "default": 1 },
+						"shinespark_damage_from_suits": { "description": "type unknown", "default": 0 },
+						"charge_combo_ammo": { "description": "type unknown", "default": 1 },
+					},
+					"required": [
+						"beam_distance", "missile_damage_frozen_multiplier", "power_bomb_base_damage",
+						"speedboost_damage", "bomb_base_damage", "stun_bosses", "missile_charge_replace_ammo",
+						"bomb_scale_damage_from_beams", "shinespark_damage_from_suits", "charge_combo_ammo",
+						"beam_base_cooldown", "missile_autofire", "stun_mooks", "bash_damage", "stun_time_mooks",
+						"autofire_cooldown", "beam_autofire", "stun_time_bosses", "inherit_momentum", "beam_speed",
+						"shinespark_damage", "charge_time"
+					],
+					"additionalProperties": false
+				},
+				"energy": {
+					"type": "object",
+					"properties": {
+						"hud_type": { "type": "integer", "default": 0 },
+						"tanks_grant_capacity": { "$ref": "#/$defs/MessyBool", "default": true },
+						"last_chance": { "$ref": "#/$defs/MessyBool", "default": true }
+					},
+					"required": [ "hud_type", "tanks_grant_capacity", "last_chance" ],
+					"additionalProperties": false
+				},
+				"load_state": {
+					"type": "integer",
+					"default": 3
+				},
+				"movement": {
+					"type": "object",
+					"properties": {
+						"walk_speed": { "type": "number", "default": 0.75 },
+						"morph_speed": { "type": "number", "default": 0.75 },
+						"air_speed": { "type": "number", "default": 0.75 },
+						"walk_speed_max": { "type": "number", "default": 1.5 },
+						"morph_speed_max": { "type": "number", "default": 1.5 },
+						"air_speed_max": { "type": "number", "default": 1.5 },
+						"gravity": { "type": "number", "default": 0.1 },
+						"gravity_max": { "type": "number", "default": 3.5 },
+						
+						"enable_respin": { "$ref": "#/$defs/MessyBool", "default": false },
+						"enable_downward_aiming": { "$ref": "#/$defs/MessyBool", "default": true },
+						"enable_spider_boost": { "$ref": "#/$defs/MessyBool", "default": true },
+						"enable_midair_morph": { "$ref": "#/$defs/MessyBool", "default": false },
+						"enable_unmorph_jump": { "$ref": "#/$defs/MessyBool", "default": true },
+						
+						"allow_extra_jumps_in_liquids": { "$ref": "#/$defs/MessyBool", "default": false },
+						"force_walljump_momentum": { "$ref": "#/$defs/MessyBool", "default": true },
+						
+						"speed_boost_walk_on_liquids": { "$ref": "#/$defs/MessyBool", "default": true },
+						"speed_boost_bounce_on_liquids": { "$ref": "#/$defs/MessyBool", "default": true },
+						
+						"speed_keep": { "$ref": "#/$defs/MessyBool", "default": true },
+						"speed_keep_airborne": { "$ref": "#/$defs/MessyBool", "default": true },
+						"speed_keep_spider": { "$ref": "#/$defs/MessyBool", "default": true },
+						"speed_auto_run": { "$ref": "#/$defs/MessyBool", "default": true },
+						
+						"screw_shot_blocks": { "$ref": "#/$defs/MessyBool", "default": false },
+						"screw_bomb_blocks": { "$ref": "#/$defs/MessyBool", "default": false },
+						
+						"speed_boost_shot_blocks": { "$ref": "#/$defs/MessyBool", "default": false },
+						"speed_boost_bomb_blocks": { "$ref": "#/$defs/MessyBool", "default": false },
+						
+						"bash_shot_blocks": { "$ref": "#/$defs/MessyBool", "default": false },
+						"bash_bomb_blocks": { "$ref": "#/$defs/MessyBool", "default": false },
+						
+						"spin_jump_timing": { "description": "Type unknown", "default": 0 },
+						"jump_power": { "type": "number", "default": 4.0 },
+						"liquid_slowdown": { "type": "number", "default": 0.6 },
+						"speed_boost_distance": { "type": "integer", "default": 20 },
+						"knockback": {
+							"type": "object",
+							"properties": {
+								"boosting_allowed": { "$ref": "#/$defs/MessyBool", "default": true },
+								"boosting_force": { "type": "number", "default": 4.0 },
+								"boosting_time": { "type": "integer", "default": 30 },
+								"style": { "type": "integer", "minimum": 0, "maximum": 1, "default": 0 },
+								"base_time": { "type": "integer", "default": 12 },
+								"base_h_force": { "type": "number", "default": 4.0 },
+								"base_v_force": { "type": "number", "default": 2.5 }
+							},
+							"required": [
+								"boosting_allowed", "boosting_force", "boosting_time", "style", "base_time",
+								"base_h_force", "base_v_force"
+							],
+							"additionalProperties": false
+						}
+						
+					},
+					"required": [
+						"walk_speed", "enable_respin", "morph_speed_max", "gravity_max", "air_speed_max",
+						"speed_boost_walk_on_liquids", "enable_downward_aiming", "force_walljump_momentum",
+						"speed_keep_spider", "speed_auto_run", "spin_jump_timing", "enable_spider_boost",
+						"jump_power", "gravity", "speed_boost_bounce_on_liquids", "enable_unmorph_jump",
+						"liquid_slowdown", "speed_boost_shot_blocks", "knockback", "screw_shot_blocks",
+						"enable_midair_morph", "speed_keep_airborne", "screw_bomb_blocks", "morph_speed",
+						"walk_speed_max", "speed_boost_bomb_blocks", "allow_extra_jumps_in_liquids",
+						"air_speed", "bash_bomb_blocks", "speed_keep", "bash_shot_blocks", "speed_boost_distance"
+					]
+				},
+				"missiles": {
+					"type": "array",
+					"description": "Stats for the three missile types you can switch between. Default values are typical for basic missiles.",
+					"items": {
+						"type": "object",
+						"properties": {
+							"ammo_use": { "type": "integer", "default": 1 },
+							"screen_limit": { "type": "integer", "default": 10 },
+							"cooldown": { "type": "integer", "default": 18 },
+							"speed_acceleration": { "type": "number", "default": 0.3 },
+							"speed_max": { "type": "number", "default": 3.5 },
+							"damage": { "type": "integer", "default": 8 },
+							"speed_start": { "type": "number", "default": 0.5 },
+						},
+						"required": [
+							"ammo_use", "screen_limit", "cooldown", "speed_acceleration",
+							"speed_max", "damage", "speed_start"
+						],
+						"additionalProperties": false
+					},
+					"minItems": 3,
+					"maxItems": 3
+				},
+				"items": {
+					"type": "object",
+					"properties": {
+						"starting": {
+							"type": "array",
+							"items": { "type": "integer" }
+						}
+					},
+					"required": [ "starting" ],
+					"additionalProperties": false
+				},
+				"invincibility_frames": { "type": "integer", "default": 64 },
+			},
+			"required": [
+				"ammo", "oxygen_base_capacity", "weapons", "energy", "load_state", "movement", "missiles", "items",
+				"invincibility_frames"
+			],
+			"additionalProperties": false
 		},
 		
 		"PROGRESSION_LOG": {
@@ -291,6 +474,7 @@
 						"halfway_point": { "type": "integer" },
 						"dynamic_music": { "$ref": "#/$defs/MessyBool" }
 					},
+					"required": [ "time", "halfway_point", "dynamic_music" ],
 					"additionalProperties": false
 				},
 				"slim": { "$ref": "#/$defs/MessyBool" },
@@ -345,6 +529,7 @@
 					}
 				},
 			},
+			"$comment": "Everything here is optional, and it is good practice for an externally-edited map not to have built-in enigma debug logs, because its automatic generation process will necessarily be different or nonexistant.",
 			"required": [],
 			"additionalProperties": true
 		},
