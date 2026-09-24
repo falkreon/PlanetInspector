@@ -1,0 +1,17 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "DoorType",
+	"oneOf": [
+		{ "const": 0, "title": "zero_blue" },
+		{ "const": 1, "title": "blue" },
+		{ "const": 2, "title": "missile" },
+		{ "const": 3, "title": "boss" },
+		{ "const": 4, "title": "super_missile" },
+		{ "const": 5, "title": "power_bomb" },
+		{ "const": 6, "title": "impassable" },
+		{ "const": 7, "title": "mother_brain" },
+		{ "const": 8, "title": "combat" },
+		{ "const": 9, "title": "unknown_cyan" },
+		{ "const":10, "title": "unknown_dark_blue" }
+	],
+}

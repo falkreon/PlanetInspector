@@ -1,0 +1,113 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"type": "object",
+	"name": "RoomGeneralProperties",
+	"description": "General properties of a room",
+	
+	"$defs": {
+		"MessyBool": {
+			"description": "Boolean that often shows up as an integer or double in the file",
+			"oneOf": [
+				{ "type": "boolean" },
+				{ "const": 0, "title": "false" },
+				{ "const": 1, "title": "true" }
+			]
+		},
+		
+		"MagnetInfo": {
+			"description": "Unknown. Possibly related to magnet ball.",
+			"type": "object",
+			"properties": {
+				"use_shader": { "$ref": "#/$defs/MessyBool" },
+				"use_palettes": { "$ref": "#/$defs/MessyBool" },
+				"on_palette": {
+					"type": "integer"
+				},
+				"off_palette": {
+					"type": "integer"
+				}
+			},
+			"required": [ "use_palettes", "on_palette", "use_shader", "off_palette" ]
+		}
+	},
+	
+	"properties": {
+		"threat": {
+			"description": "threat, spike_level, and difficulty have an unclear relationship.",
+			"type": "integer"
+		},
+		"spike_level": {
+			"type": "integer"
+		},
+		"difficulty": {
+			"type": "integer"
+		},
+		"tags": {
+			"description": "A list of tags applied to the Room",
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
+		"darkness": {
+			"type": "integer"
+		},
+		"magnet": { "$ref": "#/$defs/MagnetInfo" },
+		"classic_pathing": { "$ref": "#/$defs/MessyBool" },
+		"emergency_intended": { "$ref": "#/$defs/MessyBool" },
+		"gravity_multiplier": {
+			"type": "number"
+		},
+
+		"areas": {
+			"type": "array",
+			"description": "A list of names of Areas that the Room is thematically and/or mechanically appropriate for",
+			"items": {
+				"type": "string"
+			}
+		},
+		"sector": {
+			"type": "integer",
+			"description": "The Sector this Room is a part of. Required for Rooms placed within a World."
+		},
+ 		"name": {
+			"type": "string"
+		},
+		"powered": { "$ref": "#/$defs/MessyBool" },
+		"focus": {
+			"type": "array",
+			"items": {
+				"type": "integer"
+			}
+		},
+		"bgm": {
+			"type": "string"
+		},
+		"no_floor": { "$ref": "#/$defs/MessyBool" },
+		"designer": {
+			"type": "string"
+		},
+		"vision_limit": {
+			"type": "number"
+		},
+		"miniboss": {
+			"type": "integer"
+		},
+		"area": {
+			"description": "zero-based index into the AREAS list of the Area the Room is in.",
+			"type": "integer"
+		},
+		"bg_color": {
+			"type": "integer"
+		}
+	},
+	
+	"required": [
+		"threat", "spike_level", "tags", "darkness", "magnet", "classic_pathing", "emergency_intended", "difficulty",
+		"gravity_multiplier", "areas", "sector", "name", "powered", "focus", "bgm", "no_floor", "designer",
+		"vision_limit", "miniboss", "area", "bg_color"
+	]
+}
+
+
+

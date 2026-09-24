@@ -1,0 +1,155 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"name": "Planets World Format (.mp_world) - Entire File",
+	"description": "Status block with precompiled room information.",
+	
+	"$defs": {
+		"MessyBool": {
+			"description": "Boolean that often shows up as an integer or double in the file",
+			"oneOf": [
+				{ "type": "boolean" },
+				{ "const": 0, "title": "false" },
+				{ "const": 1, "title": "true" }
+			]
+		}
+	},
+	
+	
+	
+	"type": "object",
+	"properties": {
+		"MODES": { "type": "object" },
+		"LOGS": { "type": "array" },
+		"SECTORS": { "type": "array" },
+		"TIMERS": { "type": "array" },
+		"AREAS": { "type": "array" },
+		"ROOMS": { "type": "array" },
+		
+		"HAZARDS": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"touch": { "$ref": "#/$defs/MessyBool" },
+					"suffocating": { "$ref": "#/$defs/MessyBool" },
+					"corrupting": { "$ref": "#/$defs/MessyBool" },
+					"air": { "$ref": "#/$defs/MessyBool" },
+					"disabling_flags": { "type": "array" },
+					"visual_color": { "type": "integer" },
+					"name": { "type": "string" },
+					"damage": { "type": "integer" },
+					"visual_style": { "type": "integer" }
+				}
+			}
+		},
+		
+		"GENERATION_DEBUG_LOG": { "type": "array" },
+		"OBJECTIVES": {
+			"type": "object",
+			"properties": {
+				"enabled": { "$ref": "#/$defs/MessyBool" },
+				"required": {
+					"description": "Type uncertain! It's 1.0 in practice!",
+					"$ref": "#/$defs/MessyBool"
+				},
+			}
+		},
+		"RULES": {
+			"type": "object",
+			
+			"properties": {
+				"ammo_refills": { "$ref": "#/$defs/MessyBool" },
+				"energy_refills": { "$ref": "#/$defs/MessyBool" },
+				"route_replay": { "$ref": "#/$defs/MessyBool" },
+				"enemy_random_spawning": { "$ref": "#/$defs/MessyBool" },
+				"map_revealed": { "$ref": "#/$defs/MessyBool" },
+				"room_info_show_popup": { "$ref": "#/$defs/MessyBool" },
+				"room_info_show_on_map": { "$ref": "#/$defs/MessyBool" },
+				"auto_map": { "$ref": "#/$defs/MessyBool" },
+				"freeze_effect_time_by_hazard": { "$ref": "#/$defs/MessyBool" },
+				"boss_missiles": { "$ref": "#/$defs/MessyBool" },
+				
+				
+				"door_red_health": { "type": "integer" },
+				"door_purple_health": { "type": "integer" },
+				"magnet_energize_time": { "type": "integer" },
+				"enemy_death_memory_distance": { "type": "integer" },
+				"block_crumble_time": { "type": "integer" },
+				"enemy_random_spawn_rate": { "type": "integer" },
+				"map_scanner_size": { "type": "integer" },
+				
+				"save_style": { "const": 0 },
+				"enemy_death_memory": { "const": 0 },
+				
+				"map_marker_icons": {
+					""
+					
+					
+				}
+			}
+		},
+		"LIQUIDS_DAMAGE": { "type": "array" },
+		"SAMUS": { "type": "object" },
+		"EVENTS": { "type": "array" },
+		"SYSTEM_PALETTES": { "type": "array" },
+		"VALUES": { "type": "array" },
+		"PROGRESSION_LOG": { "type": "array" },
+		"GUNSHIP": { "type": "object" },
+		"ENEMY_DATA": { "type": "array" },
+		"CUTSCENES": { "type": "array" },
+		"FLAGS": { "type": "array" },
+		"ITEM_DATA": { "type": "array" },
+		
+		"GENERAL": {
+			"type": "object",
+			"properties": {
+				"escape": {
+					"type": "object",
+					"properties": {
+						"time": { "type": "integer" },
+						"halfway_point": { "type": "integer" },
+						"dynamic_music": { "$ref": "#/$defs/MessyBool" }
+					},
+					"additionalProperties": false
+				},
+				"slim": { "$ref": "#/$defs/MessyBool" },
+				"starting_spawn_point_id": { "type": "integer" },
+				"gunship_hints": { "$ref": "#/$defs/MessyBool" },
+				"gate_bosses": {
+					"type": "array",
+					"items": {
+						"type": "integer"
+					}
+				}
+			},
+			"required": [ "escape", "slim", "starting_spawn_point_id", "gunship_hints", "gate_bosses" ],
+			"additionalProperties": false
+		},
+	},
+	"required": [
+		"MODES",
+		"LOGS",
+		"SECTORS",
+		"TIMERS",
+		"AREAS",
+		"ROOMS",
+		"HAZARDS",
+		"GENERATION_DEBUG_LOG",
+		"OBJECTIVES",
+		"RULES",
+		"LIQUIDS_DAMAGE",
+		"SAMUS",
+		"EVENTS",
+		"SYSTEM_PALETTES",
+		"VALUES",
+		"PROGRESSION_LOG",
+		"GUNSHIP",
+		"ENEMY_DATA",
+		"CUTSCENES",
+		"FLAGS",
+		"ITEM_DATA",
+		"GENERAL"
+	],
+	"additionalProperties": false
+}
+

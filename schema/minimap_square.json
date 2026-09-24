@@ -1,0 +1,52 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "MinimapSquare",
+	"description": "The appearance of a Screen on the minimap and Area map",
+	
+	"$defs": {
+		"WallType": {
+			"description": "The kind of line(s) drawn on the edge of a minimap square.",
+			"oneOf": [
+				{ "const": 0, "title": "none" },
+				{ "const": 1, "title": "solid" },
+				{ "const": 2, "title": "secret" },
+				{ "const": 3, "title": "opening" }
+			]
+		}
+	},
+	
+	"type": "object",
+	"properties": {
+		"walls": {
+			"type": "array",
+			"items": {
+				"$ref": "#/$defs/WallType",
+				"minItems": 5,
+				"maxItems": 5
+			}
+		},
+		"doors": {
+			"type": "array",
+			"items": {
+				"$ref": "./door_type.json"
+			},
+			"minItems": 5,
+			"maxItems": 5
+		},
+		"icons": {
+			"type": "array"
+		},
+		"base": {
+			"type": "integer",
+			"min": 0,
+			"max": 8
+		},
+		"area": {
+			"type": "integer"
+		},
+    "elevator": {
+      "type": "integer"
+    }
+  },
+  "required": [ "walls", "doors", "icons", "base", "area", "elevator" ]
+}

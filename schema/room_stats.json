@@ -1,0 +1,126 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"type": "object",
+	"name": "RoomPrecompiledStats",
+	"description": "Status block with precompiled room information.",
+	
+	"$defs": {
+		"MessyBool": {
+			"description": "Boolean that often shows up as an integer or double in the file",
+			"oneOf": [
+				{ "type": "boolean" },
+				{ "const": 0, "title": "false" },
+				{ "const": 1, "title": "true" }
+			]
+		}
+	},
+	
+	
+	"properties": {
+		"pathing_items": {
+			"description": "Bitmask of items (items required to arrive here?)",
+			"type": "integer"
+		},
+		"combat": {
+			"description": "True if this Room is considered to be a 'combat room'.",
+			"$ref": "#/$defs/MessyBool"
+		},
+		"items": {
+			"description": "Count of item pickup locations in the Room.",
+			"type": "integer"
+		},
+		"potential_major": {
+			"description": "True if there was a major item pickup location in the original room design(?)",
+			"$ref": "#/$defs/MessyBool"
+		},
+		"doors": {
+			"type": "integer"
+		},
+		"door_directions": {
+			"description": "Bitmask of door directions present.",
+			"type": "integer"
+		},
+		"elevators": {
+			"description": "An array of two values: The number of elevators pointing up, and the number of elevators pointing down.",
+			"type": "array",
+			"items": {
+				"type": "integer"
+			},
+			"minItems": 2,
+			"maxItems": 2
+		},
+		"class": {
+			"type": "integer"
+		},
+		"object_types": {
+			"type": "Array",
+			"items": {
+				"type": "integer"
+			}
+		},
+		"landsite": { "$ref": "#/$defs/MessyBool" },
+		"enemy_types": {
+			"description": "List of enemy Id's for all enemies found in the room.",
+			"type": "array",
+			"items": {
+				"type": "integer"
+			}
+		},
+		"boss": {
+			"description": "Enemy Id for the boss in this room if there is one. Otherwise -1.",
+			"type": "integer"
+		},
+		"liquid_types": {
+			"description": "This is supposed to be an array, but it is an integer in practice.",
+			"type": "integer",
+		},
+		"block_types": {
+			"description": "This is supposed to be an array, but it is an integer in practice.",
+			"type": "integer",
+		},
+		"filler": { "$ref": "#/$defs/MessyBool" },
+		"farming": { "$ref": "#/$defs/MessyBool" },
+		"missiles_required": { "$ref": "#/$defs/MessyBool" },
+		"emergency_linear": { "$ref": "#/$defs/MessyBool" },
+		"emergency_open": { "$ref": "#/$defs/MessyBool" },
+		"screens": {
+			"type": "integer"
+		},
+		"alternate_logic": {
+			"description": "Bitmask",
+			"type": "integer"
+		},
+		"region": {
+			"type": "object",
+			"properties": {
+				"list": {
+					"type": "array",
+					"items": {
+						"description": "Integer triplets, possibly xyz coordinates? But why??",
+						"type": "array",
+						"items": {
+							"type": "integer"
+						},
+						"minItems": 3,
+						"maxItems": 3
+					}
+				},
+				"x1": { "type": "integer" },
+				"y1": { "type": "integer" },
+				"width": { "type": "integer" },
+				"height": { "type": "integer" },
+				"mask": {
+					"description": "Another integer triplet, purpose unknown.",
+					"type": "array",
+					"items": {
+						"type": "integer"
+					},
+					"minItems": 3,
+					"maxItems": 3
+				}
+			},
+			"required": [ "list", "x1", "y1", "width", "height", "mask" ]
+		}
+	},
+	"required": []
+}

@@ -8,7 +8,7 @@
             "description": "The Room-unique Id of this door.",
             "type": "integer"
         },
-        "type": {
+        "type": { "$ref": "./door_type.json"
             "description": "An enum specifying the color/type of this door - blue, missile, boss, combat, etc.",
             "type": "integer",
             "minimum": 0,
