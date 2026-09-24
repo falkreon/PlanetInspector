@@ -18,7 +18,7 @@
 	
 	"type": "object",
 	"properties": {
-		"MODES": { "type": "object" },
+		"MODES": { "type": "array" },
 		"LOGS": { "type": "array" },
 		"SECTORS": { "type": "array" },
 		"TIMERS": { "type": "array" },
@@ -43,7 +43,7 @@
 			}
 		},
 		
-		"GENERATION_DEBUG_LOG": { "type": "array" },
+		"GENERATION_DEBUG_LOG": { "type": "object" },
 		"OBJECTIVES": {
 			"type": "object",
 			"properties": {
