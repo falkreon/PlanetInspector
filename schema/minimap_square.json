@@ -44,9 +44,9 @@
 		"area": {
 			"type": "integer"
 		},
-    "elevator": {
-      "type": "integer"
-    }
-  },
-  "required": [ "walls", "doors", "icons", "base", "area", "elevator" ]
+		"elevator": {
+			"type": "integer"
+		}
+	},
+	"required": [ "walls", "doors", "icons", "base", "area", "elevator" ]
 }

@@ -129,18 +129,20 @@ public class RoomConfiguratorView extends AbstractView {
 				default -> {
 					ObjectType type = mapObject.type();
 					if (type != null) {
-						switch(type) {
-							case SCANNER -> {
+						/*
+						switch(type.stringId()) {
+							case "scanner" -> {
 								editor.setObject(mapObject.json(), null);
 							}
-							case GUNSHIP -> {
+							case "gunship" -> {
 								editor.setObject(mapObject.json(), null);
 							}
 							
 							default -> {
 								editor.setObject(mapObject.json(), null);
 							}
-						}
+						}*/
+						editor.setObject(mapObject.json(), null);
 						
 						this.rightPanel = editor;
 						context.setRightPanel(editor);

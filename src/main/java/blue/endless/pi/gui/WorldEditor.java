@@ -335,7 +335,7 @@ public class WorldEditor extends AbstractView implements CloseAware {
 		propertyView.addExternalLine("Short Name", world.metaJson(), "name", SchemaType.STRING);
 		propertyView.addExternalLine("Full Name", world.metaJson(), "name_full", SchemaType.STRING);
 		propertyView.addExternalLine("Version", world.metaJson(), "world_version", SchemaType.INT);
-		propertyView.addExternalLine("Authors", world.metaJson().getObject("external_editor"), "authors", SchemaType.STRING_LIST);
+		propertyView.addExternalLine("Authors", world.metaJson(), "author", SchemaType.STRING);
 		propertyView.addExternalLine("Tags", world.metaJson().getObject("external_editor"), "tags", SchemaType.STRING_LIST);
 		propertyView.addExternalLine("Id", world.metaJson(), "id", SchemaType.IMMUTABLE_INT);
 	}
@@ -687,7 +687,7 @@ public class WorldEditor extends AbstractView implements CloseAware {
 				int objectCount = screen.objectCount();
 				for(int i=0; i<objectCount; i++) {
 					ObjectElement obj = screen.object(i);
-					if (obj.getPrimitive("type").asInt().orElse(-1) == ObjectType.GUNSHIP.value()) return true;
+					if (obj.getPrimitive("type").asInt().orElse(-1) == ObjectType.GUNSHIP.id()) return true;
 				}
 			}
 		}

@@ -16,10 +16,7 @@
 	
 	"type": "object",
 	"properties": {
-		"SCREENS": {
-			"type": "array",
-			"$comment": "will be addressed in a separate schema file"
-		},
+		"SCREENS": { "$ref": "screen.json" },
 		
 		"PATHING": {
 			"type": "array",
@@ -179,16 +176,6 @@
 			"additionalProperties": false
 		},
 		
-		"VARIATIONS": {
-			"type": "array",
-			"default": []
-		},
-		
-		"EVENTS": {
-			"type": "array",
-			"default": []
-		},
-		
 		"GENERAL": {
 			"type": "object",
 			"properties": {
@@ -323,7 +310,10 @@
 			},
 			"required": [ "id", "playable", "last_patch", "content_version", "last_save" ],
 			"additionalProperties": false
-		}
+		},
+		
+		"VARIATIONS": { "const": [] },
+		"EVENTS": { "const": [] },
 	},
 	"required": [
 		"SCREENS", "PATHING", "HAZARD", "STATS", "VARIATIONS", "EVENTS", "GENERAL", "PALETTES",

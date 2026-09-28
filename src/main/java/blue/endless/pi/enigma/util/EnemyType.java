@@ -94,7 +94,7 @@ public class EnemyType {
 	private final boolean isBoss;
 	
 	public EnemyType(ObjectElement obj) {
-		this.id = obj.getPrimitive("id").asInt().orElse(0);
+		this.id = obj.getPrimitive("id").asInt().orElse(-1);
 		this.name = obj.getPrimitive("name").asString().orElse("Unknown");
 		this.spriteResource = obj.getPrimitive("sprite").asString().orElse("");
 		this.isBoss = obj.getPrimitive("boss").asBoolean().orElse(Boolean.FALSE).booleanValue();

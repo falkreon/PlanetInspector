@@ -68,7 +68,9 @@ public class RoomDisplayPanel extends JPanel {
 			ArrayElement objectsArr = s.json().getArray("OBJECTS");
 			for(ValueElement val : objectsArr) {
 				if (val instanceof ObjectElement objObj) {
-					if (ObjectType.of(objObj) == ObjectType.ITEM) {
+					System.out.println(ObjectType.of(objObj));
+					if (ObjectType.of(objObj).stringId().equals("item")) {
+						System.out.println("Item Selectable created");
 						MapObjectInfo.ItemInfo itemInfo = new MapObjectInfo.ItemInfo(s, objObj);
 						int baseX = itemInfo.roomX() - (offset.x() * ScreenInfo.PIXEL_WIDTH);
 						int baseY = itemInfo.roomY() - (offset.y() * ScreenInfo.PIXEL_HEIGHT);
@@ -189,13 +191,13 @@ public class RoomDisplayPanel extends JPanel {
 					image = door.sprite();
 				}
 				default -> {
-					ObjectType type = selectable.object().type();
+					String type = selectable.object().type().stringId();
 					switch(type) {
-						case GUNSHIP -> {
+						case "gunship" -> {
 							image = Assets.getPalettedImage("objects/gunship.png", new int[] { 0x10, 0x17, 0x28 }).orElseGet(Assets::missingImage);
 						}
 						
-						case SCANNER -> {
+						case "scanner" -> {
 							image = Assets.getPalettedImage("objects/map_scanner.png", new int[] { 0x10, 0x20, 0x30 }).orElseGet(Assets::missingImage);
 						}
 						

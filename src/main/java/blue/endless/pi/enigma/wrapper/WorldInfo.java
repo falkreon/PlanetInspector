@@ -249,7 +249,7 @@ public record WorldInfo(ObjectElement json, ObjectElement metaJson, List<RoomInf
 		try(InputStream in = Files.newInputStream(worldFile, StandardOpenOption.READ)) {
 			InflaterInputStream zin = new InflaterInputStream(new BufferedInputStream(in));
 			
-			// Buffer all world data. Yes, I know this is a bad idea.
+			// Buffer all world data. This might break for unusually big worlds!
 			
 			int data = 0;
 			while(data != -1) {
@@ -278,18 +278,19 @@ public record WorldInfo(ObjectElement json, ObjectElement metaJson, List<RoomInf
 			
 			ObjectElement worldMetaObj = Jankson.readJsonObject(new ByteArrayInputStream(files.get(0)));
 			
-			// Check world version
+			// Check world version - Try to load absolutely anything within our target range!
 			double enigmaVersion = worldMetaObj.getPrimitive("version").asDouble().orElse(-1.0);
 			
-			// Ignore version for testing
-			//if ((enigmaVersion - EnigmaFormat.CURRENT_VERSION) > 0.0001) {
-			//	throw new SyntaxError("Cannot open this world version (version: "+enigmaVersion+")");
-			//}
+			if (enigmaVersion > EnigmaFormat.CURRENT_VERSION) {
+				throw new SyntaxError("This enigma version is too new (version: "+enigmaVersion+")");
+			} else if (enigmaVersion < EnigmaFormat.ORIGINAL_PI_VERSION) {
+				throw new SyntaxError("This enigma version is too old (version: "+enigmaVersion+")");
+			}
 			
 			ObjectElement worldObj = Jankson.readJsonObject(new ByteArrayInputStream(files.get(1)));
 			
-			// We can do additional validation here but let's try to load anything we can.
 			
+			// DEBUG: Save the world and meta json in the same folder as the world was
 			String fileName = worldFile.getFileName().toString();
 			Path basePath = worldFile.getParent();
 			if (fileName.endsWith(".mp_world")) {
@@ -305,6 +306,8 @@ public record WorldInfo(ObjectElement json, ObjectElement metaJson, List<RoomInf
 			BufferedWriter worldWriter = Files.newBufferedWriter(basePath.resolve(worldJsonName));
 			Jankson.writeJson(worldObj, worldWriter, JsonWriterOptions.STRICT);
 			worldWriter.flush(); worldWriter.close();
+			// END DEBUG
+			
 			
 			return WorldInfo.of(worldObj, worldMetaObj);
 		}

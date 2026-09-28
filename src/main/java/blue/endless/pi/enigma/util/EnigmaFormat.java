@@ -1,8 +1,8 @@
 package blue.endless.pi.enigma.util;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
+import java.text.NumberFormat;
+import java.time.Duration;
+import java.time.ZonedDateTime;
 
 import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.ObjectElement;
@@ -16,11 +16,39 @@ import it.unimi.dsi.fastutil.ints.IntRBTreeSet;
 import it.unimi.dsi.fastutil.ints.IntSortedSet;
 
 public class EnigmaFormat {
-	public static final double CURRENT_VERSION = 0.775;
+	public static final double ORIGINAL_PI_VERSION = 0.775;
+	public static final long CURRENT_VERSION = 81;
 	public static final String PI_ID = "planet_inspector";
 	
 	public static WorldInfo createWorld() {
 		throw new RuntimeException("Not yet implemented");
+	}
+	
+	public static final double createTimestamp(ZonedDateTime time) {
+		// Planets timestamps are double precision floats representing days (whole and fractional) since 30 Dec 1899.
+		ZonedDateTime origin = ZonedDateTime.parse("1899-12-30T00:00:00+00:00");
+		Duration delta = Duration.between(origin, time);
+		long seconds = delta.toSeconds();
+		long days = seconds / 86400;
+		long remainder = seconds - (days * 86400);
+		
+		double result = days + (remainder / 86400.0);
+		
+		// The game rounds timestamps to 4 places. We make a best effort here.
+		NumberFormat fmt = NumberFormat.getNumberInstance();
+		fmt.setGroupingUsed(false);
+		fmt.setMaximumFractionDigits(5);
+		return Double.parseDouble(fmt.format(result));
+	}
+	
+	public ZonedDateTime decodeTimestamp(double timestamp) {
+		ZonedDateTime origin = ZonedDateTime.parse("1899-12-30T00:00:00+00:00");
+		
+		ZonedDateTime justDays = origin.plusDays((long) timestamp);
+		double fractionalDays = timestamp - Math.floor(timestamp);
+		long seconds = (long) (fractionalDays * 86400);
+		
+		return justDays.plusSeconds(seconds);
 	}
 	
 	/**
@@ -35,9 +63,9 @@ public class EnigmaFormat {
 		debugLog.remove("core_pool");
 		debugLog.remove("placed_items");
 		
-		if (!debugLog.containsKey(PI_ID)) {
-			debugLog.put(PI_ID, new ArrayElement());
-		}
+		//if (!debugLog.containsKey(PI_ID)) {
+		//	debugLog.put(PI_ID, new ArrayElement());
+		//}
 	}
 	
 	/**
@@ -45,12 +73,14 @@ public class EnigmaFormat {
 	 * @param world The world being edited
 	 */
 	public static void logEdit(WorldInfo world) {
-		ObjectElement debugLog = world.json().getObject("GENERATION_DEBUG_LOG");
-		if (!debugLog.containsKey(PI_ID)) {
-			debugLog.put(PI_ID, new ArrayElement());
-		}
-		ArrayElement lines = debugLog.getArray(PI_ID);
-		lines.add(PrimitiveElement.of("Edited on "+LocalDateTime.now().atOffset(ZoneOffset.UTC).format(DateTimeFormatter.RFC_1123_DATE_TIME)));
+		//ObjectElement debugLog = world.json().getObject("GENERATION_DEBUG_LOG");
+		//if (!debugLog.containsKey(PI_ID)) {
+		//	debugLog.put(PI_ID, new ArrayElement());
+		//}
+		//ArrayElement lines = debugLog.getArray(PI_ID);
+		//lines.add(PrimitiveElement.of("Edited on "+LocalDateTime.now().atOffset(ZoneOffset.UTC).format(DateTimeFormatter.RFC_1123_DATE_TIME)));
+		
+		
 	}
 	
 	private static void fixCrashingRooms(WorldInfo world) {
@@ -156,14 +186,8 @@ public class EnigmaFormat {
 	 * @param world The world to mark as externally edited.
 	 */
 	private static void markAsEdited(WorldInfo world) {
-		ObjectElement toolObj = world.metaJson().getObject("external_editor");
-		if (toolObj.isEmpty()) {
-			// If it's empty or fake, make sure it exists now as part of the meta json
-			world.metaJson().put("external_editor", toolObj);
-		}
-		toolObj.computeIfAbsent("authors", (it) -> new ArrayElement());
-		toolObj.computeIfAbsent("tags", (it) -> new ArrayElement());
-		toolObj.put("editor_tool", PrimitiveElement.of(PI_ID));
+		world.metaJson().put("modified", PrimitiveElement.of(true));
+		world.metaJson().put("modification_tool", PrimitiveElement.of(PI_ID));
 	}
 	
 	/**
@@ -202,7 +226,7 @@ public class EnigmaFormat {
 			for(ScreenInfo screen : room.screens()) {
 				screens++;
 				
-				for(ObjectElement obj : screen.json().getArray("objects").asObjectArray()) {
+				for(ObjectElement obj : screen.json().getArray("OBJECTS").asObjectArray()) {
 					switch(obj.getPrimitive("type").asInt().orElse(-1)) {
 						case 0 -> items++;
 					}
@@ -216,6 +240,24 @@ public class EnigmaFormat {
 		stats.put("rooms", PrimitiveElement.of(rooms));
 		stats.put("areas", PrimitiveElement.of(areas));
 		stats.put("items", PrimitiveElement.of(items));
+		stats.put("sectors", PrimitiveElement.of(1));
+		stats.computeIfAbsent("tags_used", (it) -> new ArrayElement());
+		stats.computeIfAbsent("designers_used", (it) -> new ArrayElement());
+		
+		world.metaJson().put("stats", stats); // If it didn't exist, put it back.
+		
+		
+		
+		//Grab stats and include in the preview
+		
+		String statusText = "";
+		statusText += "AREAS:  " + areas + ";";
+		statusText += "ROOMS:  " + rooms + ";";
+		statusText += "SCREENS:" + screens + ";";
+		statusText += "BOSSES: " + bosses + ";";
+		statusText += "ITEMS:  " + items + ";";
+		
+		world.metaJson().put("description", PrimitiveElement.of(statusText));
 	}
 	
 	/**
@@ -253,11 +295,20 @@ public class EnigmaFormat {
 	}
 	
 	/**
+	 * Compute status text and include it in the world description.
+	 * @param world the world to fix stats for.
+	 */
+	public static void createStatsText(WorldInfo world) {
+		
+	}
+	
+	/**
 	 * Does last-minute edits to the world json and metaJson to ensure consistency. Fills in stats, double-checks gate
 	 * bosses, marks the world as edited, etc.
 	 * @param world the world to prepare for saving
 	 */
 	public static void prepareForSave(WorldInfo world) {
+		world.metaJson().put("version", PrimitiveElement.of(CURRENT_VERSION));
 		
 		removeEnigmaDebug(world);
 		logEdit(world);
@@ -267,13 +318,6 @@ public class EnigmaFormat {
 		fixProgressionItemAreas(world);
 		
 		updateMetadata(world);
-		
-		// Grab stats and include in the preview
-		ObjectElement stats = world.metaJson().getObject("stats");
-		int roomCount = stats.getPrimitive("rooms").asInt().orElse(0);
-		int bossCount = stats.getPrimitive("bosses").asInt().orElse(0);
-		int areaCount = stats.getPrimitive("areas").asInt().orElse(0);
-		world.metaJson().put("description", PrimitiveElement.of("MODIFIED WORLD, USE WITH CARE; ROOMS: "+roomCount+"; AREAS: "+areaCount+"; BOSSES: "+bossCount));
 		
 		
 		markAsEdited(world);

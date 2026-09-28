@@ -208,8 +208,14 @@
 				"ammo": {
 					"type": "object",
 					"properties": {
-						"tanks_grant_capacity": { "$ref": "#/$defs/MessyBool", "default": true },
-						"universal": { "$ref": "#/$defs/MessyBool", "default": false },
+						"tanks_grant_capacity": {
+							"$ref": "#/$defs/MessyBool",
+							"default": true
+						},
+						"universal": {
+							"$ref": "#/$defs/MessyBool",
+							"default": false,
+						},
 					},
 					"required": [ "tanks_grant_capacity", "universal" ],
 					"additionalProperties": false
@@ -534,12 +540,11 @@
 			"additionalProperties": true
 		},
 		
-		"CUTSCENES": { "type": "array" },
-		"FLAGS": { "type": "array" },
-		"EVENTS": { "type": "array" },
-		"SYSTEM_PALETTES": { "type": "array" },
-		"VALUES": { "type": "array" },
-		
+		"CUTSCENES": { "const": [] },
+		"FLAGS": { "const": [] },
+		"EVENTS": { "const": [] },
+		"SYSTEM_PALETTES": { "const": [] },
+		"VALUES": { "const": [] },
 	},
 	"required": [
 		"MODES",

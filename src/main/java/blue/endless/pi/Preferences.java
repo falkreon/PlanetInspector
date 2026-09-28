@@ -130,12 +130,15 @@ public class Preferences {
 			Path defaultPlanetsDir = getUserHome().resolve("AppData").resolve("Local").resolve("Metroid");
 			if (Files.exists(defaultPlanetsDir)) return Optional.of(defaultPlanetsDir);
 			
+			// Try wine
 			Path userHome = getUserHome();
 			if (userHome.getNameCount() > 0) {
 				String username = userHome.getName(userHome.getNameCount()-1).toString();
 				Path noPrefixWinePlanetsDir = userHome.resolve(".wine").resolve("drive_c").resolve("users").resolve(username).resolve("AppData").resolve("Local").resolve("Metroid");
 				if (Files.exists(noPrefixWinePlanetsDir)) return Optional.of(noPrefixWinePlanetsDir);
 			}
+			
+			
 			
 		} catch (Throwable t) {}
 		
@@ -194,13 +197,13 @@ public class Preferences {
 		try {
 			result = base.getPrimitive(key).asString().map(Path::of);
 			if (result.isPresent() && Files.exists(result.get())) return result;
-			System.out.println("path doesn't exist? -> "+result);
+			//System.out.println("path doesn't exist? -> "+result);
 		} catch (Throwable t) {
-			System.out.println("... invalid path");
+			//System.out.println("... invalid path");
 		}
 		
 		result = supplier.get();
-		System.out.println("Computed "+key+" from supplier: "+result);
+		//System.out.println("Computed "+key+" from supplier: "+result);
 		base.put(key, PrimitiveElement.of(result.map(Path::toString).orElse(null)));
 		
 		return result;

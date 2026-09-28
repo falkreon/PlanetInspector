@@ -36,6 +36,30 @@
 				{ "const": 3, "title": "west" },
 				{ "const": 4, "title": "south" },
 			]
+		},
+		
+		"WallType": {
+			"description": "The kind of line(s) drawn on the edge of a minimap square.",
+			"oneOf": [
+				{ "const": 0, "title": "none" },
+				{ "const": 1, "title": "solid" },
+				{ "const": 2, "title": "secret" },
+				{ "const": 3, "title": "opening" }
+			]
+		},
+		
+		"BaseMapShape": {
+			"description": "The shape of the background / walkable area of a minimap / Area map cell.",
+			"oneOf": [
+				{ "const": 1, "title": "empty" },
+				{ "const": 2, "title": "square" },
+				{ "const": 3, "title": "slope_sw" },
+				{ "const": 4, "title": "slope_se" },
+				{ "const": 5, "title": "slope_ne" },
+				{ "const": 6, "title": "slope_nw" },
+				{ "const": 7, "title": "tube_h" },
+				{ "const": 8, "title": "tube_v" },
+			]
 		}
 	},
 
@@ -122,7 +146,29 @@
 		},
 		
 		"TILES": {
-			"type": "array"
+			"type": "array",
+			"description": "Each element of the array is one plane - background, mid, and foreground, respectively.",
+			"items": {
+				"type": "array",
+				"description": "Each element of the array is a column of tile data for the containing Screen plane, from left to right. These 20 columns are each either empty or contain 15 integers.",
+				"items": {
+					"oneOf": [
+						{ "const": [] },
+						{
+							"type": "array",
+							"description": "Packed tile representation. Tile ID is the bottom 9(?) bits. Palette is (value >> 12) & 0x1F. Mirror is bit 28 (counting up from least-significant bit 0), flip is 29, and rotate is 30, applied in that order. The top bit is unused.",
+							"$comment": "in other words, the bitmask looks a bit like: [.RFM...._.......P_PPPP..T_TTTTTTTT] where dots are zeroes / reserved space.",
+							"items": { "type": "integer" },
+							"minItems": 15,
+							"maxItems": 15
+						}
+					]
+				},
+				"minItems": 20,
+				"maxItems": 20
+			},
+			"minItems": 3,
+			"maxItems": 3
 		},
 		
 		"ENEMIES": {
@@ -130,16 +176,239 @@
 		},
 		
 		"MAP": {
-			"type": "object"
+			"type": "object",
+			"properties": {
+				"walls": {
+					"type": "array",
+					"$comment": "Each index in the array typically corresponds to one #/$defs/Direction",
+					"items": {
+						"$ref": "#/$defs/WallType",
+						"minItems": 5,
+						"maxItems": 5
+					}
+				},
+				"doors": {
+					"type": "array",
+					"items": {
+						"$ref": "#/$defs/DoorType"
+					},
+					"minItems": 5,
+					"maxItems": 5
+				},
+				"icons": {
+					"type": "array",
+					"items": {
+						"type": "integer"
+					}
+				},
+				"base": { "$ref": "#/$defs/BaseMapShape" },
+				"area": {
+					"type": "integer",
+					"description": "The Area this map cell should visually represent. Primarily affects filled background color."
+				},
+				"elevator": {
+					"type": "integer"
+				}
+			},
+			"required": [ "walls", "doors", "icons", "base", "area", "elevator" ]
 		},
 		
 		"OBJECTS": {
-			"type": "array"
+			"type": "array",
+			"items": {
+				"oneOf": [
+					{
+						"title": "Item",
+						"type": "object",
+						"properties": {
+							"type": { "const": 0 },
+							"id": { "type": "integer" },
+							"x": { "type": "integer" },
+							"y": { "type": "integer" },
+							"item": { "type": "integer" }
+						},
+						"required": [ "type", "id", "x", "y", "item" ],
+						"additionalProperties": false
+					},
+					{
+						"title": "Gunship",
+						"type": "object",
+						"properties": {
+							"type": { "const": 1 },
+							"id": { "type": "integer" },
+							"x": { "type": "integer" },
+							"y": { "type": "integer" },
+							"spawn_point_name": { "type": "string" },
+							"landsite_description": { "type": "string" },
+							"spawn_point_id": { "type": "integer" }
+						},
+						"required": [ "type", "id", "x", "y", "spawn_point_name", "landsite_description", "spawn_point_id" ],
+						"additionalProperties": false
+					},
+					{
+						"title": "Lift",
+						"type": "object",
+						"properties": {
+							"type": { "const": 2 },
+							"id": { "type": "integer" },
+							"x": { "type": "integer" },
+							"y": { "type": "integer" },
+							"lift_up": { "type": "integer" },
+							"lift_down": { "type": "integer" },
+							"pal": { "type": "integer", "default": 6 },
+							"skin": { "type": "integer", "default": 0 }
+							
+						},
+						"required": [ "type", "id", "x", "y", "lift_up", "lift_down", "pal", "skin" ],
+						"additionalProperties": false
+					},
+					{
+						"title": "Scanner",
+						"type": "object",
+						"properties": {
+							"type": { "const": 3 },
+							"id": { "type": "integer" },
+							"x": { "type": "integer" },
+							"y": { "type": "integer" },
+							"pal": { "type": "integer", "description": "Palette index" },
+							"ea_stats": {
+								"type": "object",
+								"$comment": "Unknown structure",
+								"properties": {},
+								"required": [],
+								"additionalProperties": true
+							}
+						},
+						"required": [ "type", "id", "x", "y", "pal", "ea_stats" ],
+						"additionalProperties": false
+					},
+					{
+						"title": "Gate",
+						"type": "object",
+						"$comment": "When retracted, this block sits outside the gate's normal space, in the middle of an adjacent block. When fully extended, the gate will occupy length blocks in direction dir, starting at the next block in that direction.",
+						"properties": {
+							"type": { "const": 4 },
+							"id": { "type": "integer" },
+							"x": { "type": "integer" },
+							"y": { "type": "integer" },
+							"length": {
+								"type": "integer",
+								"description": "Number of blocks this gate occupies when extended"
+							},
+							"dir": { "$ref": "#/$defs/Direction" },
+							"time": { "type": "integer", "default": 0 },
+							"pal": { "type": "integer", "description": "Palette index for this object", "default": 0 },
+							"start": { "type": "integer", "default": 1 },
+							"trigger": { "type": "integer" }
+						},
+						"required": [ "type", "id", "x", "y", "length", "dir", "time", "pal", "start", "trigger" ],
+						"additionalProperties": false
+					},
+					{
+						"title": "Button",
+						"type": "object",
+						"properties": {
+							"type": { "const": 5 },
+							"id": { "type": "integer" },
+							"x": { "type": "integer" },
+							"y": { "type": "integer" },
+							"pal": { "type": "integer", "description": "Palette index for this object", "default": 0 },
+							"multi_use": { "$ref": "#/$defs/MessyBool" },
+							"trigger": { "type": "integer" },
+							"links": {
+								"type": "array",
+								"$comment": "Unknown structure"
+							}
+						},
+						"required": [ "type", "id", "x", "y", "pal", "ea_stats" ],
+						"additionalProperties": false
+					},
+					{
+						"title": "Miniboss Statue",
+						"type": "object",
+						"$comment": "There are likely more properties. When this is investigated we can turn this into a closed property set.",
+						"properties": {
+							"type": { "const": 6 },
+							"id": { "type": "integer" },
+							"x": { "type": "integer" },
+							"y": { "type": "integer" },
+						},
+						"required": [ "type", "id", "x", "y" ],
+						"additionalProperties": true
+					},
+					{
+						"title": "Spawn Point",
+						"type": "object",
+						"$comment": "Normal placement is 15 pixels above an Elevator y position.",
+						"properties": {
+							"type": { "const": 7 },
+							"id": { "type": "integer" },
+							"x": { "type": "integer" },
+							"y": { "type": "integer" },
+							"spawn_point_id": {
+								"type": "integer",
+								"$comment": "Must be unique across the world."
+							},
+							"spawn_point_name": {
+								"type": "string",
+								"description": "Spawn point name used on the save file display"
+							},
+							"save_point": { "$ref": "#/$defs/MessyBool" }
+						}
+					},
+					{
+						"title": "Save Station",
+						"type": "object",
+						"$comment": "There are likely more properties. When this is investigated we can turn this into a closed property set.",
+						"properties": {
+							"type": { "const": 8 },
+							"id": { "type": "integer" },
+							"x": { "type": "integer" },
+							"y": { "type": "integer" },
+						},
+						"required": [ "type", "id", "x", "y" ],
+						"additionalProperties": true
+					},
+					{
+						"title": "Beam Prism",
+						"type": "object",
+						"$comment": "There are likely more properties. When this is investigated we can turn this into a closed property set.",
+						"properties": {
+							"type": { "const": 9 },
+							"id": { "type": "integer" },
+							"x": { "type": "integer" },
+							"y": { "type": "integer" },
+						},
+						"required": [ "type", "id", "x", "y" ],
+						"additionalProperties": true
+					},
+					{
+						"title": "Spazer Barrier",
+						"type": "object",
+						"$comment": "There are likely more properties. When this is investigated we can turn this into a closed property set.",
+						"properties": {
+							"type": { "const": 10 },
+							"id": { "type": "integer" },
+							"x": { "type": "integer" },
+							"y": { "type": "integer" },
+							"length": {
+								"type": "integer",
+								"description": "Number of blocks the piston extends"
+							},
+							"dir": { "$ref": "#/$defs/Direction" },
+							"pal": { "type": "integer" },
+							"double_sided": { "$ref": "#/$defs/MessyBool" },
+						},
+						"required": [ "type", "id", "x", "y" ],
+						"additionalProperties": false
+					},
+				]
+			}
 		},
 		
-		"LIQUIDS": { "type": "array", "default": [] },
-		"DECOR": { "type": "array", "default": [] },
-		"TUBES": { "type": "array", "default": [] }
+		"LIQUIDS": { "const": [] },
+		"DECOR": { "const": [] },
+		"TUBES": { "const": [] }
 	},
 	"required": [
 		"x", "y", "boss",

@@ -1,0 +1,113 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"name": "Planets World Metadata File",
+	"description": "The smaller first json in the .mp_world file format, allowing quick lookup for world metadata.",
+	
+	"$defs": {
+		"MessyBool": {
+			"description": "Boolean that often shows up as an integer or double in the file",
+			"oneOf": [
+				{ "type": "boolean" },
+				{ "const": 0, "title": "false" },
+				{ "const": 1, "title": "true" }
+			]
+		}
+	},
+	
+	"type": "object",
+	"properties": {
+		"version": { "type": "number", "default": 81 },
+		"id": { "type": "integer" },
+		"description": {
+			"description": "Crawl text visible in the 'stats' area when you go to select an Enigma world. When non-empty, obscures all stats.",
+			"type": "string",
+			"default": ""
+		},
+		"author": { "type": "string", "default": "" },
+		"name": {
+			"type": "string",
+			"description": "Short world name, which doesn't include the 'demo number'."
+		},
+		"name_full": {
+			"type": "string",
+			"description": "Full world name, including the 'demo number'."
+		},
+		"world_version": {
+			"type": "integer",
+			"description": "Edit version of this particular world. Used to determine whether to overwrite an older version with the same id.",
+			"default": 0
+		},
+		"save_date": {
+			"type": "number",
+			"description": "Timestamp of when the world was last saved, in days and fractional days since 30 December 1899."
+		},
+		"creation_date": {
+			"type": "number",
+			"description": "Timestamp of when the world was originally created, in days and fractional days since 30 December 1899."
+		},
+		"connect_compatible": { "type": "boolean" },
+		"versus_compatible": { "tpye": "boolean" },
+		
+		"handcrafted": {
+			"type": "boolean",
+			"$comment": "Is set for developer-created worlds like Ex Ramie, is set by Planet Inspector, and will be set by the world studio."
+		},
+		"modified": {
+			"type": "boolean",
+			"$comment": "Is set by external editing tools like Planet Inspector. Shows a red banner and suppresses the usual Stats display in the enigma world picker."
+		},
+		"challenge_warning": { "type": "boolean" },
+		"experimental_warning": { "type": "boolean" },
+		
+		"external_editor": {
+			"type": "string",
+			"$comment": "This is not an official property, but will be set by Planet Inspector to identify to other tools which editor created the world. This should be the last tool that made significant edits to the world - don't worry about clobbering PI's credit!"
+		},
+		
+		"stats": {
+			"type": "object",
+			"properties": {
+				"sectors": { "type": "integer" },
+				"areas":   { "type": "integer" },
+				"rooms":   { "type": "integer" },
+				"screens": { "type": "integer" },
+				"bosses":  { "type": "integer" },
+				"items":   { "type": "integer" },
+				
+				"ship_hints": { "$ref": "#/$defs/MessyBool" },
+				"room_hints": { "$ref": "#/$defs/MessyBool" },
+				
+				"hazard_runs": {
+					"oneOf": [
+						{ "const": 0, "title": "off" },
+						{ "const": 1, "title": "allowed" },
+						{ "const": 2, "title": "forced" }
+					]
+				},
+				
+				
+				"tags_used": {
+					"type": "array",
+					"items": { "type": "string" }
+				},
+				"designers_used": {
+					"type": "array",
+					"items": { "type": "string" }
+				}
+			},
+			"required": [ "sectors", "areas", "rooms" ,"screens", "bosses", "items" ],
+			"additionalProperties": false
+		}
+	},
+	"required": [
+		"version", "id", "description", "author", "name", "world_version", "name_full", "handcrafted",
+		"save_date", "creation_date", "connect_compatible", "versus_compatible", "modified", "stats",
+		"experimental_warning", "challenge_warning"
+	],
+	"additionalProperties": false
+	
+	
+}
+
+
+

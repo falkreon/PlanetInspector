@@ -261,5 +261,43 @@
         "id": 50,
         "name": "Giant Dessgeega",
         "sprite": "spr_Enemy_Giant_Dessgeega_0"
-    }
+    },
+	"unknown_plant_bulb": { // needs "rot" property for rotation, place against a solid tile to prevent instant death
+		"id": 51,
+		"name": "Unknown Plant-Like Bulb",
+		"properties": {
+			"rot": { "type": "integer", "$comment": "Direction, like other rot properties" }
+		}
+	},
+	"ululith": {
+		"id": 52,
+		"name": "Ululith",
+		"properties": {
+			"patrol_shape": {
+				"oneOf": [
+					{ "const": -1, "title": "static" },
+					{ "const": 0, "title": "vertical bobbing (no distance effect)" },
+					{ "const": 1, "title": "horizontal wandering" },
+					{ "const": 2, "title": "vertical wandering" },
+					{ "const": 3, "title": "circling in place (no distance effect)" },
+					{ "const": 4, "title": "UL-DR wandering" },
+					{ "const": 5, "title": "more free wandering" }
+				]
+			},
+			"patrol_distance": { "type": "integer", "$comment": "blocks" },
+			"patrol_start": {},
+			"patrol_direction": {}
+		}
+	},
+	"veilreaver": {
+		"id": 53,
+		"name": "Veilreaver"
+	},
+	"unknown": {
+		"id": 55,
+		"name": "Unknown"
+	}
 }
+
+
+

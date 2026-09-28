@@ -1,0 +1,49 @@
+{
+	"item": {
+		"id": 0,
+		"name": "Item"
+	},
+	"gunship": {
+		"id": 1,
+		"name": "Gunship",
+		"sprite": "gunship"
+	},
+	"lift": {
+		"id": 2,
+		"name": "Lift"
+	},
+	"scanner": {
+		"id": 3,
+		"name": "Scanner",
+		"sprite": "map_scanner"
+	},
+	"gate": {
+		"id": 4,
+		"name": "Gate",
+		"sprite": "spr-Gate_0"
+	},
+	"button": {
+		"id": 5,
+		"name": "Button"
+	},
+	"statue": {
+		"id": 6,
+		"name": "Miniboss Statue"
+	},
+	"spawn_point": {
+		"id": 7,
+		"name": "Spawn Point"
+	},
+	"save_station": {
+		"id": 8,
+		"name": "Save Station"
+	},
+	"beam_prism": {
+		"id": 9,
+		"name": "Beam Prism"
+	},
+	"spazer_barrier": {
+		"id": 10,
+		"name": "Spazer Barrier"
+	}
+}
