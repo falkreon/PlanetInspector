@@ -177,6 +177,8 @@ public class RoomDisplayPanel extends JPanel {
 		
 		for(Selectable selectable : selectables) {
 			BufferedImage image = null;
+			MapObjectInfo spriteResource = selectable.object();
+			
 			switch(selectable.object()) {
 				case MapObjectInfo.ItemInfo item -> {
 					image = item.item().getSprite();
@@ -188,7 +190,7 @@ public class RoomDisplayPanel extends JPanel {
 					image = Assets.getPalettedImage("objects/spr_Elevator_0.png", new int[] { 22, 40, 26 }).orElseGet(Assets::missingImage);
 				}
 				case MapObjectInfo.DoorObjectInfo door -> {
-					image = door.sprite();
+					image = door.getSprite(world);
 				}
 				default -> {
 					String type = selectable.object().type().stringId();

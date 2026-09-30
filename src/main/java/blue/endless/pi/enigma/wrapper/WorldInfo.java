@@ -26,11 +26,15 @@ import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
+import blue.endless.jankson.api.io.ObjectReaderFactory;
+import blue.endless.jankson.api.io.ObjectWriter;
+import blue.endless.jankson.api.io.ValueElementReader;
 import blue.endless.jankson.api.io.json.JsonWriterOptions;
+import blue.endless.pi.enigma.WorldMeta;
 import blue.endless.pi.enigma.util.EnigmaFormat;
 import blue.endless.pi.enigma.util.MinimapBaseShape;
 
-public record WorldInfo(ObjectElement json, ObjectElement metaJson, List<RoomInfo> rooms, List<AreaInfo> areas) {
+public record WorldInfo(ObjectElement json, WorldMeta metadata, List<RoomInfo> rooms, List<AreaInfo> areas) {
 	
 	public static WorldInfo of(ObjectElement json, ObjectElement metaJson) {
 		ArrayList<RoomInfo> rooms = new ArrayList<>();
@@ -49,7 +53,14 @@ public record WorldInfo(ObjectElement json, ObjectElement metaJson, List<RoomInf
 			}
 		}
 		
-		return new WorldInfo(json, metaJson, rooms, areas);
+		ObjectWriter<WorldMeta> worldMetaWriter = new ObjectWriter<>(WorldMeta.class);
+		try {
+			ValueElementReader.of(metaJson).transferTo(worldMetaWriter);
+		} catch (SyntaxError | IOException e) {
+			throw new RuntimeException(e);
+		}
+		
+		return new WorldInfo(json, worldMetaWriter.toObject(), rooms, areas);
 	}
 	
 	/**
@@ -91,31 +102,32 @@ public record WorldInfo(ObjectElement json, ObjectElement metaJson, List<RoomInf
 			ArrayElement roomsArray = json.getArray("ROOMS");
 			roomsArray.remove(room);
 			
-			ObjectElement stats = metaJson.getObject("stats");
+			//ObjectElement stats = metaJson.getObject("stats");
+			WorldMeta.Stats stats = metadata().stats;
 			
 			// Fix the counts in metaJson `stats.rooms` and `stats.screens` fields to keep map traversal stats accurate
-			int screens = (int) stats.getPrimitive("screens").asDouble().orElse(0);
-			int rooms = (int) stats.getPrimitive("rooms").asDouble().orElse(0);
+			//int screens = stats.screens;
+			//int rooms = stats.rooms;
 			
 			int traversableOrphanScreens = 0;
 			for(ScreenInfo screen : orphan.screens()) {
 				if (screen.mapShape() != MinimapBaseShape.BLANK) traversableOrphanScreens++;
 			}
 			
-			rooms = Math.max(rooms - 1, 0);
-			screens = Math.max(screens - traversableOrphanScreens, 0);
+			stats.rooms = Math.max(stats.rooms - 1, 0);
+			stats.screens = Math.max(stats.screens - traversableOrphanScreens, 0);
 			
-			stats.put("screens", PrimitiveElement.of(screens));
-			stats.put("rooms", PrimitiveElement.of(rooms));
+			//stats.put("screens", PrimitiveElement.of(screens));
+			//stats.put("rooms", PrimitiveElement.of(rooms));
 			
 			// Did we remove a boss room? What was the boss's id? (boss Id will probably be set to -1 for non-boss rooms)
 			boolean bossRoom = orphan.isBossRoom();
 			int bossId = orphan.bossId();
 			if (bossRoom) {
 				// Reduce the boss count in metaJson `stats.bosses` field
-				int bossCount = stats.getPrimitive("bosses").asInt().orElse(0);
-				bossCount = Math.max(bossCount - 1, 0);
-				stats.put("bosses", PrimitiveElement.of(bossCount));
+				//int bossCount = stats.getPrimitive("bosses").asInt().orElse(0);
+				stats.bosses = Math.max(stats.bosses - 1, 0);
+				//stats.put("bosses", PrimitiveElement.of(bossCount));
 				
 				// Remove the boss id entry from `GENERAL.gate_bosses[*]`
 				Iterator<ValueElement> gateBosses = json.getObject("GENERAL").getArray("gate_bosses").iterator();
@@ -318,7 +330,8 @@ public record WorldInfo(ObjectElement json, ObjectElement metaJson, List<RoomInf
 			DeflaterOutputStream deflaterOut = new DeflaterOutputStream(fileOut, new Deflater(), 4096, true);
 			
 			OutputStreamWriter writer = new OutputStreamWriter(deflaterOut, StandardCharsets.UTF_8);
-			Jankson.writeJson(metaJson(), writer, JsonWriterOptions.ONE_LINE);
+			Jankson.writeJson(new WorldMeta(), new ObjectReaderFactory(), writer, JsonWriterOptions.ONE_LINE);
+			//Jankson.writeJson(metaJson(), writer, JsonWriterOptions.ONE_LINE);
 			writer.flush();
 			deflaterOut.write(0);
 			Jankson.writeJson(json(), writer, JsonWriterOptions.ONE_LINE);

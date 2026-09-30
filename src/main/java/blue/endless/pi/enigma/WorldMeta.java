@@ -4,12 +4,14 @@ import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import blue.endless.jankson.api.annotation.Deserializer;
 import blue.endless.jankson.api.annotation.SerializedName;
+import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.pi.enigma.util.EnigmaFormat;
 
 public class WorldMeta {
 	/** Generally referred to in patch notes as a "world format version". */
-	public long version = EnigmaFormat.CURRENT_VERSION;
+	public Version version = new Version(EnigmaFormat.CURRENT_VERSION);
 	
 	/** The world Id. */
 	public long id = 0L;
@@ -33,6 +35,9 @@ public class WorldMeta {
 	
 	/** True if this world was modified by an external tool. Always true for anything saved by PI */
 	public boolean modified = true;
+	
+	@SerializedName("external_editor")
+	public String externalEditor = EnigmaFormat.PI_ID;
 	
 	/** Timestamp for when the world was created */
 	@SerializedName("creation_date")
@@ -61,12 +66,12 @@ public class WorldMeta {
 	
 	public static class Stats {
 		// === Numeric stats
-		long sectors = 1;
-		long areas = 2;
-		long rooms = 0;
-		long screens = 0;
-		long bosses = 0;
-		long items = 0;
+		public long sectors = 1;
+		public long areas = 2;
+		public long rooms = 0;
+		public long screens = 0;
+		public long bosses = 0;
+		public long items = 0;
 		
 		// === Enumerated items
 		
@@ -82,10 +87,9 @@ public class WorldMeta {
 		public int hazardRuns = 0;
 		
 		public int layout = 0;
-		
 		public int progression = 0;
-		public int size = 1;
-		public int style = 1;
+		public int size = 0;
+		public int style = 0;
 		
 		public int focus = -1; // bitmask probably - -1 is a good sentinel because it will always mean "focus everything"
 		
@@ -96,14 +100,23 @@ public class WorldMeta {
 		// === Sets
 		
 		@SerializedName("tags_used")
-		Set<String> tagsUsed = new HashSet<>();
+		public Set<String> tagsUsed = new HashSet<>();
 		
 		@SerializedName("designers_used")
-		Set<String> designersUsed = new HashSet<>();
+		public Set<String> designersUsed = new HashSet<>();
 		
 		/** Not including hidden stuff like power suit / beam / visor */
 		@SerializedName("starting_items")
-		Set<Integer> startingItems = new HashSet<>();
+		public Set<Integer> startingItems = new HashSet<>();
+	}
+	
+	@Deserializer
+	public static WorldMeta fromJson(ObjectElement obj) {
+		WorldMeta result = new WorldMeta();
+		result.version = Version.of(obj.getPrimitive("version"));
+		
+		
+		return result;
 	}
 }
 

@@ -8,6 +8,8 @@ import blue.endless.jankson.api.document.ArrayElement;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.jankson.api.document.PrimitiveElement;
 import blue.endless.jankson.api.document.ValueElement;
+import blue.endless.pi.enigma.Version;
+import blue.endless.pi.enigma.WorldMeta;
 import blue.endless.pi.enigma.wrapper.RoomInfo;
 import blue.endless.pi.enigma.wrapper.ScreenInfo;
 import blue.endless.pi.enigma.wrapper.WorldInfo;
@@ -17,6 +19,7 @@ import it.unimi.dsi.fastutil.ints.IntSortedSet;
 
 public class EnigmaFormat {
 	public static final double ORIGINAL_PI_VERSION = 0.775;
+	public static final long ORIGINAL_INT_VERSION = 77;
 	public static final long CURRENT_VERSION = 81;
 	public static final String PI_ID = "planet_inspector";
 	
@@ -186,8 +189,10 @@ public class EnigmaFormat {
 	 * @param world The world to mark as externally edited.
 	 */
 	private static void markAsEdited(WorldInfo world) {
-		world.metaJson().put("modified", PrimitiveElement.of(true));
-		world.metaJson().put("modification_tool", PrimitiveElement.of(PI_ID));
+		world.metadata().modified = true;
+		world.metadata().externalEditor = PI_ID;
+		//world.metaJson().put("modified", PrimitiveElement.of(true));
+		//world.metaJson().put("modification_tool", PrimitiveElement.of(PI_ID));
 	}
 	
 	/**
@@ -213,27 +218,29 @@ public class EnigmaFormat {
 	}*/
 	
 	private static void updateMetadata(WorldInfo world) {
-		int bosses = 0;
-		int screens = 0;
-		int rooms = 0;
-		int areas = world.areas().size() - 2;
-		int items = 0;
+		WorldMeta.Stats stats = world.metadata().stats;
+		stats.bosses = 0;
+		stats.screens = 0;
+		stats.rooms = 0;
+		stats.areas = world.areas().size() - 2;
+		stats.items = 0;
 		
 		for (RoomInfo room : world.rooms()) {
-			if (room.isBossRoom()) bosses++;
-			rooms++;
+			if (room.isBossRoom()) stats.bosses++;
+			stats.rooms++;
 			
 			for(ScreenInfo screen : room.screens()) {
-				screens++;
+				stats.screens++;
 				
 				for(ObjectElement obj : screen.json().getArray("OBJECTS").asObjectArray()) {
 					switch(obj.getPrimitive("type").asInt().orElse(-1)) {
-						case 0 -> items++;
+						case 0 -> stats.items++;
 					}
 				}
 			}
 		}
 		
+		/*
 		ObjectElement stats = world.metaJson().getObject("stats");
 		stats.put("bosses", PrimitiveElement.of(bosses));
 		stats.put("screens", PrimitiveElement.of(screens));
@@ -243,21 +250,23 @@ public class EnigmaFormat {
 		stats.put("sectors", PrimitiveElement.of(1));
 		stats.computeIfAbsent("tags_used", (it) -> new ArrayElement());
 		stats.computeIfAbsent("designers_used", (it) -> new ArrayElement());
+		*/
 		
-		world.metaJson().put("stats", stats); // If it didn't exist, put it back.
+		//world.metaJson().put("stats", stats); // If it didn't exist, put it back.
 		
 		
 		
 		//Grab stats and include in the preview
 		
 		String statusText = "";
-		statusText += "AREAS:  " + areas + ";";
-		statusText += "ROOMS:  " + rooms + ";";
-		statusText += "SCREENS:" + screens + ";";
-		statusText += "BOSSES: " + bosses + ";";
-		statusText += "ITEMS:  " + items + ";";
+		statusText += "AREAS:  " + stats.areas + ";";
+		statusText += "ROOMS:  " + stats.rooms + ";";
+		statusText += "SCREENS:" + stats.screens + ";";
+		statusText += "BOSSES: " + stats.bosses + ";";
+		statusText += "ITEMS:  " + stats.items + ";";
 		
-		world.metaJson().put("description", PrimitiveElement.of(statusText));
+		//world.metaJson().put("description", PrimitiveElement.of(statusText));
+		world.metadata().description = statusText;
 	}
 	
 	/**
@@ -308,7 +317,8 @@ public class EnigmaFormat {
 	 * @param world the world to prepare for saving
 	 */
 	public static void prepareForSave(WorldInfo world) {
-		world.metaJson().put("version", PrimitiveElement.of(CURRENT_VERSION));
+		world.metadata().version = new Version(CURRENT_VERSION);
+		//world.metaJson().put("version", PrimitiveElement.of(CURRENT_VERSION));
 		
 		removeEnigmaDebug(world);
 		logEdit(world);

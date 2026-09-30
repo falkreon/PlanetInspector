@@ -159,6 +159,13 @@ public class PropertyEditor extends JPanel {
 		editorPanel.validate();
 	}
 	
+	public void addConstantLine(String label, String constant) {
+		JTextField editor = new JTextField();
+		editor.setEditable(false);
+		editor.setDisabledTextColor(Color.WHITE);
+		editor.setText(constant);
+	}
+	
 	public void addExternalLine(String label, JComponent editor) {
 		addLine(label, editor);
 		editorPanel.validate();

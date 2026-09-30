@@ -174,9 +174,15 @@
 				"map_scanner_size": { "type": "integer" },
 				"map_scanner_time": { "type": "integer" },
 				
-				"room_info_indicate_major": { "description": "Data type unknown", "default": 0 },
+				"room_info_indicate_major": { "$ref": "#/$defs/MessyBool" },
 				"save_style": { "description": "Data type unknown", "default": 0 },
-				"enemy_death_memory": { "description": "Data type unknown", "default": 0 },
+				"enemy_death_memory": {
+					"oneOf": [
+						{ "const": 0, "title": "Unknown_0" },
+						{ "const": 1, "title": "Unknown_1" },
+						{ "const": 2, "title": "Unknown_2" },
+					]
+				},
 				
 				"map_marker_icons": {
 					"type": "array",
@@ -237,6 +243,9 @@
 						"beam_speed": { "type": "number", "default": 5.0 },
 						"shinespark_damage": { "type": "integer", "default": 30 },
 						"charge_time": { "type": "integer", "default": 90 },
+						"charge_combo_ammo": { "type": "integer", "default": 1 },
+						"bomb_scale_damage_from_beams": { "type": "integer", "default": 1 },
+						"shinespark_damage_from_suits": { "type": "integer", "default": 0 },
 						
 						"stun_bosses": { "$ref": "#/$defs/MessyBool", "default": false },
 						"missile_charge_replace_ammo": { "$ref": "#/$defs/MessyBool", "default": false },
@@ -244,10 +253,6 @@
 						"stun_mooks": { "$ref": "#/$defs/MessyBool", "default": false },
 						"beam_autofire": { "$ref": "#/$defs/MessyBool", "default": true },
 						"inherit_momentum": { "$ref": "#/$defs/MessyBool", "default": true },
-						
-						"bomb_scale_damage_from_beams": { "description": "type unknown", "default": 1 },
-						"shinespark_damage_from_suits": { "description": "type unknown", "default": 0 },
-						"charge_combo_ammo": { "description": "type unknown", "default": 1 },
 					},
 					"required": [
 						"beam_distance", "missile_damage_frozen_multiplier", "power_bomb_base_damage",
@@ -311,7 +316,13 @@
 						"bash_shot_blocks": { "$ref": "#/$defs/MessyBool", "default": false },
 						"bash_bomb_blocks": { "$ref": "#/$defs/MessyBool", "default": false },
 						
-						"spin_jump_timing": { "description": "Type unknown", "default": 0 },
+						"spin_jump_timing": {
+							"oneOf": [
+								{ "const": 0, "title": "Unknown_0" },
+								{ "const": 1, "title": "Unknown_1" },
+								{ "const": 2, "title": "Unknown_2" },
+							]
+						},
 						"jump_power": { "type": "number", "default": 4.0 },
 						"liquid_slowdown": { "type": "number", "default": 0.6 },
 						"speed_boost_distance": { "type": "integer", "default": 20 },

@@ -48,6 +48,19 @@ public class MapObjectInfo {
 		return ObjectType.of(rawType);
 	}
 	
+	public BufferedImage getSprite(WorldInfo world) {
+		String rsrc = type().spriteResource();
+		if (rsrc.isBlank()) return Assets.missingImage();
+		
+		
+		// Special-case gunship
+		if (type().stringId().equals("gunship")) {
+			return Assets.getPalettedImage("objects/"+rsrc+".png", new int[] { 0x10, 0x17, 0x28 }).orElseGet(Assets::missingImage);
+		}
+		
+		return Assets.getCachedImage("objects/"+rsrc+".png").orElseGet(Assets::missingImage);
+	}
+	
 	public static class EnemyInfo extends MapObjectInfo {
 		public EnemyInfo(ScreenInfo screen, ObjectElement json) {
 			super(screen, json);
@@ -58,6 +71,7 @@ public class MapObjectInfo {
 			return EnemyType.values.get(rawType);
 		}
 		
+		@Override
 		public BufferedImage getSprite(WorldInfo world) {
 			ArrayElement enemiesData = world.json().getArray("ENEMY_DATA");
 			int rawType = json.getPrimitive("type").asInt().orElse(0);
@@ -98,6 +112,11 @@ public class MapObjectInfo {
 		public void setItem(ItemType item) {
 			json.put("item", PrimitiveElement.of(item.id()));
 		}
+		
+		@Override
+		public BufferedImage getSprite(WorldInfo world) {
+			return item().getSprite();
+		}
 	}
 	
 	public static class MapElevatorInfo extends MapObjectInfo {
@@ -115,6 +134,11 @@ public class MapObjectInfo {
 		
 		public boolean isEscape() {
 			return json.getPrimitive("dest_rm").asInt().orElse(-2) == -1;
+		}
+		
+		@Override
+		public BufferedImage getSprite(WorldInfo world) {
+			return Assets.getPalettedImage("objects/spr_Elevator_0.png", new int[] { 22, 40, 26 }).orElseGet(Assets::missingImage);
 		}
 		
 		public void setEscape(boolean escape) {
@@ -142,7 +166,7 @@ public class MapObjectInfo {
 			return Direction.of(json.getPrimitive("pos").asInt().orElse(1));
 		}
 		
-		public BufferedImage sprite() {
+		public BufferedImage getSprite(WorldInfo world) {
 			
 			//int[] palette = new int[] { 0x00, 0x10, 0x20 };
 			int paletteIndex = json.getPrimitive("type").asInt().orElse(0);

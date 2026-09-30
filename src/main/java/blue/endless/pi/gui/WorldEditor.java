@@ -227,7 +227,8 @@ public class WorldEditor extends AbstractView implements CloseAware {
 				if (world == null) return;
 				long seconds = System.currentTimeMillis() / 1_000L; // Seconds since midnight, january 1, 1970
 				long newId = seconds * 1000L + (long) (Math.random() * 999);
-				world.metaJson().put("id", PrimitiveElement.of(newId));
+				world.metadata().id = newId;
+				//world.metaJson().put("id", PrimitiveElement.of(newId));
 				context.clearSaved();
 				//planetView.getView().setDirty(true);
 				setWorldProperties();
@@ -332,12 +333,14 @@ public class WorldEditor extends AbstractView implements CloseAware {
 	public void setWorldProperties() {
 		propertyView.setObject(null, null);
 		if (world == null) return;
-		propertyView.addExternalLine("Short Name", world.metaJson(), "name", SchemaType.STRING);
-		propertyView.addExternalLine("Full Name", world.metaJson(), "name_full", SchemaType.STRING);
-		propertyView.addExternalLine("Version", world.metaJson(), "world_version", SchemaType.INT);
-		propertyView.addExternalLine("Authors", world.metaJson(), "author", SchemaType.STRING);
-		propertyView.addExternalLine("Tags", world.metaJson().getObject("external_editor"), "tags", SchemaType.STRING_LIST);
-		propertyView.addExternalLine("Id", world.metaJson(), "id", SchemaType.IMMUTABLE_INT);
+		propertyView.addConstantLine("Short Name", world.metadata().name);
+		
+		//propertyView.addExternalLine("Short Name", world.metaJson(), "name", SchemaType.STRING);
+		//propertyView.addExternalLine("Full Name", world.metaJson(), "name_full", SchemaType.STRING);
+		//propertyView.addExternalLine("Version", world.metaJson(), "world_version", SchemaType.INT);
+		//propertyView.addExternalLine("Authors", world.metaJson(), "author", SchemaType.STRING);
+		//propertyView.addExternalLine("Tags", world.metaJson().getObject("external_editor"), "tags", SchemaType.STRING_LIST);
+		//propertyView.addExternalLine("Id", world.metaJson(), "id", SchemaType.IMMUTABLE_INT);
 	}
 	/*
 	public void setRoomProperties(ObjectElement room) {
@@ -513,7 +516,11 @@ public class WorldEditor extends AbstractView implements CloseAware {
 			JFileChooser chooser = new JFileChooser();
 			FileNameExtensionFilter filter = new FileNameExtensionFilter("Planets Enigma worlds", "mp_world");
 			chooser.setFileFilter(filter);
-			String defaultFileName = world.metaJson().getPrimitive("name").asString().orElse("untitled").replace(' ', '_') + ".mp_world";
+			//String defaultFileName = world.metaJson().getPrimitive("name").asString().orElse("untitled").replace(' ', '_') + ".mp_world";
+			String defaultFileName = world.metadata().name;
+			if (defaultFileName ==  null || defaultFileName.isBlank()) defaultFileName = "untitled";
+			defaultFileName.replace(' ', '_');
+			defaultFileName += ".mp_world";
 			
 			chooser.setCurrentDirectory(curWorldsDir);
 			chooser.setSelectedFile(new File(curWorldsDir, defaultFileName));

@@ -76,6 +76,7 @@
 				
 				"ship_hints": { "$ref": "#/$defs/MessyBool" },
 				"room_hints": { "$ref": "#/$defs/MessyBool" },
+				"cores": { "$ref": "#/$defs/MessyBool" },
 				
 				"hazard_runs": {
 					"oneOf": [
@@ -84,7 +85,37 @@
 						{ "const": 2, "title": "forced" }
 					]
 				},
+				"progression": {
+					"oneOf": [
+						{ "const": 0, "title": "normal" },
+						{ "const": 1, "title": "grouped" },
+						{ "const": 2, "title": "chaotic" }
+					]
+				},
+				"size": {
+					"oneOf": [
+						{ "const": 0, "title": "tiny" },
+						{ "const": 1, "title": "small" },
+						{ "const": 2, "title": "medium" },
+						{ "const": 3, "title": "large" },
+					]
+				},
+				"style": {
+					"type": "integer",
+					
+					"$comment": "Hubs/hallways/balanced"
+				},
+				"layout": {
+					"oneOf": [
+						{ "const": 0, "title": "standard" },
+						{ "const": 1, "title": "centralized" },
+						{ "const": 2, "title": "chaotic" }
+					]
+				},
 				
+				"focus": {
+					"type": "integer"
+				},
 				
 				"tags_used": {
 					"type": "array",
@@ -93,9 +124,20 @@
 				"designers_used": {
 					"type": "array",
 					"items": { "type": "string" }
+				},
+				"starting_items": {
+					"type": "array",
+					"items": { "type": "integer" }
 				}
 			},
-			"required": [ "sectors", "areas", "rooms" ,"screens", "bosses", "items" ],
+			"required": [
+				"sectors", "areas", "rooms" ,"screens", "bosses", "items",
+				"ship_hints", "room_hints", "cores",
+				"hazard_runs", "progression", "size", "style", "layout",
+				"focus",
+				"tags_used", "designers_used",
+				"starting_items"
+			],
 			"additionalProperties": false
 		}
 	},
