@@ -12,7 +12,7 @@ import blue.endless.jankson.api.io.ObjectReaderFactory;
 import blue.endless.jankson.api.io.json.JsonWriterOptions;
 import blue.endless.pi.gui.WorldEditor;
 import blue.endless.pi.gui.view.ViewerFrame;
-import blue.endless.pi.enigma.WorldMeta;
+import blue.endless.pi.enigma.domain.WorldMeta;
 import blue.endless.pi.enigma.util.EnemyType;
 import blue.endless.pi.enigma.util.EnigmaFormat;
 import blue.endless.pi.enigma.util.ItemType;
@@ -23,6 +23,7 @@ import blue.endless.pi.gui.Tileset;
 public class App {
 	public static void main(String... args) {
 		
+		/*
 		try {
 			StringWriter sw = new StringWriter();
 			Jankson.writeJson(new WorldMeta(), new ObjectReaderFactory(), sw, JsonWriterOptions.STRICT);
@@ -30,7 +31,7 @@ public class App {
 		} catch (SyntaxError | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 		
 		Preferences.init();
 		Tileset.init();

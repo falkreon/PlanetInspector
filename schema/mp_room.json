@@ -145,7 +145,7 @@
 						"list": {
 							"type": "array",
 							"items": {
-								"description": "Integer triplets, possibly xyz coordinates palette colors? But why??",
+								"description": "Bitmasks that hold grid information to represent the layout of screens/doors",
 								"type": "array",
 								"items": {
 									"type": "integer"
@@ -280,6 +280,7 @@
 		},
 		"PARALLAX": {
 			"type": "object",
+			"$comment": "NOT STABLE. EXPECT STRUCTURAL CHANGES HERE.",
 			"properties": {
 				"type": { "type": "integer", "default": 0 },
 				"tiles": {

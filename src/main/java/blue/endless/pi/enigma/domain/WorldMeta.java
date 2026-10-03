@@ -1,13 +1,13 @@
-package blue.endless.pi.enigma;
+package blue.endless.pi.enigma.domain;
 
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import blue.endless.jankson.api.annotation.Deserializer;
 import blue.endless.jankson.api.annotation.SerializedName;
-import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.pi.enigma.util.EnigmaFormat;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 
 public class WorldMeta {
 	/** Generally referred to in patch notes as a "world format version". */
@@ -17,7 +17,7 @@ public class WorldMeta {
 	public long id = 0L;
 	
 	/** The monotonic version of this World. Affects whether importing a world will overwrite another one with the same id. */
-	public long world_version = World.createWorldId();
+	public long world_version = WorldMeta.createWorldId();
 	
 	/** The author of the World - if "handcrafted" and "modified" are both false, set this to the empty string. */
 	public String author = "";
@@ -74,10 +74,8 @@ public class WorldMeta {
 		public long items = 0;
 		
 		// === Enumerated items
-		
-		/** 0: off, 1: on - copy of a flag in world */
 		@SerializedName("ship_hints")
-		public int shipHints = 0;
+		public boolean shipHints = false;
 		
 		@SerializedName("room_hints")
 		public boolean roomHints = false;
@@ -107,16 +105,19 @@ public class WorldMeta {
 		
 		/** Not including hidden stuff like power suit / beam / visor */
 		@SerializedName("starting_items")
-		public Set<Integer> startingItems = new HashSet<>();
+		public IntSet startingItems = new IntOpenHashSet();
 	}
 	
-	@Deserializer
-	public static WorldMeta fromJson(ObjectElement obj) {
-		WorldMeta result = new WorldMeta();
-		result.version = Version.of(obj.getPrimitive("version"));
-		
-		
-		return result;
+	public void makeUnique() {
+		this.id = createWorldId();
+	}
+	
+	/**
+	 * Generates a new, unique world Id
+	 */
+	public static long createWorldId() {
+		long seconds = System.currentTimeMillis() / 1_000L; // Seconds since midnight, january 1, 1970
+		return seconds * 1000L + (long) (Math.random() * 999);
 	}
 }
 

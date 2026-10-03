@@ -1,4 +1,4 @@
-package blue.endless.pi.enigma;
+package blue.endless.pi.enigma.domain;
 
 import blue.endless.jankson.api.annotation.Deserializer;
 import blue.endless.jankson.api.annotation.Serializer;

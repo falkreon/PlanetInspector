@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.util.Optional;
 
 import blue.endless.pi.Assets;
+import blue.endless.pi.datastruct.Vec2;
 import blue.endless.pi.enigma.wrapper.RoomInfo;
 
 public class Tileset {
@@ -107,12 +108,39 @@ public class Tileset {
 	}*/
 	
 	private static void paintTintImage(Graphics g, int dx, int dy, BufferedImage buf, int tileId, boolean mirror, boolean flip, boolean rotate, Color bg, Color mid, Color fg) {
+		Vec2 basisX = new Vec2(1, 0);
+		Vec2 basisY = new Vec2(0, 1);
+		Vec2 origin = new Vec2(0, 0);
+		
+		if (rotate) {
+			basisX = new Vec2(basisX.y(), -basisX.x());
+			basisY = new Vec2(basisY.y(), -basisY.x());
+			origin = new Vec2(origin.y(), 15 - origin.x());
+		}
+		
+		if (mirror) {
+			basisX = new Vec2(-basisX.x(), basisX.y());
+			basisY = new Vec2(-basisY.x(), basisY.y());
+			origin = new Vec2(15 - origin.x(), origin.y());
+		}
+		
+		if (flip) {
+			basisX = new Vec2(basisX.x(), -basisX.y());
+			basisY = new Vec2(basisY.x(), -basisY.y());
+			origin = new Vec2(origin.x(), 15 - origin.y());
+		}
+		
+		
+		
 		int sx = tileId % 16;
 		int sy = tileId / 16;
 		
 		//g.setColor(c);
 		for(int y=0; y<16; y++) {
 			for(int x=0; x<16; x++) {
+				int ix = origin.x() + x * basisX.x() + y * basisY.x();
+				int iy = origin.y() + x * basisX.y() + y * basisY.y();
+				/*
 				int ix = x;
 				int iy = y;
 				
@@ -131,7 +159,7 @@ public class Tileset {
 					
 					ix = xp;
 					iy = yp;
-				}
+				}*/
 				
 				int color = buf.getRGB(sx*16 + ix, sy*16 + iy);
 				if (color != 0) {

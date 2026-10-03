@@ -40,6 +40,7 @@ import blue.endless.pi.BGM;
 import blue.endless.pi.Preferences;
 import blue.endless.pi.SchemaType;
 import blue.endless.pi.datastruct.Vec2;
+import blue.endless.pi.enigma.domain.World;
 import blue.endless.pi.enigma.util.EnemyType;
 import blue.endless.pi.enigma.util.EnigmaFormat;
 import blue.endless.pi.enigma.util.Hazard;
@@ -316,7 +317,7 @@ public class WorldEditor extends AbstractView implements CloseAware {
 			if (world != null) return;
 			
 			try {
-				WorldInfo world = WorldInfo.load(file.toPath());
+				WorldInfo world = EnigmaFormat.load(file.toPath());
 				WorldEditor.this.setWorld(world);
 				worldMenu.setEnabled(true);
 				context.markSaved();
@@ -498,8 +499,7 @@ public class WorldEditor extends AbstractView implements CloseAware {
 			File selectedFolder = worldFile.getParentFile();
 			if (selectedFolder != null) curWorldsDir = selectedFolder;
 			
-			
-			WorldInfo world = WorldInfo.load(worldFile.toPath());
+			WorldInfo world = EnigmaFormat.load(worldFile.toPath());
 			this.setWorld(world);
 			worldMenu.setEnabled(true);
 			context.markSaved();

@@ -1,11 +1,6 @@
 package blue.endless.pi.enigma.wrapper;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
@@ -18,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
-import java.util.zip.InflaterInputStream;
 
 import blue.endless.jankson.api.Jankson;
 import blue.endless.jankson.api.SyntaxError;
@@ -30,9 +24,9 @@ import blue.endless.jankson.api.io.ObjectReaderFactory;
 import blue.endless.jankson.api.io.ObjectWriter;
 import blue.endless.jankson.api.io.ValueElementReader;
 import blue.endless.jankson.api.io.json.JsonWriterOptions;
-import blue.endless.pi.enigma.WorldMeta;
-import blue.endless.pi.enigma.util.EnigmaFormat;
+import blue.endless.pi.enigma.domain.WorldMeta;
 import blue.endless.pi.enigma.util.MinimapBaseShape;
+import blue.endless.pi.reflect.PlanetsDeserializer;
 
 public record WorldInfo(ObjectElement json, WorldMeta metadata, List<RoomInfo> rooms, List<AreaInfo> areas) {
 	
@@ -53,14 +47,20 @@ public record WorldInfo(ObjectElement json, WorldMeta metadata, List<RoomInfo> r
 			}
 		}
 		
-		ObjectWriter<WorldMeta> worldMetaWriter = new ObjectWriter<>(WorldMeta.class);
+		WorldMeta worldMeta = null;
 		try {
-			ValueElementReader.of(metaJson).transferTo(worldMetaWriter);
-		} catch (SyntaxError | IOException e) {
-			throw new RuntimeException(e);
+			worldMeta = PlanetsDeserializer.decode(metaJson, WorldMeta.class);
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
 		}
+		//ObjectWriter<WorldMeta> worldMetaWriter = new ObjectWriter<>(WorldMeta.class);
+		//try {
+		//	ValueElementReader.of(metaJson).transferTo(worldMetaWriter);
+		//} catch (SyntaxError | IOException e) {
+		//	throw new RuntimeException(e);
+		//}
 		
-		return new WorldInfo(json, worldMetaWriter.toObject(), rooms, areas);
+		return new WorldInfo(json, worldMeta, rooms, areas);
 	}
 	
 	/**
@@ -255,82 +255,12 @@ public record WorldInfo(ObjectElement json, WorldMeta metadata, List<RoomInfo> r
 	}
 	
 	
-	public static WorldInfo load(Path worldFile) throws IOException, SyntaxError {
-		ArrayList<byte[]> files = new ArrayList<>();
-		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		try(InputStream in = Files.newInputStream(worldFile, StandardOpenOption.READ)) {
-			InflaterInputStream zin = new InflaterInputStream(new BufferedInputStream(in));
-			
-			// Buffer all world data. This might break for unusually big worlds!
-			
-			int data = 0;
-			while(data != -1) {
-				data = zin.read();
-				if (data == 0) {
-					if (bytes.size() > 0) {
-						files.add(bytes.toByteArray());
-						bytes.reset();
-					}
-				} else if (data == -1) {
-					break;
-				} else {
-					bytes.write(data);
-				}
-			}
-			
-			if (bytes.size() > 0) {
-				files.add(bytes.toByteArray());
-			}
-			
-			// Parse things
-			
-			if (files.size() != 2) {
-				throw new SyntaxError("Expected 2 embedded jsons");
-			}
-			
-			ObjectElement worldMetaObj = Jankson.readJsonObject(new ByteArrayInputStream(files.get(0)));
-			
-			// Check world version - Try to load absolutely anything within our target range!
-			double enigmaVersion = worldMetaObj.getPrimitive("version").asDouble().orElse(-1.0);
-			
-			if (enigmaVersion > EnigmaFormat.CURRENT_VERSION) {
-				throw new SyntaxError("This enigma version is too new (version: "+enigmaVersion+")");
-			} else if (enigmaVersion < EnigmaFormat.ORIGINAL_PI_VERSION) {
-				throw new SyntaxError("This enigma version is too old (version: "+enigmaVersion+")");
-			}
-			
-			ObjectElement worldObj = Jankson.readJsonObject(new ByteArrayInputStream(files.get(1)));
-			
-			
-			// DEBUG: Save the world and meta json in the same folder as the world was
-			String fileName = worldFile.getFileName().toString();
-			Path basePath = worldFile.getParent();
-			if (fileName.endsWith(".mp_world")) {
-				fileName = fileName.substring(0, fileName.length()-9);
-			}
-			String metaJsonName = fileName + ".meta.json";
-			String worldJsonName = fileName + ".json";
-			
-			BufferedWriter metaWriter = Files.newBufferedWriter(basePath.resolve(metaJsonName));
-			Jankson.writeJson(worldMetaObj, metaWriter, JsonWriterOptions.STRICT);
-			metaWriter.flush(); metaWriter.close();
-			
-			BufferedWriter worldWriter = Files.newBufferedWriter(basePath.resolve(worldJsonName));
-			Jankson.writeJson(worldObj, worldWriter, JsonWriterOptions.STRICT);
-			worldWriter.flush(); worldWriter.close();
-			// END DEBUG
-			
-			
-			return WorldInfo.of(worldObj, worldMetaObj);
-		}
-	}
-	
 	public void save(Path worldFile) throws IOException, SyntaxError {
 		try (OutputStream fileOut = Files.newOutputStream(worldFile, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
 			DeflaterOutputStream deflaterOut = new DeflaterOutputStream(fileOut, new Deflater(), 4096, true);
 			
 			OutputStreamWriter writer = new OutputStreamWriter(deflaterOut, StandardCharsets.UTF_8);
-			Jankson.writeJson(new WorldMeta(), new ObjectReaderFactory(), writer, JsonWriterOptions.ONE_LINE);
+			Jankson.writeJson(metadata, new ObjectReaderFactory(), writer, JsonWriterOptions.ONE_LINE);
 			//Jankson.writeJson(metaJson(), writer, JsonWriterOptions.ONE_LINE);
 			writer.flush();
 			deflaterOut.write(0);
