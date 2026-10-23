@@ -49,7 +49,7 @@ public record WorldInfo(ObjectElement json, WorldMeta metadata, List<RoomInfo> r
 		
 		WorldMeta worldMeta = null;
 		try {
-			worldMeta = PlanetsDeserializer.decode(metaJson, WorldMeta.class);
+			worldMeta = PlanetsDeserializer.toType(metaJson, WorldMeta.class);
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}

@@ -17,7 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.border.EmptyBorder;
 
-public class ViewerFrame extends JFrame implements ViewContext {
+public class RootFrame extends JFrame implements ViewContext {
 	JSplitPane splitPane;
 	JButton backButton = new JButton("Back");
 	JPanel statusBar;
@@ -26,12 +26,12 @@ public class ViewerFrame extends JFrame implements ViewContext {
 	
 	public ArrayDeque<View> stack = new ArrayDeque<>();
 	
-	public ViewerFrame(String title) {
+	public RootFrame(String title) {
 		this();
 		this.setTitle(title);
 	}
 	
-	public ViewerFrame() {
+	public RootFrame() {
 		this.setMinimumSize(new Dimension(640, 480));
 		
 		splitPane = new JSplitPane();

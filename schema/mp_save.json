@@ -1,0 +1,238 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"name": "Planets Save File",
+	"description": "The .mp_save file format",
+	
+	"$defs": {
+		"MessyBool": {
+			"description": "Boolean that often shows up as an integer or double in the file",
+			"oneOf": [
+				{ "type": "boolean" },
+				{ "const": 0, "title": "false" },
+				{ "const": 1, "title": "true" }
+			]
+		}
+	},
+	
+	"type": "object",
+	"properties": {
+		"GUNSHIP": {
+			"type": "object",
+			"properties": {
+				"position": { "type": "integer", "default": 0 },
+				"inventory": { "type": "array", "default": [] },
+				"landsites_available": { "type": "array", "default": [] }
+			},
+			"required": [ "position", "inventory", "landsites_available" ]
+		},
+		
+		"RUN_STATS": {
+			"type": "array"
+		},
+		
+		"HINTS": {
+			"type": "object",
+			"properties": {
+				"last_hint": { "type": "integer" },
+				"message_shown": { "type": "integer" }
+			},
+			"required": [ "last_hint", "message_shown" ],
+			"additionalProperties": false
+		},
+		
+		"BOSSES_DEFEATED": {
+			"type": "array",
+			"items": { "type": "integer" }
+		},
+		
+		"REPLAY": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"t": { "type": "integer" },
+					"f": { "type": "integer" },
+					"c": { "type": "integer" },
+					
+					"x": { "type": "integer" },
+					"y": { "type": "integer" },
+					"z": { "type": "integer" }
+				},
+				"required": [ "f", "t" ],
+				"additionalProperties": false
+			}
+		},
+		
+		"STATE_CHANGES": {
+			"type": "object",
+			"properties": {
+				"areas": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"visited": { "$ref": "#/$defs/MessyBool" },
+							"bgm_override": { "type": "string" }
+						},
+						"required": [ "visited", "bgm_override" ],
+						"additionalProperties": false
+					}
+				},
+				"rooms": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"enemies": { "type": "array", "default": [] },
+							"last_visit_time": { "type": "integer", "default": 0 },
+							"doors": { "type": "array", "default": [] },
+							"last_visit_transition": { "type": "integer", "default": 0 },
+							"visited": { "$ref": "#/$defs/MessyBool", "default": 0 },
+							"objects": { "type": "array", "default": [] },
+							"enemies_recent": { "type": "array", "default": [] },
+							"bgm_override": { "type": "string", "default": "" },
+							"events": { "type": "array", "default": [] },
+							"blocks": { "type": "array", "default": [] }
+						},
+						"required": [],
+						"additionalProperties": false
+					}
+				},
+				"map": {
+					"type": "array",
+					"description": "array of column arrays, same organization as tiles. Each cell is a number 0-7."
+				},
+				"values": { "type": "array", "default": [] },
+				"flags": { "type": "array", "default": [] },
+				"sectors": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"visited": { "type": "boolean" }
+						},
+						"required": [ "visited" ],
+						"additionalProperties": false
+					}
+				},
+				"events": { "type": "array", "default": [] }
+			},
+			"required": [
+				"areas", "rooms", "map", "values", "flags", "sectors", "events"
+			],
+			"additionalProperties": false
+		},
+		
+		"SPAWN_POINT": { "type": "integer" },
+		
+		"GAME": {
+			"type": "object",
+			"properties": {
+				"mode": { "type": "integer" },
+				"time": { "type": "integer" },
+				"seed": { "type": "integer" },
+				"percentage": { "type": "number" },
+				"seguru": { "type": "integer" },
+				"difficulty": { "type": "integer" }
+			},
+			"required": [
+				"mode", "time", "seed", "percentage", "seguru", "difficulty"
+			],
+			"additionalProperties": false
+		},
+		
+		"SAMUS": {
+			"type": "object",
+			"properties": {
+				"reserve_tanks_filled": { "type": "integer" },
+				"ammo": {
+					"type": "array",
+					"items": { "type": "integer" }
+				},
+				"equipped": {
+					"type": "array",
+					"items": { "$ref": "#/$defs/MessyBool" }
+				},
+				"inventory": {
+					"type": "array",
+					"items": { "type": "integer" }
+				},
+				"energy": { "type": "integer" },
+				"energy_tanks_corrupted": { "type": "integer" },
+				"load_state": { "type": "integer" },
+				"core_cooldown": { "type": "integer" },
+				"energy_corruption": { "type": "integer" }
+			},
+			"required": [
+				"reserve_tanks_filled", "ammo", "equipped", "inventory", "energy", "energy_tanks_corrupted",
+				"load_state", "core_cooldown", "energy_corruption"
+			],
+			"additionalProperties": false
+		},
+		
+		"MARKERS": {
+			"type": "array"
+		},
+		
+		"META": {
+			"type": "object",
+			"properties": {
+				"version": { "type": "number" },
+				"save_format": { "type": "integer" },
+				"completed": { "type": "boolean" },
+				"world_file_version": { "type": "integer" },
+				"connect_game": { "type": "integer" },
+				"started": { "$ref": "#/$defs/MessyBool" },
+				"world_version": { "type": "integer" },
+				"planet": { "type": "integer" },
+				"world_id": { "type": "integer" },
+				"display": {
+					"type": "object",
+					"properties": {
+						"location_name": { "type": "string" },
+						"energy_style": { "type": "integer" },
+						"ammo_capacity": {
+							"type": "array",
+							"items": { "type": "integer" },
+							"minItems": 7,
+							"maxItems": 7
+						},
+						"samus_colors": {
+							"type": "array",
+							"items": { "type": "integer" },
+							"minItems": 3,
+							"maxItems": 3
+						},
+						"energy_capacity": { "type": "integer" },
+						"items": {
+							"type": "array",
+							"items": { "type": "integer" },
+						},
+						"world_name": { "type": "string" },
+						"samus_sprite": { "type": "integer" }
+					},
+					"required": [],
+					"additionalProperties": false
+				}
+			},
+			"required": [
+				"version", "save_format", "completed", "world_file_version", "connect_game", "started", "world_version",
+				"planet", "world_id", "display"
+			],
+			"additionalProperties": false
+		},
+		
+		"MISC": {
+			"type": "object",
+			"properties": {
+				"map_bonus_scans": { "type": "integer" }
+			},
+			"required": [ "map_bonus_scans" ],
+			"additionalProperties": false
+		}
+		
+	},
+	
+	"required": [],
+	"additionalProperties": false
+}

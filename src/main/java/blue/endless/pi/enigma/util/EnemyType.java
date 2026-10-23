@@ -1,9 +1,12 @@
 package blue.endless.pi.enigma.util;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -11,9 +14,20 @@ import blue.endless.jankson.api.document.KeyValuePairElement;
 import blue.endless.jankson.api.document.ObjectElement;
 import blue.endless.pi.Assets;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntSet;
 
 public class EnemyType {
 	public static final int MOTHER_BRAIN_ID = 36; // Hardcoded because MB searches are common.
+	/** The set of IDs for RELEASED enemies that, if present in a world, will prevent access to yellow doors. */
+	public static final IntSet MINIBOSS_IDS = IntSet.of(
+			34, // Kraid
+			35, // Ridley
+			39 // Spore Spawn
+			);
+	/** The unique EnemyType for the last boss */
+	public static EnemyType MOTHER_BRAIN;
+	/** The set of RELEASED EnemyTypes that, if present in a world, will prevent access to yellow doors. */
+	public static Set<EnemyType> MINIBOSSES;
 	
 	public static final Map<String, EnemyType> byName = new HashMap<>();
 	public static final Int2ObjectOpenHashMap<EnemyType> values = new Int2ObjectOpenHashMap<EnemyType>();
@@ -32,6 +46,14 @@ public class EnemyType {
 				values.put(monster.id(), monster);
 			}
 		}
+		
+		List<EnemyType> bossEnemies = new ArrayList<>();
+		MINIBOSS_IDS.intIterator().forEachRemaining((id) -> {
+			EnemyType enemy = values.get(id);
+			if (enemy != null) bossEnemies.add(enemy);
+		});
+		MINIBOSSES = Set.copyOf(bossEnemies);
+		MOTHER_BRAIN = values.get(MOTHER_BRAIN_ID);
 	}
 	
 	//ZOOMER(0, "spr_Enemy_zoomer_NEW_0"),
@@ -86,7 +108,6 @@ public class EnemyType {
 	cacti 48
 	spore bud 49
 	giant dessgeega 50*/
-	;
 	
 	private final int id;
 	private final String name;

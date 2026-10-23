@@ -24,7 +24,7 @@ public class WorldMeta {
 	/** Short name of the world, without the "DEMO number" */
 	public String name = "UNTITLED";
 	/** Full name of the world, including the "DEMO number" */
-	@SerializedName("name_full")
+	//@SerializedName("name_full")
 	public String nameFull = "UNTITLED - DEMO 0";
 	
 	/** The plot text crawl. Currently PI overwrites this with stats when you save a world. */
@@ -36,29 +36,29 @@ public class WorldMeta {
 	/** True if this world was modified by an external tool. Always true for anything saved by PI */
 	public boolean modified = true;
 	
-	@SerializedName("external_editor")
+	//@SerializedName("external_editor")
 	public String externalEditor = EnigmaFormat.PI_ID;
 	
 	/** Timestamp for when the world was created */
-	@SerializedName("creation_date")
+	//@SerializedName("creation_date")
 	public double creationDate = EnigmaFormat.createTimestamp(ZonedDateTime.now());
 	
 	/** Timestamp for when the world was last saved */
-	@SerializedName("save_date")
+	//@SerializedName("save_date")
 	public double saveDate = EnigmaFormat.createTimestamp(ZonedDateTime.now());
 	
-	@SerializedName("connect_compatible")
+	//@SerializedName("connect_compatible")
 	public boolean connectCompatible = true;
 	
-	@SerializedName("versus_compatible")
+	//@SerializedName("versus_compatible")
 	public boolean versusCompatible = true;
 	
 	/** Should we warn users about experimental content, like arm blades or spin boost? */
-	@SerializedName("experimental_warning")
+	//@SerializedName("experimental_warning")
 	public boolean experimentalWarning = false;
 	
 	/** Should we warn users about excessive challenge? This is typically driven by tags */
-	@SerializedName("challenge_warning")
+	//@SerializedName("challenge_warning")
 	public boolean challengeWarning = false;
 	
 	/** Stats block. REQUIRED! */

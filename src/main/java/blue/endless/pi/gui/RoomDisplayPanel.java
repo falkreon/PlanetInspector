@@ -216,6 +216,7 @@ public class RoomDisplayPanel extends JPanel {
 			}
 			int baseX = selectable.object().roomX() - (offset.x() * ScreenInfo.PIXEL_WIDTH);
 			int baseY = selectable.object().roomY() - (offset.y() * ScreenInfo.PIXEL_HEIGHT);
+			int rot = selectable.object().json().getPrimitive("rot").asInt().orElse(0);
 			//System.out.println("Selectable of type "+selectable.object.getClass().getSimpleName()+" is at "+baseX+", "+baseY+", with rect "+selectable.rect());
 			if (image != null) {
 				g.drawImage(image, (baseX - halfWidth) * scale, (baseY - halfHeight) * scale, image.getWidth() * scale, image.getHeight() * scale, null);

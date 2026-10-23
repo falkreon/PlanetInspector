@@ -29,6 +29,8 @@ import blue.endless.jankson.api.document.ValueElement;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 
 public class PlanetsDeserializer {
+	
+	/*
 	public static <T> T decode(ValueElement v, Class<T> clazz) throws IOException {
 		if (v instanceof ObjectElement o) {
 			T result = null;
@@ -52,12 +54,15 @@ public class PlanetsDeserializer {
 			// Map and marshall
 			for(KeyValuePairElement kvp: o) {
 				Field field = fields.get(kvp.getKey());
+				if (field == null) field = fields.get(Case.snakeToCamel(kvp.getKey()));
+				
+				
 				if (field == null) {
 					System.out.println(kvp.getKey() + ": No Mapping");
 				} else {
 					System.out.println("Inspecting " + kvp.getKey() + ": " + kvp.getValue().getClass().getSimpleName()+" -> "+field.getType().getSimpleName());
 					try {
-						Object marshalledValue = marshallUnknown(kvp.getValue(), field.getGenericType());
+						Object marshalledValue = toType(kvp.getValue(), field.getGenericType());
 						
 						if (marshalledValue == null) {
 							System.out.println("  Field SKIPPED");
@@ -75,7 +80,7 @@ public class PlanetsDeserializer {
 		} else {
 			throw new IOException("Source data is not an Object");
 		}
-	}
+	}*/
 	
 	public static Class<?> toClass(Type t) {
 		return switch(t) {
@@ -98,22 +103,23 @@ public class PlanetsDeserializer {
 		};
 	}
 	
-	private static Object marshallUnknown(ValueElement input, Type destType) {
+	@SuppressWarnings("unchecked")
+	public static <T> T toType(ValueElement input, Type destType) {
 		Class<?> baseClass = toClass(destType);
 		if (baseClass == null) return null;
-		if (baseClass.isAssignableFrom(input.getClass())) return input;
+		if (baseClass.isAssignableFrom(input.getClass())) return (T) input;
 		
 		return switch(baseClass.getSimpleName()) {
-			case "Boolean", "boolean" -> marshallBoolean(input);
-			case "Integer", "int" -> marshallInt(input);
-			case "Long", "long" -> marshallLong(input);
-			case "Double", "double" -> marshallDouble(input);
-			case "String" -> marshallString(input);
+			case "Boolean", "boolean" -> (T) toBoolean(input);
+			case "Integer", "int" -> (T) toInt(input);
+			case "Long", "long" -> (T) toLong(input);
+			case "Double", "double" -> (T) toDouble(input);
+			case "String" -> (T) toString(input);
 			
 			case "Set" -> {
 				if (destType instanceof ParameterizedType p && p.getActualTypeArguments().length == 1) {
 					Type elementType = p.getActualTypeArguments()[0];
-					yield marshallSet(input, elementType);
+					yield (T) toSet(input, elementType);
 				} else {
 					yield null;
 				}
@@ -123,10 +129,10 @@ public class PlanetsDeserializer {
 				if (input instanceof ArrayElement arr) {
 					IntOpenHashSet result = new IntOpenHashSet();
 					for(ValueElement v : arr) {
-						Integer i = marshallInt(v);
+						Integer i = toInt(v);
 						if (i != null) result.add(i.intValue());
 					}
-					yield result;
+					yield (T) result;
 				} else {
 					yield null;
 				}
@@ -135,18 +141,18 @@ public class PlanetsDeserializer {
 			case "List" -> {
 				if (destType instanceof ParameterizedType p && p.getActualTypeArguments().length == 1) {
 					Type elementType = p.getActualTypeArguments()[0];
-					yield marshallList(input, elementType);
+					yield (T) toList(input, elementType);
 				} else {
 					yield null;
 				}
 			}
 			
 			// Look for a Deserializer factory method
-			default -> marshallObject(baseClass, input);
+			default -> (T) toObject(baseClass, input);
 		};
 	}
 	
-	private static Boolean marshallBoolean(ValueElement input) {
+	private static Boolean toBoolean(ValueElement input) {
 		if (input instanceof PrimitiveElement prim) {
 			if (prim instanceof DoubleElement d) {
 				return d.asDouble().orElse(0) != 0;
@@ -157,7 +163,7 @@ public class PlanetsDeserializer {
 		}
 	}
 	
-	private static Integer marshallInt(ValueElement input) {
+	private static Integer toInt(ValueElement input) {
 		if (input instanceof PrimitiveElement prim) {
 			OptionalInt result = prim.asInt();
 			if (result.isPresent()) return result.getAsInt();
@@ -165,7 +171,7 @@ public class PlanetsDeserializer {
 		return null;
 	}
 	
-	private static Long marshallLong(ValueElement input) {
+	private static Long toLong(ValueElement input) {
 		if (input instanceof PrimitiveElement prim) {
 			OptionalLong result = prim.asLong();
 			if (result.isPresent()) return result.getAsLong();
@@ -173,7 +179,7 @@ public class PlanetsDeserializer {
 		return null;
 	}
 	
-	private static Double marshallDouble(ValueElement input) {
+	private static Double toDouble(ValueElement input) {
 		if (input instanceof PrimitiveElement prim) {
 			OptionalDouble result = prim.asDouble();
 			if (result.isPresent()) return result.getAsDouble();
@@ -181,7 +187,7 @@ public class PlanetsDeserializer {
 		return null;
 	}
 	
-	private static String marshallString(ValueElement input) {
+	private static String toString(ValueElement input) {
 		if (input instanceof PrimitiveElement prim) {
 			return prim.asString().orElse(null);
 		} else {
@@ -189,14 +195,14 @@ public class PlanetsDeserializer {
 		}
 	}
 	
-	private static <T> Set<T> marshallSet(ValueElement input, Type elementType) {
+	private static <T> Set<T> toSet(ValueElement input, Type elementType) {
 		if (input instanceof ArrayElement arr) {
 			HashSet<T> result = new HashSet<>();
 			
 			for(ValueElement elem: arr) {
 				try {
 					@SuppressWarnings("unchecked")
-					T t = (T) marshallUnknown(elem, elementType);
+					T t = (T) toType(elem, elementType);
 					result.add(t);
 				} catch (Throwable t) {
 					// Skip this item
@@ -210,14 +216,14 @@ public class PlanetsDeserializer {
 		return null;
 	}
 	
-	public static <T> List<T> marshallList(ValueElement input, Type elementType) {
+	public static <T> List<T> toList(ValueElement input, Type elementType) {
 		ArrayList<T> result = new ArrayList<>();
 		
 		if (input instanceof ArrayElement arr) {
 			for(ValueElement elem: arr) {
 				try {
 					@SuppressWarnings("unchecked")
-					T t = (T) marshallUnknown(elem, elementType);
+					T t = (T) toType(elem, elementType);
 					result.add(t);
 				} catch (Throwable t) {
 					// Skip this item
@@ -230,7 +236,7 @@ public class PlanetsDeserializer {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private static <T> T marshallObject(Class<T> outputType, ValueElement input) {
+	private static <T> T toObject(Class<T> outputType, ValueElement input) {
 		for(Method m : outputType.getDeclaredMethods()) {
 			if (!m.isAnnotationPresent(Deserializer.class)) continue;
 			if (!m.accessFlags().contains(AccessFlag.STATIC)) continue;
@@ -252,7 +258,7 @@ public class PlanetsDeserializer {
 		
 		try {
 			System.out.println("  ObjectDEFER...");
-			T result = decode(input, outputType);
+			T result = toType(input, outputType);
 			if (result != null) {
 				System.out.println("  ObjectDEFER COMPLETE");
 				return result;

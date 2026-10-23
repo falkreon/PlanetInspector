@@ -3,6 +3,8 @@ package blue.endless.pi.enigma.util;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
+import blue.endless.pi.enigma.domain.Room;
+
 public final class Palette {
 	private static final Color[] COLORS = {
 		new Color(0x34, 0x34, 0x34), new Color(0x25, 0x18, 0x8c), new Color(0x00, 0x00, 0xaa), new Color(0x43, 0x00, 0x9d),
@@ -70,6 +72,14 @@ public final class Palette {
 		}
 	}
 	
+	/**
+	 * Destructively colorizes the provided image, in-place.
+	 * @see #colorize(BufferedImage, int[])
+	 */
+	public static final void colorize(BufferedImage image, Room.PaletteFrame palette) {
+		colorize(image, palette.toArray());
+	}
+	
 	public static final BufferedImage getColorizedCopy(BufferedImage image, Color tint) {
 		float[] tintComponents = new float[3];
 		tintComponents = tint.getRGBColorComponents(tintComponents);
@@ -91,4 +101,5 @@ public final class Palette {
 		
 		return result;
 	}
+	
 }

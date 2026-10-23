@@ -59,7 +59,7 @@ public class EnigmaFormat {
 		return Double.parseDouble(fmt.format(result));
 	}
 	
-	public ZonedDateTime decodeTimestamp(double timestamp) {
+	public static ZonedDateTime decodeTimestamp(double timestamp) {
 		ZonedDateTime origin = ZonedDateTime.parse("1899-12-30T00:00:00+00:00");
 		
 		ZonedDateTime justDays = origin.plusDays((long) timestamp);
