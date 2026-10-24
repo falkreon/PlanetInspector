@@ -53,10 +53,16 @@
 					"t": { "type": "integer" },
 					"f": { "type": "integer" },
 					"c": { "type": "integer" },
+					"s": { "type": "integer" },
+					"i": { "type": "integer" },
+					"b": { "type": "integer" },
+					"id": { "type": "integer" },
+					"rm": { "type": "integer" },
 					
 					"x": { "type": "integer" },
 					"y": { "type": "integer" },
 					"z": { "type": "integer" }
+					
 				},
 				"required": [ "f", "t" ],
 				"additionalProperties": false
@@ -233,6 +239,9 @@
 		
 	},
 	
-	"required": [],
+	"required": [
+		"GUNSHIP", "RUN_STATS", "HINTS", "BOSSES_DEFEATED", "REPLAY", "STATE_CHANGES", "SPAWN_POINT", "GAME",
+		"SAMUS", "MARKERS", "META", "MISC"
+	],
 	"additionalProperties": false
 }
